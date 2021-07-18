@@ -1,0 +1,12 @@
+.dashboard-page { width: 100vw; min-height: 100vh; background: #F5F5F5; }
+.dark .dashboard-page { background: #222730; }
+.main-side { margin-left: 80px; background: #FFF; box-shadow: -1px 0 3px rgba(0, 0, 0, .1); min-height: 100vh; border-radius: 35px 0 0 35px; overflow: hidden; position: relative; }
+.dark .main-side { background: #1a2029; }
+.rtl .main-side { margin-left: 0; margin-right: 80px; border-radius: 0 35px 35px 0; }
+.main-side > * { padding-left: 120px; }
+.rtl .main-side > * { padding-left: 0; padding-right: 120px; }
+.main-side .content { padding-top: 50px; padding-right: 40px; position: relative; min-height: 85vh; }
+.main-side .content > .whitebox-loader { position: fixed; z-index: 100; top: 75px; margin-left: 140px; }
+.main-side .content > .whitebox-loader .center { margin-top: -57.5px; margin-left: -100px; }
+.rtl .main-side .content > .whitebox-loader { margin-right: 140px; margin-left: 0; }
+.rtl .main-side .content { padding-left: 40px; padding-right: 120px; }

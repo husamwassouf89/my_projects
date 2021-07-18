@@ -1,0 +1,20 @@
+.chart-box,
+.number-box { background: #FAFAFA; border-radius: 40px; box-shadow: 1px 1px 3px rgba(0, 0, 0, .1); padding: 50px 40px; margin-bottom: 30px; transition: all .3s ease; }
+.dark .chart-box,
+.dark .number-box { background: #222730; }
+.number-box { cursor: pointer; position: relative; overflow: hidden; border-radius: 40px; }
+.number-box:hover { transform: scale(1.05); background: #F5F5F5; }
+.dark .number-box:hover { background: #262b35; }
+.number-box::before { content: ""; position: absolute; background: #000; opacity: .03; width: 150%; height: 30px; top: -70px; left: -250px; transform: rotate(-45deg); transition: all .3s ease; }
+.dark .number-box::before { background: #FFF; }
+.number-box:hover::before { left: 250px; top: 60px; }
+.chart-box h2,
+.number-box h2 { margin: 0; font-weight: normal; font-size: 18px; color: #222; }
+.dark .chart-box h2,
+.dark .number-box h2 { color: #FFF; }
+.number-box span { font-size: 30px; display: inline-block; margin-top: 10px; font-weight: medium; color: #000; }
+.dark .number-box span { color: #FFF; }
+.number-box span small { font-size: 14px; position: relative; top: 1px; }
+
+.chart-box { padding: 22px 50px; }
+.chart-box h2 { margin-bottom: 20px; }

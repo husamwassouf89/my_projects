@@ -1,0 +1,101 @@
+#modal-container { position: fixed; display: table; height: 100%; width: 100%; top: 0; left: 0; transform: scale(1); z-index: 100; transition: all .5s ease; }
+#modal-container .modal-background { display: table-cell; text-align: center; vertical-align: middle; background: rgba(0, 0, 0, 0); animation: fadeIn 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards; }
+#modal-container .modal-background .modal { display: inline-block; border-radius: 3px; font-weight: 300; position: relative; background-color: transparent; animation: modalFadeIn 0.5s 0.8s cubic-bezier(0.165, 0.84, 0.44, 1) forwards; max-height: 90vh; overflow-y: hidden; }
+.rtl #modal-container .modal-background .modal .modal-scroller > div { margin-right: 0!important; margin-left: -17px!important; }
+.dark #modal-container .modal-background .modal { animation: modalFadeInDark 0.5s 0.8s cubic-bezier(0.165, 0.84, 0.44, 1) forwards; }
+#modal-container .modal-background .modal .modal-content { padding: 50px; opacity: 0; position: relative; animation: modalContentFadeIn 0.5s 1s cubic-bezier(0.165, 0.84, 0.44, 1) forwards; z-index: 1; }
+.dark #modal-container .modal-background .modal .modal-content { color: #FFF; }
+#modal-container .modal-background .modal .modal-svg { position: absolute; top: 0; left: 0; height: 100%; width: 100%; border-radius: 3px; pointer-events: none; }
+#modal-container .modal-background .modal .modal-svg rect { stroke: #fff; stroke-width: 2px; width: 100%; height: 100%; }
+
+#modal-container.out { opacity: 0; visibility: hidden; }
+#modal-container.out .modal-background { animation: fadeOut 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards; }
+#modal-container.out .modal-background .modal { animation: modalFadeOut 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards; }
+.dark #modal-container.out .modal-background .modal { animation: modalFadeOutDark 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards; }
+#modal-container.out .modal-background .modal .modal-content { animation: modalContentFadeOut 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards; }
+
+@keyframes fadeIn {
+	0% {
+		background: rgba(0, 0, 0, 0);
+	}
+	100% {
+		background: rgba(0, 0, 0, 0.7);
+	}
+}
+
+@keyframes fadeOut {
+	0% {
+		background: rgba(0, 0, 0, 0.7);
+	}
+	100% {
+		background: rgba(0, 0, 0, 0);
+	}
+}
+
+@keyframes modalFadeIn {
+	0% {
+		background-color: transparent;
+	}
+	100% {
+        background-color: white;
+        box-shadow: 1px 2px 3px rgba(0, 0, 0, .1);
+        overflow-y: auto;
+	}
+}
+
+@keyframes modalFadeOut {
+	0% {
+        background-color: white;
+        box-shadow: 1px 2px 3px rgba(0, 0, 0, .1);
+        overflow-y: auto;
+	}
+	100% {
+        background-color: transparent;
+        overflow-y: auto;
+	}
+}
+
+@keyframes modalFadeInDark {
+	0% {
+		background-color: transparent;
+	}
+	100% {
+        background-color: #1a2029;
+        box-shadow: 1px 2px 3px rgba(0, 0, 0, .2);
+        overflow-y: auto;
+	}
+}
+
+@keyframes modalFadeOutDark {
+	0% {
+        background-color: #1a2029;
+        box-shadow: 1px 2px 3px rgba(0, 0, 0, .2);
+        overflow-y: auto;
+	}
+	100% {
+        background-color: transparent;
+        overflow-y: auto;
+	}
+}
+
+@keyframes modalContentFadeIn {
+	0% {
+		opacity: 0;
+		top: -20px;
+	}
+	100% {
+		opacity: 1;
+		top: 0;
+	}
+}
+
+@keyframes modalContentFadeOut {
+	0% {
+		opacity: 1;
+		top: 0px;
+	}
+	100% {
+		opacity: 0;
+		top: -20px;
+	}
+}

@@ -1,0 +1,10 @@
+.login-page { width: 100vw; height: 97vh; background-image: url(../../assets/images/bg/light.svg); background-size: cover; }
+.dark .login-page { background-image: url(../../assets/images/bg/dark.svg); }
+.login-page .layout { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; max-width: 400px; transition: all .3s ease; }
+.login-page .layout .form-holder { background: #FFF; padding: 50px; border-radius: 15px; box-shadow: 0 0 5px rgba(0, 0, 0, .1); overflow: hidden; width: 100%; }
+.login-page .layout .form-holder .logo { margin: 0 0 20px; width: 200px; position: relative; left: -10px; }
+.dark .login-page .layout .form-holder { background: #323b4b; }
+
+.login-page .switch-actions { margin: 0 auto; width: fit-content; margin-top: 30px; direction: ltr; }
+.login-page .switch-actions label { margin: 0 5px; direction: ltr; }
+.login-page .switch-actions label * { direction: ltr; }

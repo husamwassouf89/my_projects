@@ -1,0 +1,81 @@
+{
+  "name": "timepiece",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@reduxjs/toolkit": "^1.5.0",
+    "@types/node": "^12.19.9",
+    "@types/react": "^16.14.2",
+    "@types/react-cookies": "^0.1.0",
+    "@types/react-dom": "^16.9.10",
+    "@yaireo/tagify": "^3.22.0",
+    "axios": "^0.21.1",
+    "chart.js": "^2.9.4",
+    "eslint-config-prettier": "^7.1.0",
+    "eslint-plugin-prettier": "^3.3.0",
+    "filepond": "^4.28.2",
+    "filepond-plugin-file-validate-type": "^1.2.6",
+    "filepond-plugin-get-file": "^1.0.7",
+    "filepond-plugin-image-crop": "^2.0.6",
+    "filepond-plugin-image-edit": "^1.6.3",
+    "filepond-plugin-image-preview": "^4.6.7",
+    "filepond-plugin-image-transform": "^3.8.6",
+    "filepond-plugin-media-preview": "^1.0.9",
+    "number-to-words": "^1.2.4",
+    "react": "^17.0.1",
+    "react-chartjs-2": "^2.11.1",
+    "react-collapse": "^5.1.0",
+    "react-cookie": "^4.0.3",
+    "react-custom-scrollbars": "^4.2.1",
+    "react-dom": "^17.0.1",
+    "react-filepond": "^7.1.1",
+    "react-grid-system": "^7.1.1",
+    "react-infinite-scroller": "^1.2.4",
+    "react-multi-lang": "^2.1.1",
+    "react-numeric-input": "^2.2.3",
+    "react-redux": "^7.2.2",
+    "react-responsive": "^8.2.0",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "4.0.1",
+    "react-select": "^3.1.1",
+    "react-tooltip": "^4.2.11",
+    "tafgeetjs": "^2.1.0",
+    "typescript": "^4.1.3",
+    "web-vitals": "^0.2.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@iconify-icons/feather": "^1.1.0",
+    "@iconify/react": "^1.1.3",
+    "@types/number-to-words": "^1.2.0",
+    "@types/react-collapse": "^5.0.0",
+    "@types/react-custom-scrollbars": "^4.0.7",
+    "@types/react-infinite-scroller": "^1.2.1",
+    "@types/react-numeric-input": "^2.2.3",
+    "@types/react-redux": "^7.1.12",
+    "@types/react-responsive": "^8.0.2",
+    "@types/react-router-dom": "^5.1.6",
+    "@types/react-select": "^3.1.2",
+    "@typescript-eslint/parser": "^4.11.1",
+    "eslint": "^7.16.0",
+    "prettier": "^2.2.1"
+  }
+}

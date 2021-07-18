@@ -1,0 +1,6 @@
+.login-form .input-box { margin: 20px auto; }
+.login-form .button { height: 50px; position: relative; }
+.login-form .button.scale { transform: scale(18); background: #FFF; }
+.dark .login-form .button.scale { background: #323b4b; }
+.dark .login-form .button.scale .lds-ripple div { border-color: #323b4b; }
+.login-form .button .lds-ripple { position: absolute; top: 50%; left: 50%; transform: translate( -50%, -50% ) scale(.5); margin-left: 2.5px; margin-top: 1px; }

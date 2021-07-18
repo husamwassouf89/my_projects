@@ -1,0 +1,56 @@
+.side-nav { background: #1ABC9C; width: 120px; text-align: center; border-radius: 25px; overflow: hidden; position: fixed; top: 53%; transform: translateY(-50%); left: 20px; z-index: 5; }
+/* RTL scrollbar */
+.rtl .side-nav > div > div { margin-right: 0!important; margin-left: -17px; }
+.rtl .side-nav { right: 20px; left: auto; }
+.side-nav .active-box { display: none; position: absolute; width: 100%; height: 90px; background: #34dab9; top: 0; opacity: .5; transition: top 600ms cubic-bezier(.26,2,.46,.71) }
+.side-nav ul { list-style: none; padding: 0; margin: 0; }
+.side-nav ul li { height: 90px; color: #FFF; position: relative; cursor: pointer; opacity: .7; transition: all .3s ease; }
+.side-nav ul li a { color: #FFF; display: block; height: 90px; }
+.side-nav ul li.active,
+.side-nav ul li:hover { opacity: 1; transform: scale(1.1 ); }
+.side-nav ul li span { line-height: 1; position: absolute; top: 50%; left: 50%; width: 100%; transform: translate( -50%, -50% ); font-size: 12px; }
+.side-nav ul li i { display: block; font-size: 25px; margin-bottom: 5px; }
+
+.side-nav ul ul { background: #25aa8f; padding: 0 20px; }
+.side-nav ul ul i { display: none; }
+.side-nav ul ul li { opacity: .6; }
+.side-nav ul ul li.active,
+.side-nav ul ul li:hover { transform: scale(1.15); }
+.side-nav ul ul li,
+.side-nav ul ul li a { height: 55px; }
+.side-nav ul ul li span { line-height: 17px; }
+/* .side-nav ul ul li span::before { content: ""; position: absolute; width: 0; height: 2px; background: #FFF; bottom: -8px; left: 50%; margin-left: -10px; transition: all .3s ease; }
+.side-nav ul ul li.active span::before { width: 20px; } */
+
+.top-nav { padding: 10px 70px 10px 120px; box-shadow: 0 0 5px rgba(0, 0, 0, .1); }
+.rtl .top-nav { padding-left: 70px!important; padding-right: 120px; }
+.top-nav .logo { width: auto; height: 50px; }
+.top-nav .actions { float: right; }
+.rtl .top-nav .actions { float: left; }
+.top-nav .actions .switchers { display: inline-block; line-height: 74px; direction: ltr; }
+.top-nav .actions .switchers * { direction: ltr; }
+.top-nav .icon-logout,
+.top-nav .icon-username-1 { width: 32px; height: 32px; line-height: 35px; position: relative; top: 11px; text-align: center; background: #FFF; box-shadow: 1px 1px 5px rgba(0, 0, 0, .2); border-radius: 50%; font-size: 13px; cursor: pointer; color: #333; float: right; margin-left: 10px; overflow: hidden; transition: transform .3s ease; }
+.top-nav .userinfo { float: right; cursor: pointer; }
+.top-nav .userinfo span { float: right; position: relative; top: 11px; margin: 0 0 0 10px; font-size: 12px; line-height: 17px; }
+.rtl .top-nav .icon-logout,
+.rtl .top-nav .icon-username-1 { float: left; margin-left: 0; margin-right: 10px; position: relative; }
+.rtl .top-nav .userinfo { float: left; }
+.rtl .top-nav .userinfo span { float: left; margin: 0 10px 0 0; }
+.dark .top-nav .userinfo span { color: #FFF; }
+.top-nav .icon-logout::before { position: relative; left: 1px; }
+.top-nav .icon-logout::after { content: ''; position: absolute; width: 50px; height: 15px; background: #1ABC9C; opacity: .3; left: -25px; top: -10px; transform: rotate(-45deg); transition: all .2s ease; }
+.top-nav .icon-logout:hover::after { left: 5px; top: 30px; }
+.top-nav .icon-logout:hover { transform: scale(1.1); }
+
+
+/* Reports list */
+.reports-list { position: relative; display: inline-block; margin-right: 20px; top: -10px; color: #222; }
+.rtl .reports-list { margin-right: 0; margin-left: 20px; }
+.dark .reports-list { color: #FFF; }
+.reports-list ul { position: absolute; background: #FFF; border-radius: 5px; box-shadow: 1px 2px 4px rgba(0, 0, 0, .1); z-index: 10; padding: 10px 20px; margin: 0; top: 40px; list-style: none; opacity: 0; visibility: hidden; transform: scale(.95) translateX(-40%); width: max-content; left: 0; transition: all .3s ease .5s; }
+.reports-list span { cursor: pointer; }
+.reports-list:hover ul { opacity: 1; visibility: visible; transform: scale(1) translateX(-40%); transition-delay: 0s; }
+.reports-list ul li { line-height: 45px; padding: 0 20px; }
+.reports-list ul li a { color: #333; text-decoration: none; display: block; transition: all .3s ease; }
+.reports-list ul li a:hover { color: #1ABC9C; }

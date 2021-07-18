@@ -1,0 +1,18 @@
+.avatar_uploader .filepond--list-scroller { margin: 0!important; transform: translate(0)!important; }
+.avatar_uploader .filepond--item { height: 150px!important; width: 150px!important; margin: 0!important; transform: translateX(-10px)!important; }
+.filepond--wrapper * { direction: ltr; }
+
+.filepond--wrapper,
+.filepond--drop-label.filepond--drop-label label { cursor: pointer; }
+.filepond--file-action-button.filepond--action-abort-item-load { margin-left: -3px!important; }
+.doka-image-editor {
+    --doka-button-primary--color: red;
+    --color-primary: #2990ff;
+    --color-primary-dark: #1a80ec;
+    --color-primary-text: #fff;
+    --color-secondary: #03a9f4;
+    --color-secondary-dark: #046bbf;
+}
+
+.rtl .doka--root * { direction: ltr; }
+.filepond--credits { display: none; }

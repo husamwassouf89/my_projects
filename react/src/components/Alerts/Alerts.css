@@ -1,0 +1,15 @@
+.alert { background: coral; color: #FFF; padding: 15px 20px; border-radius: 8px; font-size: 13px; cursor: pointer; transform: scale(.9); opacity: 0; animation: .5s alertScale cubic-bezier(.26,2.5,.46,.71) forwards; }
+.alert.error { background: #e55039; }
+.alert.success { background: #27ae60; }
+.alert.info { background: #3498db; }
+
+@keyframes alertScale {
+	0% {
+        transform: scale(.5);
+        opacity: 0;
+	}
+	100% {
+        transform: scale(1);
+        opacity: 1;
+	}
+}
