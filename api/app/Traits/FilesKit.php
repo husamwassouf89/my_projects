@@ -10,8 +10,9 @@ use Symfony\Component\HttpFoundation\File\File;
 trait FilesKit
 {
 
-    public function saveFile(File $file, $path = 'storage/attachments'):?string
+    public function saveFile(File $file, $path = 'attachments'):?string
     {
+        $path = 'storage/' . $path;
         $name = $this->generateMediaName($file->getClientOriginalName());
         if(!$file->move($path, $name)) return null;
         return $path . '/' . $name;

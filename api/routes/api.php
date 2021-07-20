@@ -4,6 +4,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\HelpController;
+use App\Http\Controllers\PDController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -47,9 +48,17 @@ Route::group(['middleware' => 'auth:api',], function () {
     });
 
 
-    // ************************************* Help Routes ******************************
+    // ************************************* Client Routes ******************************
     Route::group(['prefix' => 'clients'], function () {
         Route::post('import', [ClientController::class, 'import']);
+    });
+
+
+    // ************************************* PD Routes ******************************
+    Route::group(['prefix' => 'pd'], function () {
+        Route::get('', [PDController::class, 'index']);
+        Route::post('', [PDController::class, 'store']);
+        Route::get('class-type-years', [PDController::class, 'classTypeYears']);
     });
 
 

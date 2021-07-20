@@ -17,11 +17,10 @@ class CreatePDValuesTable extends Migration
     {
         Schema::create('p_d_values', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(PD::class);
-            $table->foreignIdFor(Grade::class, 'row_id');
-            $table->foreignIdFor(Grade::class, 'column_id')->nullable();
-            $table->enum('column_type', ['grade', 'total'])->default('grade');
-            $table->double('float');
+            $table->foreignIdFor(PD::class)->constrained('p_d_s')->cascadeOnDelete();
+            $table->foreignIdFor(Grade::class, 'row_id')->constrained('grades');
+            $table->foreignIdFor(Grade::class, 'column_id')->constrained('grades');
+            $table->double('value');
         });
     }
 

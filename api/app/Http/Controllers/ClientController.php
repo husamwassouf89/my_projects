@@ -21,6 +21,5 @@ class ClientController extends Controller
             return $this->response('success');
         }
         return $this->response('failed');
-
     }
 }

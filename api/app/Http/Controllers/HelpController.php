@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Attachment\DeleteAttachmentIdsRequest;
 use App\Models\Attachment;
+use App\Models\Client\ClassType;
+use App\Models\PD\PD;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 
@@ -22,17 +24,16 @@ class HelpController extends Controller
 
     public function test()
     {
-        \request()->validate([
-                                 'n' => 'required|numeric|min:1|max:100'
-                             ]);
-        return "s";
+        $pd = PD::find(1);
+        return $pd->classType;
 
     }
 
     public function fetchPredefined()
     {
-
         $data = [];
+        $data['class_types'] = ClassType::all();
+
 
         return $this->response('success', $data, 200);
     }

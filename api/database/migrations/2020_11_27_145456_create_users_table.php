@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Permission\Role;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -20,11 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->timestamps();
-
-            $table->foreignId('role_id')->index();
-            $table->foreign('role_id')
-                  ->references('id')->on('roles')
-                  ->onDelete('cascade');
+            $table->foreignIdFor(Role::class)->constrained();
         });
 
     }

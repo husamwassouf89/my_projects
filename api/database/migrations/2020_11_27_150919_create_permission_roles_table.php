@@ -1,8 +1,9 @@
 <?php
 
+use App\Models\Permission\Permission;
+use App\Models\Permission\Role;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreatePermissionRolesTable extends Migration
@@ -16,16 +17,8 @@ class CreatePermissionRolesTable extends Migration
     {
         Schema::create('permission_roles', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('role_id')->index();
-            $table->foreign('role_id')
-                ->references('id')
-                ->on('roles')
-                ->onDelete('cascade');
-            $table->foreignId('permission_id')->index();
-            $table->foreign('permission_id')
-                ->references('id')
-                ->on('permissions')
-                ->onDelete('cascade');
+            $table->foreignIdFor(Role::class)->constrained();
+            $table->foreignIdFor(Permission::class)->constrained();
         });
 
 

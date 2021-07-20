@@ -20,6 +20,12 @@ abstract class FormRequest extends LaravelFormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        if ($this->route('id'))
+            $this->merge(['id' => $this->route('id')]);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -34,6 +40,6 @@ abstract class FormRequest extends LaravelFormRequest
     {
         $errors = (new ValidationException($validator))->errors();
         throw new HttpResponseException(response()->json(['message' => __('messages.failed'),
-                                                          'data' => $errors]), 422);
+                                                          'data'    => $errors]), 422);
     }
 }

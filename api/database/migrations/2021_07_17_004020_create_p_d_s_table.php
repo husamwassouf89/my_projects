@@ -16,10 +16,13 @@ class CreatePDSTable extends Migration
     {
         Schema::create('p_d_s', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(ClassType::class);
+            $table->foreignIdFor(ClassType::class)->constrained();
             $table->year('year');
             $table->string('quarter');
             $table->string('path');
+
+            $table->timestamps();
+
         });
     }
 
