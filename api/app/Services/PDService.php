@@ -76,7 +76,15 @@ class PDService extends Service
 
     public function destory($id)
     {
+        if (PD::where('id', $id)->delete()) {
+            return true;
+        }
+        return false;
+    }
 
+    public function show($id)
+    {
+        return PD::where('p_d_s.id', $id)->showSelect()->first();
     }
 
 

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Client\ClassType\IdRequest;
+use App\Http\Requests\PD\IdRequest;
+use App\Http\Requests\Client\ClassType\IdRequest as ClassTypeIdRequest;
 use App\Http\Requests\PaginateRequest;
 use App\Http\Requests\PD\ImportRequest;
 use App\Services\PDService;
-use Illuminate\Http\Request;
 
 class PDController extends Controller
 {
@@ -32,9 +32,22 @@ class PDController extends Controller
         return $this->response('failed');
     }
 
-    public function classTypeYears(IdRequest $request)
+    public function show($id, IdRequest $request)
+    {
+        return $this->response('success', $this->service->show($request->id));
+    }
+
+    public function classTypeYears(ClassTypeIdRequest $request)
     {
         if ($data = $this->service->classTypeYears($request->id)) {
+            return $this->response('success', $data);
+        }
+        return $this->response('failed');
+    }
+
+    public function destroy($id, IdRequest $request)
+    {
+        if ($data = $this->service->destory($request->id)) {
             return $this->response('success', $data);
         }
         return $this->response('failed');

@@ -17,4 +17,11 @@ class IdRequest extends FormRequest
             'id' => 'required|numeric|exists:p_d_s,id'
         ];
     }
+
+    protected function prepareForValidation()
+    {
+        if ($this->route('pd'))
+            $this->merge(['id' => $this->route('pd')]);
+    }
 }
+
