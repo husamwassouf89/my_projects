@@ -17,7 +17,7 @@ class CreateGradesTable extends Migration
         Schema::create('grades', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(ClassType::class)->constrained();
-            $table->string('serial_no');
+            $table->integer('serial_no');
             $table->string('name');
         });
     }

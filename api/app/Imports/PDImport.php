@@ -26,17 +26,19 @@ class PDImport implements ToCollection
     {
         $mpRow = [];
         $mpCol = [];
-        foreach ($collection as $key => $row) {
-            foreach ($row as $key2 => $value) {
-                if ($key == 0 and $key2 >= 1 and $key2 < count($row)) {
-                    $mpCol[$value] = Grade::where('id', $this->pd->class_type_id)->first();
-
-                }
-
-                if ($key2 == 0 and $key >= 1 and $key < count($collection)) {
-                    $mpRow[$value] = Grade::where('id', $this->pd->class_type_id)->first();
+        try {
+            foreach ($collection as $key => $row) {
+                foreach ($row as $key2 => $value) {
+                    if ($key == 0 and $key2 >= 1 and $key2 < count($row)) {
+                        $mpCol[$value] = Grade::where('class_type_id', $this->pd->class_type_id)->where('name', $value)->first()->id;
+                    }
+                    if ($key2 == 0 and $key >= 1 and $key < count($collection)) {
+                        $mpRow[$value] = Grade::where('class_type_id', $this->pd->class_type_id)->where('name', $value)->first()->id;
+                    }
                 }
             }
+        } catch (\Exception $e) {
+            dd([$this->pd->class_type_id,$value]);
         }
 
         foreach ($collection as $key => $row) {
@@ -44,15 +46,13 @@ class PDImport implements ToCollection
                 if ($key == 0 or $key2 == 0) continue;
                 if ($key > $this->gradesCount or $key2 > $this->gradesCount) continue;
 
-
                 $this->pd->values()->create(
                     [
                         'value'  => $value,
-                        'column_id' => 1,
-                        'row_id' => 1,
+                        'column_id' => $mpCol[$collection[0][$key2]],
+                        'row_id' => $mpRow[$collection[$key][0]],
                     ]
                 );
-
             }
         }
 

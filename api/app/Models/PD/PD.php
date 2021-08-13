@@ -30,10 +30,10 @@ class PD extends Model
 
     public function values()
     {
-        return $this->hasMany(PDValues::class)
-                    ->join('grades as rows', 'row_id', '=', 'rows.id')
-                    ->join('grades as columns', 'column_id', '=', 'columns.id')
-                    ->select('p_d_values.*', 'rows.name as row', 'columns.name as column');
+        return $this->hasMany(PDValues::class);
+//                    ->join('grades as rows', 'row_id', '=', 'rows.id')
+//                    ->join('grades as columns', 'column_id', '=', 'columns.id')
+//                    ->select('p_d_values.*', 'rows.name as row', 'columns.name as column');
     }
 
     public function getPathAttribute($value)

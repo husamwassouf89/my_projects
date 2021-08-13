@@ -21,7 +21,6 @@ class PDController extends Controller
             return $this->response('success', $data);
         }
         return $this->response('failed');
-
     }
 
     public function store(ImportRequest $request)
