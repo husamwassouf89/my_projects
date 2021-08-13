@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\FilesKit;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Attachment extends Model
 {
-    use HasFactory;
+    use HasFactory, FilesKit;
 
     public $timestamps = false;
     protected $guarded = ['id'];
