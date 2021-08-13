@@ -59,28 +59,13 @@ export default function () {
 
         dispatch( loginSlice.actions.load() )
 
-        setTimeout(() => {
-            dispatch(loginSlice.actions.success())
-            setShowSuccessMark(true)
-            setTimeout(() => {
-                let expires: Date = rememberMe ? addToDate(new Date(), "years", 1) : addToDate(new Date(), "hours", 1);
-                setTimeout(() => {
-                    setCookie("userinfo", { email: "majd.sh42@gmail.com", name: "Majd Shamma", role: { name: "Admin" }, accessToken: "bla" }, { expires: expires })
-                    dispatch(loginSlice.actions.init())
-                }, 10);
-            }, 1500);
-        }, 1000);
-
-        return
-
         ENDPOINTS.auth().login({ email: username, password: password })
         .then((response: any) => {
-            if( response.data.message === "Success! :D" ) {
+            if( response.data.message === "Success :D!" ) {
                 dispatch( loginSlice.actions.success() )
                 setShowSuccessMark(true)
                 setTimeout(() => {
                     let expires: Date = rememberMe ? addToDate( new Date(), "years", 1 ) : addToDate( new Date(), "hours", 1 );
-                    localStorage.setItem("permissions", JSON.stringify(response.data.data.role.permissions))
                     setTimeout(() => {
                         setCookie("userinfo", {email: response.data.data.email, name: response.data.data.name, role: { name: response.data.data.role.name }, accessToken: response.data.data.access_token }, { expires: expires })
                         dispatch( loginSlice.actions.init() )
