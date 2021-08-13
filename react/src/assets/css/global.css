@@ -49,6 +49,9 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 input[type=number] { -moz-appearance:textfield; /* Firefox */ }
 
+/* Collapse */
+.ReactCollapse--collapse { transition: height 500ms; }
+
 
 @media only screen and (max-width: 768px) {
     /* Side nav */

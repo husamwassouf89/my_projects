@@ -174,8 +174,8 @@ class API {
     url: string;
 
     constructor() {
-        // this.url = "http://127.0.0.1:8000"
-        this.url = "https://workshop.jaiasoft.com/api/public"
+        this.url = "http://127.0.0.1:8000"
+        // this.url = "https://workshop.jaiasoft.com/api/public"
 
         const [cookies, _, removeCookie] = useCookies();
 
