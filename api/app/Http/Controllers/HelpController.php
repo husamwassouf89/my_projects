@@ -179,14 +179,12 @@ class HelpController extends Controller
                     if ($request->store_type == 'attachments') {
                         $file            = $request->file($key);
                         $attachment      = new Attachment();
-                        $attachment->url = $attachment->saveFile($file);
+                        $attachment->url = $this->saveFile($file);
                         $attachment->save();
                         array_push($data, $attachment->id);
                     } else {
-                        $path = $this->saveFile(request()->file('file'), 'pd');
-
+                        $path = $this->saveFile($file, $request->store_type);
                         array_push($data, $path);
-
                     }
 
                 }
