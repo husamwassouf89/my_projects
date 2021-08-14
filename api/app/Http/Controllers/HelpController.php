@@ -176,8 +176,9 @@ class HelpController extends Controller
             $data = [];
             foreach ($_FILES as $key => $value) {
                 if ($request->hasFile($key)) {
+                    $file = $request->file($key);
+
                     if ($request->store_type == 'attachments') {
-                        $file            = $request->file($key);
                         $attachment      = new Attachment();
                         $attachment->url = $this->saveFile($file);
                         $attachment->save();
