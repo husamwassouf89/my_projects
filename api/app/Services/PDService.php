@@ -39,8 +39,7 @@ class PDService extends Service
         $pd->eco_parameter_base_weight  = $input['eco_parameter_base_weight'];
         $pd->eco_parameter_mild_weight  = $input['eco_parameter_mild_weight'];
         $pd->eco_parameter_heavy_weight = $input['eco_parameter_heavy_weight'];
-        $path                           = $this->saveFile(request()->file('file'), 'pd');
-        $pd->path                       = $path;
+        $pd->path                       = $input['path'];
         $pd->save();
 
         $attachmentIds = $input['attachment_ids'] ?? null;

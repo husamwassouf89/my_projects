@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Attachment\DeleteAttachmentIdsRequest;
+use App\Http\Requests\Attachment\UploadRequest;
 use App\Models\Attachment;
 use App\Models\Client\ClassType;
 use App\Models\PD\PD;
+use App\Traits\FilesKit;
 use App\Traits\MathKit;
 use App\Traits\PDKit;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use PhpOffice\PhpSpreadsheet\Calculation\Statistical;
@@ -15,7 +18,7 @@ use PhpOffice\PhpSpreadsheet\Calculation\Statistical;
 class HelpController extends Controller
 {
 
-    use PDKit;
+    use PDKit, FilesKit;
 
     public function clearCache()
     {
@@ -167,20 +170,26 @@ class HelpController extends Controller
         return $this->response('success', $data, 200);
     }
 
-    public function uploadAttachments(Request $request)
+    public function uploadAttachments(UploadRequest $request)
     {
         if (isset($_FILES) && count($_FILES) > 0) {
-            $attachmentIds = [];
+            $data = [];
             foreach ($_FILES as $key => $value) {
                 if ($request->hasFile($key)) {
-                    $file            = $request->file($key);
-                    $attachment      = new Attachment();
-                    $attachment->url = $attachment->saveFile($file);
-                    $attachment->save();
-                    array_push($attachmentIds, $attachment->id);
+                    if ($request->store_type == 'attachments') {
+                        $file            = $request->file($key);
+                        $attachment      = new Attachment();
+                        $attachment->url = $this->saveFile($file);
+                        $attachment->save();
+                        array_push($data, $attachment->id);
+                    } else {
+                        $path = $this->saveFile($file, $request->store_type);
+                        array_push($data, $path);
+                    }
+
                 }
             }
-            return $this->response('success', $attachmentIds, 200);
+            return $this->response('success', $data, 200);
         }
         return $this->response('failed', null, 404);
     }
