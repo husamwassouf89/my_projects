@@ -178,8 +178,8 @@ class HelpController extends Controller
                 if ($request->hasFile($key)) {
                     $file = $request->file($key);
                     if ($request->type == 'attachments') {
-                        $attachment      = new Attachment();
-                        $attachment->url = $this->saveFile($file);
+                        $attachment       = new Attachment();
+                        $attachment->path = $this->saveFile($file);
                         $attachment->save();
                         array_push($data, $attachment->id);
                     } else {
