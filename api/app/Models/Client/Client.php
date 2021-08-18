@@ -21,11 +21,14 @@ class Client extends Model
 
     public function scopeSelectShow(Builder $query)
     {
-        // TODO: Implement scopeSelectShow() method.
+        return $query->select('clients.*','branches.name as branch_name','class_types.name as class_type_name',
+        'currencies.name as currency_name');
     }
 
     public function scopeJoins(Builder $query)
     {
-        // TODO: Implement scopeJoins() method.
+        return $query->join('branches', 'branches.id', '=', 'clients.branch_id')
+                     ->join('class_types', 'class_types.id', '=', 'clients.class_type_id')
+                     ->join('currencies', 'currencies.id', '=', 'clients.currency_id');
     }
 }

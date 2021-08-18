@@ -49,9 +49,7 @@ Route::group(['middleware' => 'auth:api',], function () {
 
 
     // ************************************* Client Routes ******************************
-    Route::group(['prefix' => 'clients'], function () {
-        Route::post('import', [ClientController::class, 'import']);
-    });
+    Route::resource('clients', ClientController::class);
 
 
     // ************************************* PD Routes ******************************

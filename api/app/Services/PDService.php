@@ -53,9 +53,9 @@ class PDService extends Service
             }
         }
 
-        Excel::import(new PDImport($pd), $path);
+        Excel::import(new PDImport($pd), $input['path']);
 
-        return true;
+        return $this->show($pd->id);
     }
 
     public function classTypeYears($id)
