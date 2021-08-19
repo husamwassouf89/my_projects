@@ -24,8 +24,7 @@ export default () => {
                 {isLoading ? <WhiteboxLoader /> : ""}
                 <h1 className="text-center" style={{ margin: "0 0 40px" }}>{t("import_clients")}</h1>
                 <FileUploader
-                    field="certificate"
-                    type={["other"]}
+                    type="clients"
                     onStartUploading={() => {}}
                     onErrorUploading={() => {}}
                     onRemove={() => {}}

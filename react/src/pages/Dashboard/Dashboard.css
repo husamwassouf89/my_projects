@@ -10,3 +10,6 @@
 .main-side .content > .whitebox-loader .center { margin-top: -57.5px; margin-left: -100px; }
 .rtl .main-side .content > .whitebox-loader { margin-right: 140px; margin-left: 0; }
 .rtl .main-side .content { padding-left: 40px; padding-right: 120px; }
+
+.weight { border: 1px solid #777; border-radius: 5px; margin: 20px 0; padding: 10px; position: relative; }
+.weight > label { position: absolute; top: 0; left: 10px; background: #F7F7F7; padding: 0 10px; transform: translatey(-50%); font-size: 13px; }
