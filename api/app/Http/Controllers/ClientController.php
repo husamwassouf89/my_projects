@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Client\ClientIdRequest;
 use App\Http\Requests\Client\ImportRequest;
 use App\Services\AuthService;
 use App\Services\ClientService;
@@ -15,11 +16,18 @@ class ClientController extends Controller
         $this->service = $service;
     }
 
-    public function import(ImportRequest $request)
+    public function store(ImportRequest $request)
     {
-        if ($this->service->import()) {
+        if ($this->service->store($request->validated())) {
             return $this->response('success');
         }
         return $this->response('failed');
+    }
+
+    public function show($id, ClientIdRequest $request)
+    {
+
+        return $this->response($this->service->show($request->id));
+
     }
 }

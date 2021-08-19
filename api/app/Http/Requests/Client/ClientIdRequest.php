@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests\Client;
 
+
 use App\Http\Requests\FormRequest;
 
-class ImportRequest extends FormRequest
+class ClientIdRequest extends FormRequest
 {
 
     /**
@@ -15,7 +16,13 @@ class ImportRequest extends FormRequest
     public function rules()
     {
         return [
-            'path' => 'required|string'
+            'id' => 'numeric|exists:clients,id',
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        if ($this->route('clients'))
+            $this->merge(['id' => $this->route('clients')]);
     }
 }
