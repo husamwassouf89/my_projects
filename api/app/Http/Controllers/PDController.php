@@ -33,7 +33,7 @@ class PDController extends Controller
 
     public function show($id, IdRequest $request)
     {
-        return $this->response('success', $this->service->show($request->id));
+        return $this->response('success', $this->service->show($id));
     }
 
     public function classTypeYears(ClassTypeIdRequest $request)
