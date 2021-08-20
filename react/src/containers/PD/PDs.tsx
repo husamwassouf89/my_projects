@@ -40,36 +40,35 @@ export default () => {
     }
 
     // Fetch Data
-    // const fetchData = (page: number, page_size: number = 10) => {
-
-    //     dispatch( usersSlice.actions.setIsFetching( true ) )
-
-    //     ENDPOINTS.users().index({ page, page_size, keyword })
-    //     .then((response: any) => {
-    //         let users: user[] = response.data.data.users.map((user: any): user => ({
-    //             employee: user.employee,
-    //             id: user.id,
-    //             name: user.employee.name,
-    //             email: user.email
-    //         }))
-            
-    //         dispatch( usersSlice.actions.addUsers( users ) )
-    //         dispatch( usersSlice.actions.setHasMore( page < Number(response.data.data.last_page) ) )
-    //         console.log(page !== Number(response.data.data.last_page))
-    //         if( !state.isLoaded )
-    //             dispatch( usersSlice.actions.setIsLoaded( true ) )
-    //     })
-    // }
-
     const fetchData = (page: number, page_size: number = 10) => {
 
         dispatch( pdsSlice.actions.setIsFetching( true ) )
 
-        setTimeout(() => {
-            dispatch( pdsSlice.actions.setIsLoaded( true ) )
-        }, 1000);
-
+        ENDPOINTS.pd().index({ page, page_size, keyword })
+        .then((response: any) => {
+            let pds: pd[] = response.data.data.pds.map((pd: any): pd => ({
+                id: pd.id,
+                quarter: pd.quarter,
+                year: pd.year
+            }))
+            
+            dispatch( pdsSlice.actions.addPDs( pds ) )
+            dispatch( pdsSlice.actions.setHasMore( page < Number(response.data.data.last_page) ) )
+            console.log(page !== Number(response.data.data.last_page))
+            if( !state.isLoaded )
+                dispatch( pdsSlice.actions.setIsLoaded( true ) )
+        })
     }
+
+    // const fetchData = (page: number, page_size: number = 10) => {
+
+    //     dispatch( pdsSlice.actions.setIsFetching( true ) )
+
+    //     setTimeout(() => {
+    //         dispatch( pdsSlice.actions.setIsLoaded( true ) )
+    //     }, 1000);
+
+    // }
 
     interface tableDataType { [key: string]: { [key: string]: any } }
     const generateData: () => tableDataType = () => {
