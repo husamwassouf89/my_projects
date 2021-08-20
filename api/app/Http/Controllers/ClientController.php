@@ -26,8 +26,6 @@ class ClientController extends Controller
 
     public function show($id, ClientIdRequest $request)
     {
-
-        return $this->response($this->service->show($request->id));
-
+        return $this->response('success',$this->service->show($id));
     }
 }

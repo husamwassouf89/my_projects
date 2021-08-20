@@ -64,7 +64,7 @@ class DatabaseSeeder extends Seeder
         for ($i = 1; $i <= 10; $i++) {
             $classType->grades()->create(['serial_no' => $i - 1, 'name' => $i]);
         }
-        $classType = ClassType::create(['name' => 'SME\'s']);
+        $classType = ClassType::create(['name' => 'SME`s']);
         for ($i = 0; $i < 10; $i++) {
             $classType->grades()->create(['serial_no' => $i, 'name' => $i]);
         }
