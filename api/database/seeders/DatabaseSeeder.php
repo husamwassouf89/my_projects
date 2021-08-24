@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Client\ClassType;
 use App\Models\Client\Currency;
 use App\Models\Client\Type;
+use App\Models\IRS\Category;
 use App\Models\Permission\Permission;
 use App\Models\Permission\PermissionRole;
 use App\Models\Permission\Role;
@@ -96,6 +97,11 @@ class DatabaseSeeder extends Seeder
 
         Currency::create(['code' => '001', 'name' => 'IQD']);
         Currency::create(['code' => '002', 'name' => 'USD']);
+
+
+        Category::create(['name' => 'Quantity']);
+        Category::create(['name' => 'Quality']);
+        Category::create(['name' => 'Facilitation']);
 
     }
 }

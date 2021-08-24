@@ -6,7 +6,6 @@ namespace App\Services;
 
 class Service
 {
-
     protected $data;
 
     public function handlePaginate($data, $name = 'data')
