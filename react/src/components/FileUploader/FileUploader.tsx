@@ -123,7 +123,7 @@ export default (props: fileUploaderProps) => {
                     formData.append("file", file, file.name);
 
                     const request = new XMLHttpRequest();
-                    let url = 'http://127.0.0.1:8000/'
+                    let url = 'https://desolate-inlet-24536.herokuapp.com/'
                     url += "help/upload-attachments"
                     request.open('POST', url);
 

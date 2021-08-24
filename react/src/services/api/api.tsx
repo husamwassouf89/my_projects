@@ -28,7 +28,7 @@ class API {
 
     constructor() {
         // this.url = "http://127.0.0.1:8000"
-        this.url = "/api/public"
+        this.url = "https://desolate-inlet-24536.herokuapp.com"
 
         const [cookies, _, removeCookie] = useCookies();
 
@@ -75,6 +75,27 @@ class API {
         endpoints.login = ( query: any, name='login' ) => axios.post( `${this.url}/${name}`, query )
         
         endpoints.logout = ( query: any, name='logout' ) => axios.post( `${this.url}/${name}`, query )
+
+        return endpoints
+    }
+
+
+    /**
+     * Clients APIs
+     * @param {}
+     */
+     clients(): {
+        index( query: pagination ): any;
+        show( query: { id: number } ): any;
+        store( query: { path: string; } ): any;
+    } {
+        var endpoints:any = {}
+
+        endpoints.index = ( query: any, name='clients' ) => axios.get( `${this.url}/${name}`, { params: query } )
+
+        endpoints.show = ( query: any, name='clients' ) => axios.get( `${this.url}/${name}/${query.id}`, { params: query } )
+        
+        endpoints.store = ( query: any, name='clients' ) => axios.post( `${this.url}/${name}`, query )
 
         return endpoints
     }
