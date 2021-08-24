@@ -94,6 +94,8 @@ class API {
         endpoints.index = ( query: any, name='clients' ) => axios.get( `${this.url}/${name}`, { params: query } )
 
         endpoints.show = ( query: any, name='clients' ) => axios.get( `${this.url}/${name}/${query.id}`, { params: query } )
+
+        endpoints.search_cif = ( query: any, name='clients' ) => axios.get( `${this.url}/${name}/cif/${query.cif}`, { params: query } )
         
         endpoints.store = ( query: any, name='clients' ) => axios.post( `${this.url}/${name}`, query )
 

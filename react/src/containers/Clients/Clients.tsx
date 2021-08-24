@@ -40,35 +40,27 @@ export default () => {
     }
 
     // Fetch Data
-    // const fetchData = (page: number, page_size: number = 10) => {
-
-    //     dispatch( usersSlice.actions.setIsFetching( true ) )
-
-    //     ENDPOINTS.users().index({ page, page_size, keyword })
-    //     .then((response: any) => {
-    //         let users: user[] = response.data.data.users.map((user: any): user => ({
-    //             employee: user.employee,
-    //             id: user.id,
-    //             name: user.employee.name,
-    //             email: user.email
-    //         }))
-            
-    //         dispatch( usersSlice.actions.addUsers( users ) )
-    //         dispatch( usersSlice.actions.setHasMore( page < Number(response.data.data.last_page) ) )
-    //         console.log(page !== Number(response.data.data.last_page))
-    //         if( !state.isLoaded )
-    //             dispatch( usersSlice.actions.setIsLoaded( true ) )
-    //     })
-    // }
-
     const fetchData = (page: number, page_size: number = 10) => {
 
         dispatch( clientsSlice.actions.setIsFetching( true ) )
 
-        setTimeout(() => {
-            dispatch( clientsSlice.actions.setIsLoaded( true ) )
-        }, 1000);
-
+        ENDPOINTS.clients().index({ page, page_size })
+        .then((response: any) => {
+            let clients: client[] = response.data.data.clients.map((client: any): client => ({
+                id: client.id,
+                loan_key: client.loan_key,
+                cif: client.cif,
+                name: client.name,
+                class_type: client.class_type_name,
+                type: client.type
+            }))
+            
+            dispatch( clientsSlice.actions.addClients( clients ) )
+            dispatch( clientsSlice.actions.setHasMore( page < Number(response.data.data.last_page) ) )
+            console.log(page !== Number(response.data.data.last_page))
+            if( !state.isLoaded )
+                dispatch( clientsSlice.actions.setIsLoaded( true ) )
+        })
     }
 
     interface tableDataType { [key: string]: { [key: string]: any } }
@@ -112,8 +104,8 @@ export default () => {
                     ref={tableRef}
                     header={[ t("loan_key"), t("cif"), t("name"), t("class_type"), t("type"), "" ]}
                     body={generateData()}
-                    hasMore={false}
-                    // loadMore={fetchData}
+                    hasMore={state.hasMore}
+                    loadMore={fetchData}
                     />
 
                 
