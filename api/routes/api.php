@@ -4,9 +4,9 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\HelpController;
+use App\Http\Controllers\IRSController;
 use App\Http\Controllers\PDController;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\QuestionController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -47,9 +47,17 @@ Route::group(['middleware' => 'auth:api',], function () {
         Route::get('delete-attachments', [HelpController::class, 'deleteAttachments']);
     });
 
-
     // ************************************* Client Routes ******************************
+    Route::group(['prefix' => 'clients'], function () {
+        Route::get('cif/{cif}', [ClientController::class, 'showByCif']);
+    });
     Route::resource('clients', ClientController::class);
+
+    // ************************************* IRS Routes ******************************
+    Route::resource('irs', IRSController::class)->except('update');
+
+    // ************************************* Question Routes ******************************
+    Route::resource('questions', QuestionController::class);
 
 
     // ************************************* PD Routes ******************************

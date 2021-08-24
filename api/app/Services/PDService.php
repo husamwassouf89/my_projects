@@ -94,7 +94,7 @@ class PDService extends Service
 
     public function show($id)
     {
-        return $this->handleShow(PD::where('p_d_s.id', $id)->showSelect()->first());
+        return $this->handleShow(PD::where('p_d_s.id', $id)->first());
     }
 
     private function handleShow(PD $pd)

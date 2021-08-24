@@ -1,14 +1,12 @@
 <?php
 
-use App\Models\Client\Branch;
 use App\Models\Client\ClassType;
-use App\Models\Client\Currency;
-use App\Models\Client\Type;
+use App\Models\IRS\Category;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateClientsTable extends Migration
+class CreateIRSTable extends Migration
 {
     /**
      * Run the migrations.
@@ -17,12 +15,12 @@ class CreateClientsTable extends Migration
      */
     public function up()
     {
-        Schema::create('clients', function (Blueprint $table) {
+        Schema::create('i_r_s', function (Blueprint $table) {
             $table->id();
-            $table->string('cif');
-            $table->foreignIdFor(Branch::class);
+            $table->string('name')->default('IRS for certain class type');
+            $table->float('percentage')->default(0);
+            $table->foreignIdFor(Category::class);
             $table->foreignIdFor(ClassType::class);
-            $table->string('name');
         });
     }
 
@@ -33,6 +31,6 @@ class CreateClientsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('clients');
+        Schema::dropIfExists('i_r_s');
     }
 }
