@@ -12,6 +12,7 @@ import API from '../../services/api/api'
 import TableActionBar from '../../components/TableActionBar/TableActionBar'
 import { DashboardTable } from '../../components/Table/Table'
 import { EllipsisLoader, WhiteboxLoader } from '../../components/Loader/Loader'
+import { Link } from 'react-router-dom'
 
 export default () => {
 
@@ -75,7 +76,7 @@ export default () => {
                 class_type: client.class_type,
                 type: client.type,
                 actions: <div className="show-on-hover">
-                            <i className="icon-info" />
+                            <Link to={ "/search-client?cif=" + client.cif }><i className="icon-info" style={{ color: "#333" }} /></Link>
                         </div>
             }
         })

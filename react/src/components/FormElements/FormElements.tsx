@@ -20,7 +20,7 @@ import { useState } from 'react';
 
 export const InputField = (props: any) => {
 
-    let field: object = (({ type, onChange, defaultValue, disabled, max, min, value, style }) => ({ type, onChange, defaultValue, disabled, max, min, value, style }))(props);
+    let field: object = (({ type, onChange, defaultValue, disabled, max, min, value, style, onKeyPress }) => ({ type, onChange, defaultValue, disabled, max, min, value, style, onKeyPress }))(props);
     let inputLabel: string = props.placeholder ? props.placeholder : props.label ? props.label : '';
     let id = uid('input')
 

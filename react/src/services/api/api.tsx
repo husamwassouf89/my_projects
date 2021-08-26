@@ -87,6 +87,7 @@ class API {
      clients(): {
         index( query: pagination ): any;
         show( query: { id: number } ): any;
+        search_cif( query: { cif: number } ): any;
         store( query: { path: string; } ): any;
     } {
         var endpoints:any = {}
