@@ -20,6 +20,7 @@ import './FileUploader.css'
 
 // Doka
 import * as Doka from '../../react_doka/doka.esm.min.js';
+import { useCookies } from 'react-cookie';
 
 registerPlugin(FilePondPluginImagePreview)
 registerPlugin(FilePondPluginFileValidateType)
@@ -29,12 +30,8 @@ registerPlugin(FilePondPluginImageCrop)
 // registerPlugin(FilePondPluginMediaPreview)
 registerPlugin(FilePondPluginImageEditor)
 
-
-type file_type = 'image' | 'pdf' | 'video' | 'doc' | 'other'
-
 interface fileUploaderProps {
-    type: file_type[];
-    field: 'profile_img' | 'cover_img' | 'cv' | 'identity' | 'certificate' | 'promo_video' | 'course_img' | 'course_promo_video' | 'session_attachment';
+    type: "pd" | "clients" | "attachments";
     default?: string;
     onStartUploading(): any;
     onErrorUploading(): any;
@@ -78,39 +75,16 @@ export default (props: fileUploaderProps) => {
         labelIdle: props.labelIdle
     } : undefined
 
-    let acceptedFileTypes: any = []
-    
-    if(!isFacebookApp()) {
-        props.type.map(type => {
-            switch (type) {
-                case "image":
-                    acceptedFileTypes.push(["image/*"])
-                    break
-                case "pdf":
-                    acceptedFileTypes.push(["application/pdf"])
-                    break
-                case 'doc':
-                    acceptedFileTypes.push([".doc", ".docx"])
-                    break
-                case "video":
-                    acceptedFileTypes.push(["video/*"])
-                    break
-                default:
-                    break;
-            }
-        })
-    }
-
-    acceptedFileTypes = acceptedFileTypes.length > 0 ? acceptedFileTypes : undefined
-
     useEffect(() => {
         const lang = typeof localStorage !== 'undefined' ? localStorage.getItem('lang') : 'en';
         if(lang === 'ar')
             setOptions(ar)
     })
 
+    const [cookies, _, removeCookie] = useCookies();
+
     return (
-        <FilePond allowMultiple={props.allowMultiple} allowImageEdit={props.allowImageEdit} imageEditInstantEdit={true} imageEditEditor={Doka.create( props.cropOptions || {})} required={props.required} {...files} {...avatarFields} {...labelIdle} onremovefile={(error, file) => { if(props.onRemove) props.onRemove() }} labelFileProcessingError={labelError} acceptedFileTypes={acceptedFileTypes} server={
+        <FilePond allowMultiple={props.allowMultiple} allowImageEdit={props.allowImageEdit} imageEditInstantEdit={true} imageEditEditor={Doka.create( props.cropOptions || {})} required={props.required} {...files} {...avatarFields} {...labelIdle} onremovefile={(error, file) => { if(props.onRemove) props.onRemove() }} labelFileProcessingError={labelError} server={
             {
                 timeout: 7000,
                 load: (source, load, error, progress, abort, headers) => {
@@ -127,34 +101,33 @@ export default (props: fileUploaderProps) => {
                     load()
                 },
                 process: (fieldName, file, metadata, load, error, progress, abort) => {
-                    let mime_type = file.type.split('/')[0]
-                    mime_type = file.type === "application/msword" ||  file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ? "word" : mime_type
-                    let file_type: file_type = mime_type === 'image' ? "image" : mime_type === "video" ? "video" : file.type === "application/pdf" ? "pdf" : mime_type === "word" ? "doc" : "other"
+                    // let mime_type = file.type.split('/')[0]
+                    // mime_type = file.type === "application/msword" ||  file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ? "word" : mime_type
+                    // let file_type: file_type = mime_type === 'image' ? "image" : mime_type === "video" ? "video" : file.type === "application/pdf" ? "pdf" : mime_type === "word" ? "doc" : "other"
                     
-                    if(!props.type.includes(file_type)) {
-                        setLabelError("Invalid file type please select (" + props.type.join(" - ") + ")")
-                        error(labelError)
-                        return {
-                            abort: () => {
-                                abort();
-                            }
-                        };
-                    }
+                    // if(!props.type.includes(file_type)) {
+                    //     setLabelError("Invalid file type please select (" + props.type.join(" - ") + ")")
+                    //     error(labelError)
+                    //     return {
+                    //         abort: () => {
+                    //             abort();
+                    //         }
+                    //     };
+                    // }
 
                     if(props.onStartUploading)
                         props.onStartUploading()
 
                     const formData = new FormData();
-                    formData.append("type", file_type);
-                    formData.append("used", props.field);
+                    formData.append("type", props.type || "");
                     formData.append("file", file, file.name);
 
                     const request = new XMLHttpRequest();
-                    let url = 'https://api.searchtutor.co.uk/api/'
-                    url += props.field === "session_attachment" ? 'dashboard-teacher/courses/sessions/files/upload' : 'media/upload'
+                    let url = 'https://desolate-inlet-24536.herokuapp.com/'
+                    url += "help/upload-attachments"
                     request.open('POST', url);
-                    request.setRequestHeader("Authorization", localStorage.getItem("TOKEN") || "")
 
+                    request.setRequestHeader("Authorization", cookies?.userinfo?.accessToken)
                     request.upload.onprogress = (e) => {
                         progress(e.lengthComputable, e.loaded, e.total);
                     };

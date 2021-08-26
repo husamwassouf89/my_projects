@@ -21,6 +21,10 @@ import ar from './laguages/ar.json'
 import AppRoutes from './services/routes/AppRoutes';
 import './assets/css/global.css'
 
+// Toastify
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 // Setting up translations
 setTranslations({ en, ar })
 setDefaultLanguage(localStorage.getItem("lang") ? String(localStorage.getItem("lang")) : 'en')
@@ -30,6 +34,7 @@ ReactDOM.render(
         <CookiesProvider>
             <React.StrictMode>
                 <AppRoutes />
+                <ToastContainer />
             </React.StrictMode>
         </CookiesProvider>
     </Provider>,

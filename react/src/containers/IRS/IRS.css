@@ -1,0 +1,8 @@
+.questions .question header { background: #F1F1F1; height: 60px; border-radius: 5px; border: 1px solid #DDD; border-bottom: 0; }
+.questions .question header input { height: 50px; margin-top: 5px; background: transparent; border: none; padding-left: 20px; outline: none; font-size: 15px; width: 100%; font-weight: bold; }
+.questions .question ul { list-style: none; padding: 0; margin: 0; background: #F9F9F9; border-radius: 0 0 5px 5px; border: 1px solid #DDD; border-top: 0; margin-top: -3px; }
+.questions .question ul li { border-bottom: 1px solid #DDD; position: relative; }
+.questions .question ul li:last-of-type { border: none; }
+.questions .question ul li input.answer { border: none; background: transparent; padding-left: 40px; height: 70px; outline: none; width: 100%; font-size: 14px; }
+.questions .question ul li .percentage { position: absolute; top: 50%; transform: translateY(-50%); right: 20px; width: 130px; }
+.questions .question ul li .percentage input { background: #FFF; border: 1px solid #DDD; }

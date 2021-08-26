@@ -120,7 +120,7 @@ export const TopNav = () => {
         dispatch( globalSlice.actions.setIsLoading(true) )
         ENDPOINTS.auth().logout(null)
         .then((response: any) => {
-            if( response.data.message ==="Success! :D" ) {
+            if( response.data.message ==="Success :D!" ) {
                 dispatch( globalSlice.actions.setIsLoading(false) )
                 removeCookie("userinfo")
                 setTimeout(() => {

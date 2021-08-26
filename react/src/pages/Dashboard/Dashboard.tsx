@@ -14,6 +14,7 @@ import Clients from '../../containers/Clients/Clients'
 import ImportClients from '../../containers/Clients/ImportClients'
 import PDs from '../../containers/PD/PDs'
 import ImportPDs from '../../containers/PD/ImportPDs'
+import IRS from '../../containers/IRS/IRS'
 
 export default (props: any) => {
 
@@ -92,6 +93,8 @@ export default (props: any) => {
                 return(<PDs />)
             case 'import-pd':
                 return(<ImportPDs />)
+            case 'irs':
+                return(<IRS />)
             default:
                 break;
 
