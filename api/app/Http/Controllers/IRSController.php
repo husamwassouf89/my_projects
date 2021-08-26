@@ -8,7 +8,6 @@ use App\Services\IRSService;
 
 class IRSController extends Controller
 {
-
     public function __construct(IRSService $service)
     {
         $this->service = $service;

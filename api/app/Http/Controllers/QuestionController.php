@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Question\QuestionRequest;
 use App\Http\Requests\Question\UpdateQuestionRequest;
-use App\Models\IRS\Question;
 use App\Services\QuestionService;
-use Illuminate\Http\Request;
 
 class QuestionController extends Controller
 {
@@ -24,6 +22,11 @@ class QuestionController extends Controller
     public function update($id, UpdateQuestionRequest $request)
     {
         return $this->response('success', $this->service->update($id, $request->validated()));
+    }
+
+    public function show($id)
+    {
+        return $this->response('success', $this->service->show($id));
     }
 
     public function destroy($id)

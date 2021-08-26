@@ -15,7 +15,11 @@ class UpdateQuestionRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'text' => 'required|string',
+            'max_options_value' => 'required|numeric|min:0|max:100',
+            'options' => 'required|array',
+            'options.*.text' => 'required|string',
+            'options.*.value' => 'required|numeric|min:0|max:100',
         ];
     }
 }
