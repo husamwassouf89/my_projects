@@ -60,6 +60,14 @@ input[type=number] { -moz-appearance:textfield; /* Firefox */ }
 .tabs li.active { background: #1ABC9C; color: #FFF; border-color: #1ABC9C; }
 
 
+/* Table */
+.table { width: 100%; border-spacing: 0; border-collapse: collapse; border-radius: 10px; overflow: hidden; }
+.table tr > td,
+.table tr > th { height: 40px; min-width: 50px; border: 1px solid #DDD; }
+.table tr > th { background: #1ABC9C; color: #FFF; border-color: #18a186; font-size: 13px; }
+.table tr:nth-of-type(odd) { background: #F9F9F9; }
+
+
 @media only screen and (max-width: 768px) {
     /* Side nav */
     .side-nav { top: auto; transform: translate(0, 0); bottom: 10px; width: 90%; left: 5%; max-height: 70px; overflow-y: hidden; border-radius: 20px; text-align: left; z-index: 100; }

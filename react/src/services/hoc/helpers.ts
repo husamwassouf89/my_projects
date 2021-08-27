@@ -97,3 +97,8 @@ export const numberToWordsArabic = (y: number) => {
     } while (false);
     return str.reverse().join(' ');
 }
+
+
+export const getPercentage = (n: number) => {
+    return Number(n * 100).toFixed(2) + "%"
+}

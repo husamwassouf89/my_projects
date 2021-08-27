@@ -5,6 +5,7 @@ import { Col, Row } from 'react-grid-system'
 import { useTranslation } from 'react-multi-lang'
 import { useDispatch, useSelector } from 'react-redux'
 import { InputField, NumberField, SelectField } from '../../components/FormElements/FormElements'
+import { WhiteboxLoader } from '../../components/Loader/Loader'
 
 import './IRS.css'
 import { IRSSlice, IRSState } from './IRSSlice'
@@ -23,7 +24,7 @@ export default () => {
 
     return (
         <div className="irs">
-
+            <WhiteboxLoader />
             <form>
                 <Row>
                     <Col md={6}>
