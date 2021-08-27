@@ -22,7 +22,7 @@ class PDService extends Service
 
     public function index(array $input)
     {
-        $data = PD::indexSelect()->paginate($input['page_size']);
+        $data = PD::selectIndex()->paginate($input['page_size']);
         return $this->handlePaginate($data, 'pds');
     }
 

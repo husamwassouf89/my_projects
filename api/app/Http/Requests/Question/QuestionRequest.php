@@ -12,16 +12,16 @@ class QuestionRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            'irs_id'            => 'required|numeric|exists:i_r_s,id',
+            'class_type_id'     => 'required|numeric|exists:class_types,id',
+            'category_id'       => 'required|numeric|exists:categories,id',
             'text'              => 'required|string',
             'max_options_value' => 'required|numeric|min:0|max:100',
             'options'           => 'required|array',
             'options.*.text'    => 'required|string',
             'options.*.value'   => 'required|numeric|min:0|max:100',
-
         ];
     }
 }
