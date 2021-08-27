@@ -52,6 +52,21 @@ input[type=number] { -moz-appearance:textfield; /* Firefox */ }
 /* Collapse */
 .ReactCollapse--collapse { transition: height 500ms; }
 
+/* Tabs */
+.tabs { margin: 40px 0 0; padding: 0; }
+.tabs li { display: inline-block; background: #F9F9F9; line-height: 50px; padding: 0 20px; border-radius: 5px; cursor: pointer; border: 1px solid #EEE; font-size: 14px; font-weight: 600; transition: all .3s ease; }
+.tabs li:nth-child(n + 2) { margin-left: 10px; }
+.tabs li:hover { background: #F1F1F1; border-color: #DDD; }
+.tabs li.active { background: #1ABC9C; color: #FFF; border-color: #1ABC9C; }
+
+
+/* Table */
+.table { width: 100%; border-spacing: 0; border-collapse: collapse; border-radius: 10px; overflow: hidden; }
+.table tr > td,
+.table tr > th { height: 40px; min-width: 50px; border: 1px solid #DDD; }
+.table tr > th { background: #1ABC9C; color: #FFF; border-color: #18a186; font-size: 13px; }
+.table tr:nth-of-type(odd) { background: #F9F9F9; }
+
 
 @media only screen and (max-width: 768px) {
     /* Side nav */

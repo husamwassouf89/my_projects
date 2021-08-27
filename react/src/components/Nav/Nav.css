@@ -1,4 +1,4 @@
-.side-nav { background: #1ABC9C; width: 120px; text-align: center; border-radius: 25px; overflow: hidden; position: fixed; top: 53%; transform: translateY(-50%); left: 20px; z-index: 5; }
+.side-nav { background: #1ABC9C; width: 120px; text-align: center; border-radius: 25px; overflow: hidden; position: fixed; top: 53%; transform: translateY(-50%); left: 20px; z-index: 11; }
 /* RTL scrollbar */
 .rtl .side-nav > div > div { margin-right: 0!important; margin-left: -17px; }
 .rtl .side-nav { right: 20px; left: auto; }
