@@ -21,7 +21,7 @@ class IRS extends Model
     public function scopeSelectIndex($query)
     {
         return $query->select('i_r_s.*', 'categories.name as category_name',
-                              'class_types.name as class_type_name');
+                              'class_types.name as class_type_name')->with('questions');
     }
 
     public function questions()

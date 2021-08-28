@@ -13,14 +13,15 @@ class PD extends Model
     protected $hidden = ['updated_at'];
     use HasFactory;
 
-    public function scopeIndexSelect($query)
+    public function scopeSelectIndex($query)
     {
-        return $query;
+        return $query->joins()->select('p_d_s.*', 'class_types.name as class_type_name');
     }
 
-    public function scopeShowSelect($query)
+    public function scopeSelectShow($query)
     {
-        return $query->with('attachments', 'values');
+        return $query->select('p_d_s.*', 'class_types.name as class_type_name')
+                     ->with('attachments', 'values');
     }
 
     public function attachments()
@@ -44,6 +45,11 @@ class PD extends Model
     public function classType()
     {
         return $this->belongsTo(ClassType::class);
+    }
+
+    public function scopeJoins($query)
+    {
+        return $query->join('class_types', 'class_types.id', '=', 'p_d_s.class_type_id');
     }
 
 }

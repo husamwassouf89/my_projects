@@ -4,6 +4,8 @@
 namespace App\Services;
 
 
+use App\Models\Client\ClassType;
+use App\Models\IRS\Category;
 use App\Models\IRS\IRS;
 
 class IRSService extends Service
@@ -14,21 +16,45 @@ class IRSService extends Service
         return $this->handlePaginate($data, 'irs');
     }
 
+    public function classTypePercentage()
+    {
+        $classTypes = ClassType::all();
+
+        foreach ($classTypes as $type) {
+            $type->data = Category::join('i_r_s', 'i_r_s.category_id', '=', 'categories.id')
+                                  ->join('questions', 'i_r_s.id', '=', 'questions.irs_id')
+                                  ->where('i_r_s.class_type_id', $type->id)
+                                  ->selectRaw('categories.name as category, Sum(max_options_value) as total_value')
+                                  ->groupBy('category')->get();
+        }
+
+        return $classTypes;
+
+    }
+
     public function store($input)
     {
-        $irs             = IRS::firstOrCreate([
-                                           'class_type_id' => $input['class_type_id'],
-                                           'category_id'   => $input['category_id'],
-                                       ]);
+        $irs = IRS::firstOrCreate([
+                                      'class_type_id' => $input['class_type_id'],
+                                      'category_id'   => $input['category_id'],
+                                  ]);
         $irs->percentage = $input['percentage'];
         $irs->save();
 
-        return $this->show($irs->id);
+        return $this->show($input);
     }
 
-    public function show($id)
+    public function show($input)
     {
-        return IRS::where('i_r_s.id', $id)->joins()->selectIndex()->first();
+        IRS::firstOrCreate([
+                               'class_type_id' => $input['class_type_id'],
+                               'category_id'   => $input['category_id'],
+                           ]);
+        return IRS::where('class_type_id', $input['class_type_id'])
+                  ->where('category_id', $input['category_id'])
+                  ->joins()
+                  ->selectIndex()
+                  ->first();
     }
 
     public function destroy($id)

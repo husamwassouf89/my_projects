@@ -32,10 +32,14 @@ Route::group(['middleware' => 'auth:api',], function () {
     Route::resource('clients', ClientController::class);
 
     // ************************************* IRS Routes ******************************
+    Route::group(['prefix' => 'irs'], function () {
+        Route::get('class-type-percentage', [IRSController::class, 'classTypePercentage']);
+        Route::get('show', [IRSController::class, 'show']);
+    });
+    Route::resource('irs/client-profile', ClientIRSProfileController::class)->except('index', 'update');
 
-    Route::resource('irs/client-profile', ClientIRSProfileController::class)->except('index','update');
 
-    Route::resource('irs', IRSController::class)->except('update');
+    Route::resource('irs', IRSController::class)->except('update', 'show');
 
     // ************************************* Question Routes ******************************
     Route::resource('questions', QuestionController::class);
