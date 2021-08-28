@@ -1,19 +1,30 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { useState } from 'react'
 import { Collapse } from 'react-collapse'
 import { Col, Row } from 'react-grid-system'
 import { useTranslation } from 'react-multi-lang'
 import { useDispatch, useSelector } from 'react-redux'
 import { InputField, NumberField, SelectField } from '../../components/FormElements/FormElements'
-import { WhiteboxLoader } from '../../components/Loader/Loader'
+import { EllipsisLoader, WhiteboxLoader } from '../../components/Loader/Loader'
+import { CategoriesMenu, ClassesMenu } from '../../components/PredefinedMenus/PredefinedMenus'
 
 import './IRS.css'
-import { IRSSlice, IRSState } from './IRSSlice'
+import { answer, IRSSlice, IRSState, question } from './IRSSlice'
+
+import select_vector from '../../assets/images/vectors/select.svg'
+import { useEffect } from 'react'
+import API from '../../services/api/api'
+import { toast } from 'react-toastify'
+import { Prompt } from 'react-router-dom'
 
 export default () => {
 
     // Hooks
-    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [isLoaded, setIsLoaded] = useState<boolean>(false)
+    const [classType, setClassType] = useState<any>(null)
+    const [category, setCategory] = useState<any>(null)
+    const [ irsID, setIRSID ] = useState<number>(0)
+    const [ isSaving, setIsSaving ] = useState<number>(0)
 
     // Redux
     const dispatch = useDispatch()
@@ -22,72 +33,194 @@ export default () => {
     // Translation
     const t = useTranslation()
 
+    // API
+    const ENDPOINTS = new API()
+
+    const save = () => {
+
+        let questions = state.questions.filter(question => question.status !== "saved" && question.question).map(question => ({
+            id: question.id,
+            text: question.question,
+            max_options_value: Math.max.apply(Math, question.answers?.length === 0 ? [0] : question.answers?.map(answer => answer.rate || 0) || []),
+            options: question.answers?.filter(answer => answer.rate && answer.answer).map(answer => ({
+                id: answer.id,
+                text: answer.answer,
+                value: answer.rate
+            }))
+        }))
+
+        if(questions.length === 0) {
+            toast("Your data is already saved!", {
+                progressStyle: { background: "#1ABC9C" }
+            })
+        }
+        
+        questions.map(question => {
+            
+            // TODO: Change it to more efficient way
+            let question_index = state.questions.findIndex(q => q.question === question.text)
+            if(state.questions[question_index].isSaving)
+                return
+            dispatch(IRSSlice.actions.editQuestion({ index: question_index, question: { isSaving: true } }))
+
+            setIsSaving(prev => prev + 1)
+
+            if(question.id) {
+                ENDPOINTS.irs().update({
+                    ...question
+                })
+                .then((response: any) => {
+                    setIsSaving(prev => prev - 1)
+                    let q = response.data.data
+                    dispatch( IRSSlice.actions.editQuestion({
+                        index: question_index,
+                        question: {
+                            id: q.id,
+                            status: "saved",
+                            isSaving: false,
+                            answers: q.options.map((option: any): answer => ({
+                                id: option.id,
+                                answer: option.text,
+                                rate: option.value
+                            }))
+                        }
+                    }) )
+                })
+            } else {
+                ENDPOINTS.irs().store({
+                    ...question,
+                    category_id: category.value,
+                    class_type_id: classType.value
+                })
+                .then((response: any) => {
+                    setIsSaving(prev => prev - 1)
+                    let q = response.data.data
+                    dispatch( IRSSlice.actions.editQuestion({
+                        index: question_index,
+                        question: {
+                            id: q.id,
+                            status: "saved",
+                            isSaving: false,
+                            answers: q.options.map((option: any): answer => ({
+                                id: option.id,
+                                answer: option.text,
+                                rate: option.value
+                            }))
+                        }
+                    }) )
+                })
+            }
+        })
+
+    }
+
+    const isSaved = (): boolean => {
+        return state.questions?.filter(question => question.status !== "saved").length === 0
+    }
+
+    useEffect(() => {
+        if(classType && category) {
+            setIsLoaded(false)
+            
+            // Fetch
+            ENDPOINTS.irs().irs({ class_type_id: classType.value, category_id: category.value })
+            .then(((response: any) => {
+                let irs = response.data.data
+                setIRSID(irs.id)
+                dispatch( IRSSlice.actions.setPercentage(irs.percentage) )
+                setIsLoaded(true)
+                dispatch(IRSSlice.actions.setQuestions(
+                    irs.questions?.map((question: any): question => ({
+                        id: question.id,
+                        question: question.text,
+                        status: "saved",
+                        answers: question.options.map((option: any): answer => ({
+                            id: option.id,
+                            answer: option.text,
+                            rate: option.value
+                        }))
+                    }))
+                ))
+            }))
+
+        }
+    }, [classType, category])
+
     return (
         <div className="irs">
-            <WhiteboxLoader />
-            <form>
+            <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => e.preventDefault()}>
                 <Row>
                     <Col md={6}>
                         <label>{t("class_type")}</label>
-                        <SelectField placeholder={t("class_type")} value={{ label: "Individual", value: "individual" }} options={[
-                            { label: "Individual", value: "individual" },
-                            { label: "SME'S", value: "smes" },
-                            { label: "Middle", value: "middle" },
-                            { label: "Corporate", value: "corporate" }
-                        ]} />
+                        <ClassesMenu onChange={(selected: { value: number; }) => setClassType(selected)} placeholder="Class type" />
                     </Col>
                     <Col md={6}>
                         <label>{t("factor")}</label>
-                        <SelectField placeholder={t("factor")} value={{ label: "Facility", value: "facility" }} options={[
-                            { label: "Facility", value: "facility" },
-                            { label: "Qualitative", value: "qualitative" },
-                            { label: "Quanitative", value: "quanitative" }
-                        ]} />
+                        <CategoriesMenu onChange={(selected: { value: number; }) => setCategory(selected)} placeholder="Factor" />
                     </Col>
-
-                    <Col md={10}>
-                        <h3 style={{ lineHeight: "50px" }}><span style={{ fontWeight: "normal" }}>Questions related to </span>Individuals &#x3E; Facility Factors</h3>
+                    { classType && category && isLoaded &&
+                    <>
+                    <Col md={8}>
+                        <h3 style={{ lineHeight: "50px" }}><span style={{ fontWeight: "normal" }}>Questions related to </span>{classType.label} &#x3E; {category.label} Factors</h3>
+                    </Col>
+                    
+                    <Col md={2} className="text-right">
+                        <button className="button bg-gold color-white" style={ isSaving || isSaved() ? { opacity: .5, marginTop: 12 } : { marginTop: 12 }} disabled={isSaving > 0 || isSaved()} onClick={save}>{ isSaving ? "Saving..." : "Save" }</button>
                     </Col>
 
                     <Col md={2}>
-                        <NumberField min={0} max={100} placeholder={t("max_percentage")} value={45} disabled />
+                        <NumberField min={0} max={100} placeholder={t("max_percentage")} value={state.percentage} disabled />
                     </Col>
+                    </> }
 
                 </Row>
             </form>
-
-            {/* Questions */}
-            <div className="questions">
-                
-                {
-                    state.questions.map((question, q_index) => (
-                        <div className="question margin-top-20">
-                            <header>
-                                <input placeholder="Type a question" />
-                            </header>
-                            <Collapse isOpened={true}>
-                                <ul>
-                                    { question.answers?.map((answer, a_index) => (
-                                        <li>
-                                            <input className="answer" placeholder="Type an answer" />
-                                            <div className="percentage">
-                                                <NumberField placeholder="Answer rate" value={answer.rate} />
-                                            </div>
-                                        </li>
-                                    )) }
-                                    <button className="button color-gold margin-top-30" style={{ margin: 30 }} onClick={() => dispatch( IRSSlice.actions.addAnswer({ q_index, answer: {} }) )}>Add answer</button>
-                                </ul>
-                            </Collapse>
-                        </div>
-                    ))
-                }
             
-                <button className="button bg-gold color-white margin-top-30" onClick={() => dispatch( IRSSlice.actions.addQuestion({}) )}>Add question</button>
+            {/* Questions */}
+            {
+                classType && category ?
+                isLoaded ?
+                <div className="questions">
+                    
+                    {
+                        state.questions.map((question, q_index) => (
+                            <div className="question margin-top-20">
+                                <header>
+                                    <input placeholder="Type a question" value={question.question} onChange={(e: React.ChangeEvent<HTMLInputElement>) => dispatch(IRSSlice.actions.editQuestion({ index: q_index, question: { question: e.target.value } }))} />
+                                </header>
+                                <Collapse isOpened={true}>
+                                    <ul>
+                                        { question.answers?.map((answer, a_index) => (
+                                            <li>
+                                                <input className="answer" value={answer.answer} placeholder="Type an answer" onChange={(e: React.ChangeEvent<HTMLInputElement>) => dispatch(IRSSlice.actions.editAnswer({ q_index, a_index, answer: { answer: e.target.value } }))} />
+                                                <div className="percentage">
+                                                    <NumberField placeholder="Answer rate" value={answer.rate} onChange={(e: React.ChangeEvent<HTMLInputElement>) => dispatch(IRSSlice.actions.editAnswer({ q_index, a_index, answer: { rate: Number(e.target.value) } }))} />
+                                                </div>
+                                            </li>
+                                        )) }
+                                        <button className="button color-gold margin-top-30" style={{ margin: 30 }} onClick={() => dispatch( IRSSlice.actions.addAnswer({ q_index, answer: {} }) )}>Add answer</button>
+                                    </ul>
+                                </Collapse>
+                            </div>
+                        ))
+                    }
+                
+                    <button className="button bg-gold color-white margin-top-30" onClick={() => dispatch( IRSSlice.actions.addQuestion({answers: []}) )}>Add question</button>
 
-                <br />
-                <br />
+                    <br />
+                    <br />
 
-            </div>
+                </div> :
+                <div className="text-center margin-top-50">
+                    <EllipsisLoader />
+                </div> :
+                <div className="text-center margin-top-30">
+                    <img src={select_vector} style={{ maxWidth: 300 }} />
+                    <p>Please select a class type and a category</p>
+                </div> }
+                
+                { !isSaved() &&
+                <Prompt message='You have unsaved changes, are you sure you want to leave?' /> }
 
         </div>
     )

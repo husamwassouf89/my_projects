@@ -129,6 +129,27 @@ class API {
 
 
     /**
+     * IRS APIs
+     * @param {}
+     */
+     irs(): {
+        irs( query: { class_type_id: number; category_id: number; } ): any;
+        questions( query: { id: number; } ): any;
+        store( query: any ): any;
+        update( query: any ): any;
+    } {
+        var endpoints:any = {}
+
+        endpoints.irs = ( query: any, name='irs/show' ) => axios.get( `${this.url}/${name}`, { params: query } )
+        
+        endpoints.store = ( query: any, name='questions' ) => axios.post( `${this.url}/${name}`, query )
+        
+        endpoints.update = ( query: any, name='questions' ) => axios.put( `${this.url}/${name}/${query.id}`, query )
+
+        return endpoints
+    }
+
+    /**
      * Other APIs
      * @param {}
      */

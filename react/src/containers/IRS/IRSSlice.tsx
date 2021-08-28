@@ -10,7 +10,9 @@ export interface answer {
 export interface question {
     id?: number;
     question?: string;
-    answers?: answer[]
+    status?: "new" | "saved" | "update";
+    answers?: answer[],
+    isSaving?: boolean
 }
 
 // clients state
@@ -19,7 +21,8 @@ export interface IRSState {
     isLoading: boolean, // On filtering laoder
     isFetching: boolean,
     hasMore: boolean,
-    questions: question[]
+    questions: question[],
+    percentage: number
 }
 
 const initialState: IRSState = {
@@ -27,19 +30,15 @@ const initialState: IRSState = {
     isLoading: false,
     isFetching: false,
     hasMore: true,
-    questions: [
-        {
-            id: 1,
-            question: "",
-            answers: [
-                {
-                    id: 1,
-                    answer: "",
-                    rate: 0
-                }
-            ]
-        }
-    ]
+    questions: [],
+    percentage: 0
+}
+
+// Calculate percentage
+const calculatePercentage = (state: IRSState): number => {
+    return state.questions.map(question =>
+        Math.max.apply(Math, question.answers?.length === 0 ? [0] : question.answers?.map(answer => answer.rate || 0) || [])
+    ).reduce((a, b) => a + b, 0)
 }
 
 // IRS slice
@@ -59,8 +58,11 @@ export const IRSSlice = createSlice({
         setHasMore: ( state, {payload}: PayloadAction<boolean> ) => {
             state.hasMore = payload
         },
-        addQuestions: ( state, {payload}: PayloadAction<question[]> ) => {
-            state.questions = [ ...state.questions, ...payload ]
+        setPercentage: ( state, {payload}: PayloadAction<number> ) => {
+            state.percentage = payload
+        },
+        setQuestions: ( state, {payload}: PayloadAction<question[]> ) => {
+            state.questions = payload
         },
         addQuestion: ( state, {payload}: PayloadAction<question> ) => {
             state.questions.push(payload)
@@ -71,7 +73,7 @@ export const IRSSlice = createSlice({
                 state.questions.splice(index, 1)
         },
         editQuestion: ( state, {payload}: PayloadAction<{ index: number; question: question }> ) => {
-            state.questions[payload.index] = { ...state.questions[payload.index], ...payload.question }
+            state.questions[payload.index] = { ...state.questions[payload.index], status: "update", ...payload.question }
         },
         addAnswer: ( state, {payload}: PayloadAction<{ q_index: number; answer: answer }> ) => {
             state.questions[payload.q_index].answers?.push(payload.answer)
@@ -83,7 +85,9 @@ export const IRSSlice = createSlice({
             let answers = state.questions[payload.q_index].answers
             if( answers !== undefined)
                 answers[payload.a_index] = { ...answers[payload.a_index], ...payload.answer }
+            state.questions[payload.q_index].status = "update"
             state.questions[payload.q_index].answers = answers
+            state.percentage = calculatePercentage(state)
         },
         reset: ( state ) => {
             state.questions = []
