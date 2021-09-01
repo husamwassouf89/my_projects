@@ -30,6 +30,4 @@ class ClientIRSProfileService extends Service
     {
         return (bool)ClientIRSProfile::whereId($id)->delete();
     }
-
-
 }

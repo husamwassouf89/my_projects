@@ -11,6 +11,7 @@ class ClientIRSProfile extends Model
     use HasFactory;
 
     public $guarded = ['id'];
+    protected $hidden = ['updated_at'];
 
     public function answers()
     {

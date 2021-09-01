@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Requests\IRS;
-
+namespace App\Http\Requests\Staging;
 
 use App\Http\Requests\FormRequest;
 
-class ClientIRSProfileRequest extends FormRequest
+class ClientStagingProfileRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -17,7 +16,7 @@ class ClientIRSProfileRequest extends FormRequest
         return [
             'client_id' => 'required|numeric|exists:clients,id',
             'answers'   => 'required|array',
-            'answers.*' => 'required|numeric|exists:options,id',
+            'answers.*' => 'required|numeric|exists:staging_options,id',
         ];
     }
 }

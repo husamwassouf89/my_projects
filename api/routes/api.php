@@ -4,6 +4,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientIRSProfileController;
+use App\Http\Controllers\ClientStagingProfileController;
 use App\Http\Controllers\HelpController;
 use App\Http\Controllers\IRSController;
 use App\Http\Controllers\PDController;
@@ -46,6 +47,7 @@ Route::group(['middleware' => 'auth:api',], function () {
     Route::resource('irs/questions', QuestionController::class);
 
     // ************************************* Staging Routes ******************************
+
     Route::group(['prefix' => 'staging'], function () {
         Route::group(['prefix' => 'questions'], function () {
             Route::post('', [StagingController::class, 'store']);
@@ -53,8 +55,12 @@ Route::group(['middleware' => 'auth:api',], function () {
             Route::get('{id}', [StagingController::class, 'show']);
             Route::delete('{id}', [StagingController::class, 'destroy']);
         });
+        Route::group(['prefix' => 'client-profile'], function () {
+            Route::post('', [ClientStagingProfileController::class, 'store']);
+            Route::get('{id}', [ClientStagingProfileController::class, 'show']);
+            Route::delete('{id}', [ClientStagingProfileController::class, 'destroy']);
+        });
         Route::get('{id}', [StagingController::class, 'index']);
-
     });
 
     // ************************************* PD Routes ******************************
