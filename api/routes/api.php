@@ -8,6 +8,7 @@ use App\Http\Controllers\HelpController;
 use App\Http\Controllers\IRSController;
 use App\Http\Controllers\PDController;
 use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\StagingController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -41,8 +42,20 @@ Route::group(['middleware' => 'auth:api',], function () {
 
     Route::resource('irs', IRSController::class)->except('update', 'show');
 
-    // ************************************* Question Routes ******************************
-    Route::resource('questions', QuestionController::class);
+    // ************************************* IRS Question Routes ******************************
+    Route::resource('irs/questions', QuestionController::class);
+
+    // ************************************* Staging Routes ******************************
+    Route::group(['prefix' => 'staging'], function () {
+        Route::group(['prefix' => 'questions'], function () {
+            Route::post('', [StagingController::class, 'store']);
+            Route::put('{id}', [StagingController::class, 'update']);
+            Route::get('{id}', [StagingController::class, 'show']);
+            Route::delete('{id}', [StagingController::class, 'destroy']);
+        });
+        Route::get('{id}', [StagingController::class, 'index']);
+
+    });
 
     // ************************************* PD Routes ******************************
     Route::group(['prefix' => 'pd'], function () {

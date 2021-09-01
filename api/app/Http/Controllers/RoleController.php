@@ -11,7 +11,6 @@ use App\Services\RoleService;
 
 class RoleController extends Controller
 {
-
     public function __construct(RoleService $service)
     {
         $this->service = $service;
@@ -40,13 +39,11 @@ class RoleController extends Controller
         return $this->response('success', $role, 200);
     }
 
-
     public function show(RoleIdRequest $request)
     {
         $user = $this->service->show($request->id);
         return $this->response('success', $user, 200);
     }
-
 
     public function update(RoleIdRequest $request)
     {

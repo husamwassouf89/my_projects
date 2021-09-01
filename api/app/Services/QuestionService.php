@@ -48,17 +48,17 @@ class QuestionService extends Service
                           ]);
 
         foreach ($input['options'] as $option) {
-            if (is_null($option['id'])) {
-                $question->options()->create([
-                                                 'text'  => $option['text'],
-                                                 'value' => $option['value'],
-                                             ]);
-            } else {
+            if (isset($option['id']) and $option['id'] != null) {
                 $question->options()->where('id', $option['id'])
                          ->update([
                                       'text'  => $option['text'],
                                       'value' => $option['value'],
                                   ]);
+            } else {
+                $question->options()->create([
+                                                 'text'  => $option['text'],
+                                                 'value' => $option['value'],
+                                             ]);
             }
 
         }
