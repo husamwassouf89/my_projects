@@ -9,19 +9,9 @@ class StagingOption extends Model
 {
     use HasFactory;
 
-    public static $TYPES = ['Yes', 'No', 'Others'];
+    public static $TYPES = ['Yes', 'No', 'Others', 'Linked'];
     public $timestamps = false;
     public $guarded = ['id'];
 
-    public static function getTypes(): string
-    {
-        $string = '';
-        foreach (StagingOption::$TYPES as $item) {
-            if ($string != '') $string .= ',';
-            $string .= $item;
-        };
-
-        return $string;
-    }
 
 }

@@ -25,8 +25,9 @@ class StagingService extends Service
 
         foreach ($input['options'] as $option) {
             $question->options()->create([
-                                             'text' => $option['text'],
-                                             'type' => $option['type'],
+                                             'text'       => $option['text'],
+                                             'type'       => $option['type'],
+                                             'with_value' => $option['with_value'],
                                          ]);
         }
 
@@ -50,13 +51,15 @@ class StagingService extends Service
             if (isset($option['id']) and $option['id'] != null) {
                 $question->options()->where('id', $option['id'])
                          ->update([
-                                      'text' => $option['text'],
-                                      'type' => $option['type'],
+                                      'text'       => $option['text'],
+                                      'type'       => $option['type'],
+                                      'with_value' => $option['with_value'],
                                   ]);
             } else {
                 $question->options()->create([
-                                                 'text' => $option['text'],
-                                                 'type' => $option['type'],
+                                                 'text'       => $option['text'],
+                                                 'type'       => $option['type'],
+                                                 'with_value' => $option['with_value'],
                                              ]);
             }
 

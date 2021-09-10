@@ -7,14 +7,9 @@ use App\Http\Requests\Attachment\UploadRequest;
 use App\Models\Attachment;
 use App\Models\Client\ClassType;
 use App\Models\IRS\Category;
-use App\Models\PD\PD;
 use App\Traits\FilesKit;
-use App\Traits\MathKit;
 use App\Traits\PDKit;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
-use PhpOffice\PhpSpreadsheet\Calculation\Statistical;
 
 class HelpController extends Controller
 {
@@ -38,13 +33,15 @@ class HelpController extends Controller
 
     public function fetchPredefined()
     {
-        $data = [];
+        $data                = [];
         $data['class_types'] = ClassType::all();
-        $data['categories'] = Category::all();
-
+        $data['categories']  = Category::all();
+        $data['years']       = ClassType::getYears();
+        $data['quarters']    = ClassType::$QUARTERS;
 
         return $this->response('success', $data, 200);
     }
+
 
     public function uploadAttachments(UploadRequest $request)
     {
@@ -54,7 +51,7 @@ class HelpController extends Controller
                 if ($request->hasFile($key)) {
                     $file = $request->file($key);
                     if ($request->type == 'attachments') {
-                        $attachment = new Attachment();
+                        $attachment       = new Attachment();
                         $attachment->path = $this->saveFile($file);
                         $attachment->save();
                         array_push($data, $attachment->id);
@@ -78,6 +75,12 @@ class HelpController extends Controller
         }
         return $this->response('failed', null, 500);
     }
+
+    private function getQuarters()
+    {
+
+    }
+
 
 }
 

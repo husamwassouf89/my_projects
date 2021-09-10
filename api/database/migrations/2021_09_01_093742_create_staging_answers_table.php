@@ -19,6 +19,7 @@ class CreateStagingAnswersTable extends Migration
             $table->id();
             $table->foreignIdFor(StagingOption::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(ClientStagingProfile::class)->constrained()->cascadeOnDelete();
+            $table->float('value')->nullable();
         });
     }
 

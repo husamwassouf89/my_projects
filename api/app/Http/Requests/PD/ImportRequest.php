@@ -17,7 +17,7 @@ class ImportRequest extends FormRequest
     {
         return [
             'class_type_id' => 'required|numeric|exists:class_types,id',
-            'year'          => 'required|digits:4|integer|min:2000|max:' . (date('Y') + 1),
+            'year'          => 'required|string|in:' . implode(',', ClassType::getYears()),
             'quarter'       => 'required|string|in:' . implode(',', ClassType::$QUARTERS),
 
             'eco_parameter_base_value'  => 'required|numeric|min:0.0|max:1',

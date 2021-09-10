@@ -14,9 +14,10 @@ class ClientStagingProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'client_id' => 'required|numeric|exists:clients,id',
-            'answers'   => 'required|array',
-            'answers.*' => 'required|numeric|exists:staging_options,id',
+            'client_id'       => 'required|numeric|exists:clients,id',
+            'answers'         => 'required|array',
+            'answers.*.id'    => 'required|numeric|exists:staging_options,id',
+            'answers.*.value' => 'required|numeric',
         ];
     }
 }

@@ -9,7 +9,6 @@ class StagingQuestion extends Model
 {
     use HasFactory;
 
-
     public $timestamps = false;
     public $guarded = ['id'];
 

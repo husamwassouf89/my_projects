@@ -15,11 +15,12 @@ class UpdateStagingQuestionRequest extends FormRequest
     public function rules()
     {
         return [
-            'text'           => 'required|string',
-            'options'        => 'required|array',
-            'options.*.id'   => 'nullable|numeric|exists:options,id',
-            'options.*.text' => 'required|string',
-            'options.*.type' => 'required|string|in:' . StagingOption::getTypes(),
+            'text'            => 'required|string',
+            'options'         => 'required|array',
+            'options.*.id'    => 'nullable|numeric|exists:options,id',
+            'options.*.text'  => 'required|string',
+            'options.*.type'  => 'required|string|in:' . implode(',', StagingOption::$TYPES),
+            'options.*.value' => 'required|string|in:Yes,No',
         ];
     }
 

@@ -20,6 +20,7 @@ class CreateStagingOptionsTable extends Migration
             $table->foreignIdFor(StagingQuestion::class)->constrained()->cascadeOnDelete();
             $table->string('text');
             $table->enum('type', StagingOption::$TYPES);
+            $table->enum('with_value', ['Yes','No'])->default('No');
         });
     }
 

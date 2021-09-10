@@ -20,7 +20,8 @@ class StagingQuestionRequest extends FormRequest
             'options'         => 'required|array',
             'options.*.id'    => 'nullable|numeric|exists:options,id',
             'options.*.text'  => 'required|string',
-            'options.*.type' => 'required|string|in:' . StagingOption::getTypes(),
+            'options.*.type'  => 'required|string|in:' . implode(',', StagingOption::$TYPES),
+            'options.*.value' => 'required|string|in:Yes,No',
         ];
     }
 }

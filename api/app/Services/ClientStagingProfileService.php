@@ -8,6 +8,12 @@ use App\Models\Staging\ClientStagingProfile;
 
 class ClientStagingProfileService extends Service
 {
+
+    public function index($id)
+    {
+        return ClientStagingProfile::where('client_id', $id)->get();
+    }
+
     public function store(array $input)
     {
         $profile = ClientStagingProfile::create([
@@ -15,7 +21,11 @@ class ClientStagingProfileService extends Service
                                                 ]);
 
         foreach ($input['answers'] as $item) {
-            $profile->answers()->create(['staging_option_id' => $item]);
+            $data = ['staging_option_id' => $item['id']];
+            if (isset($item['value']) and $item['value']) {
+                $data['value'] = $item['value'];
+            }
+            $profile->answers()->create($data);
         }
 
         return $this->show($profile->id);

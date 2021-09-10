@@ -10,22 +10,20 @@ class Client extends Model
 {
     use HasFactory;
 
-    protected $guarded = ['id'];
-
     public $timestamps = false;
-
+    protected $guarded = ['id'];
 
     public function scopeSelectShow(Builder $query)
     {
         return $query->select('clients.*', 'branches.name as branch_name', 'class_types.name as class_type_name')
                      ->with(['clientAccounts' => function ($query2) {
-                         $query2->joins()->selectShow();
+                         $query2->joins()->selectShow()->with('accountInfos');
                      }]);
     }
 
     public function scopeSelectIndex(Builder $query)
     {
-        return $query->select('clients.*', 'branches.name as branch_name', 'class_types.name as class_type_name', 'client_accounts.loan_key','types.name as type');
+        return $query->select('clients.*', 'branches.name as branch_name', 'class_types.name as class_type_name', 'client_accounts.loan_key', 'types.name as type');
     }
 
     public function scopeJoins(Builder $query)
