@@ -24,6 +24,6 @@ class StagingAnswer extends Model
     {
         $query->joins()->select('staging_answers.*', 'staging_questions.text as question_text',
                                 'staging_options.text as answer_text', 'staging_options.type as answer_type',
-                                'staging_options.staging_question_id');
+                                'staging_options.staging_question_id','staging_options.with_value');
     }
 }

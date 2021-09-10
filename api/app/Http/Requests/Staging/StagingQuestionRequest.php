@@ -15,13 +15,13 @@ class StagingQuestionRequest extends FormRequest
     public function rules()
     {
         return [
-            'class_type_id'   => 'required|numeric|exists:class_types,id',
-            'text'            => 'required|string',
-            'options'         => 'required|array',
-            'options.*.id'    => 'nullable|numeric|exists:options,id',
-            'options.*.text'  => 'required|string',
-            'options.*.type'  => 'required|string|in:' . implode(',', StagingOption::$TYPES),
-            'options.*.value' => 'required|string|in:Yes,No',
+            'class_type_id'        => 'required|numeric|exists:class_types,id',
+            'text'                 => 'required|string',
+            'options'              => 'required|array',
+            'options.*.id'         => 'nullable|numeric|exists:options,id',
+            'options.*.text'       => 'required|string',
+            'options.*.type'       => 'required|string|in:' . implode(',', StagingOption::$TYPES),
+            'options.*.with_value' => 'required|string|in:Yes,No',
         ];
     }
 }

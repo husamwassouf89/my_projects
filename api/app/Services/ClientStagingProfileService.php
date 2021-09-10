@@ -22,7 +22,7 @@ class ClientStagingProfileService extends Service
 
         foreach ($input['answers'] as $item) {
             $data = ['staging_option_id' => $item['id']];
-            if (isset($item['value']) and $item['value']) {
+            if (isset($item['value'])) {
                 $data['value'] = $item['value'];
             }
             $profile->answers()->create($data);
