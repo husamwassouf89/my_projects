@@ -13,6 +13,12 @@ class ClientIRSProfileController extends Controller
         $this->service = $service;
     }
 
+    public function index($id)
+    {
+        return $this->response('success', $this->service->index($id));
+    }
+
+
     public function show($id): JsonResponse
     {
         return $this->response('success', $this->service->show($id));

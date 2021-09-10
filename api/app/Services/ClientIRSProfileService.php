@@ -4,13 +4,15 @@
 namespace App\Services;
 
 
+use App\Models\Client\Client;
 use App\Models\IRS\ClientIRSProfile;
 
 class ClientIRSProfileService extends Service
 {
     public function index($id)
     {
-        return ClientIRSProfile::where('client_id', $id)->get();
+        $client = Client::findOrFail($id);
+        return ClientIRSProfile::where('client_id', $client->id)->with('answers')->get();
     }
 
     public function store(array $input)

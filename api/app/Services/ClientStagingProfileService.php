@@ -4,25 +4,27 @@
 namespace App\Services;
 
 
+use App\Models\Client\Client;
 use App\Models\Staging\ClientStagingProfile;
+use App\Models\Staging\StagingOption;
 
 class ClientStagingProfileService extends Service
 {
 
     public function index($id)
     {
-        return ClientStagingProfile::where('client_id', $id)->get();
+        $client = Client::findOrFail($id);
+        return ClientStagingProfile::where('client_id', $client->id)->with('answers')->get();
     }
 
     public function store(array $input)
     {
-        $profile = ClientStagingProfile::create([
-                                                    'client_id' => $input['client_id'],
-                                                ]);
+        $profile = ClientStagingProfile::create(['client_id' => $input['client_id']]);
 
         foreach ($input['answers'] as $item) {
-            $data = ['staging_option_id' => $item['id']];
-            if (isset($item['value'])) {
+            $option = StagingOption::find($item['id']);
+            $data   = ['staging_option_id' => $item['id']];
+            if (isset($item['value']) and $option->with_value == 'Yes') {
                 $data['value'] = $item['value'];
             }
             $profile->answers()->create($data);

@@ -37,6 +37,7 @@ Route::group(['middleware' => 'auth:api',], function () {
     Route::group(['prefix' => 'irs'], function () {
         Route::get('class-type-percentage', [IRSController::class, 'classTypePercentage']);
         Route::get('show', [IRSController::class, 'show']);
+        Route::get('client-profile/all/{id}', [ClientIRSProfileController::class, 'index']);
     });
     Route::resource('irs/client-profile', ClientIRSProfileController::class)->except('update');
 
@@ -56,7 +57,7 @@ Route::group(['middleware' => 'auth:api',], function () {
             Route::delete('{id}', [StagingController::class, 'destroy']);
         });
         Route::group(['prefix' => 'client-profile'], function () {
-            Route::get('', [ClientStagingProfileController::class, 'index']);
+            Route::get('all/{id}', [ClientStagingProfileController::class, 'index']);
             Route::post('', [ClientStagingProfileController::class, 'store']);
             Route::get('{id}', [ClientStagingProfileController::class, 'show']);
             Route::delete('{id}', [ClientStagingProfileController::class, 'destroy']);

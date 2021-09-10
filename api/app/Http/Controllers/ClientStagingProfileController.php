@@ -2,18 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\IRS\ClientIRSProfileRequest;
 use App\Http\Requests\Staging\ClientStagingProfileRequest;
-use App\Services\ClientIRSProfileService;
 use App\Services\ClientStagingProfileService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class ClientStagingProfileController extends Controller
 {
     public function __construct(ClientStagingProfileService $service)
     {
         $this->service = $service;
+    }
+
+    public function index($id)
+    {
+        return $this->response('success', $this->service->index($id));
     }
 
     public function show($id): JsonResponse
