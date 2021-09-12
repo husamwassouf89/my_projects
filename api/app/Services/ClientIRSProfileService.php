@@ -7,7 +7,6 @@ namespace App\Services;
 use App\Models\Client\Client;
 use App\Models\Client\Grade;
 use App\Models\IRS\ClientIRSProfile;
-use App\Models\Staging\ClientStagingProfile;
 use App\Traits\HelpKit;
 
 class ClientIRSProfileService extends Service
@@ -43,18 +42,22 @@ class ClientIRSProfileService extends Service
         return (bool)ClientIRSProfile::whereId($id)->delete();
     }
 
-    public function calculateIrsScore($year, $quarter, $clientId): int
+    public function calculateIrsScore($year, $quarter, $clientId)
     {
         $dateRange = $this->getDateRange($year, $quarter);
         $profile   = ClientIRSProfile::where('client_id', $clientId)
-                                     ->where('created_at', '<=', $dateRange['last_date'])
+                                     ->where('created_at', '>=', $dateRange['last_date'])
                                      ->orderBy('id', 'desc')
                                      ->with('answers')
                                      ->first();
+
         $score     = 0;
-        foreach ($profile->answers as $item) {
-            $score += $item->answer_value;
+        if($profile and count($profile->answers) > 0){
+            foreach ($profile->answers as $item) {
+                $score += $item->answer_value;
+            }
         }
+
         return $score;
     }
 

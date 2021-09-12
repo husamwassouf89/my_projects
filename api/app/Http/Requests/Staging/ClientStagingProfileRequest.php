@@ -17,7 +17,7 @@ class ClientStagingProfileRequest extends FormRequest
             'client_id'       => 'required|numeric|exists:clients,id',
             'answers'         => 'required|array',
             'answers.*.id'    => 'required|numeric|exists:staging_options,id',
-            'answers.*.value' => 'required|numeric',
+            'answers.*.value' => 'nullable|numeric',
         ];
     }
 }

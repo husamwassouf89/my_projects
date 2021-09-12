@@ -61,8 +61,8 @@ trait HelpKit
         $firstDate = Carbon::createFromDate($year, $firstMonth, $firstDay);
         $lastDate  = Carbon::createFromDate($year, $lastMonth, $lastDay);
         return [
-            'first_date' => $firstDate,
-            'last_date'  => $lastDate,
+            'first_date' => $firstDate->toDateTimeString(),
+            'last_date'  => $lastDate->toDateTimeString(),
         ];
 
 
