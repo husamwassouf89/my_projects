@@ -25,4 +25,9 @@ class ClientAccount extends Model
         return $query->select('client_accounts.*', 'types.name as type_name', 'currencies.name as currency_name');
     }
 
+    public function accountInfos()
+    {
+        return $this->hasMany(AccountInfo::class);
+    }
+
 }

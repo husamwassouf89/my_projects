@@ -16,7 +16,7 @@ class ClientIRSProfileRequest extends FormRequest
     {
         return [
             'client_id' => 'required|numeric|exists:clients,id',
-            'answers' => 'required|array',
+            'answers'   => 'required|array',
             'answers.*' => 'required|numeric|exists:options,id',
         ];
     }

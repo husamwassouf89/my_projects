@@ -6,7 +6,6 @@ use App\Http\Requests\FormRequest;
 
 class QuestionRequest extends FormRequest
 {
-
     /**
      * Get the validation rules that apply to the request.
      *

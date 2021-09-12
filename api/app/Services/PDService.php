@@ -61,7 +61,7 @@ class PDService extends Service
     public function classTypeYears($id)
     {
         $allYears = [];
-        for ($i = 2000; $i <= Date('Y'); $i++) {
+        for ($i = 1990; $i <= Date('Y'); $i++) {
             array_push($allYears, $i);
         }
 

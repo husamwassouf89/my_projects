@@ -6,7 +6,6 @@ namespace App\Services;
 
 use App\Imports\ClientImport;
 use App\Models\Client\Client;
-use App\Models\PD\PD;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ClientService extends Service
@@ -33,6 +32,16 @@ class ClientService extends Service
     public function showByCif($cif)
     {
         return Client::where('clients.cif', $cif)->joins()->selectShow()->first();
+    }
+
+
+    private function calculateEAD($account)
+    {
+        $outstanding = $account->outstanding_lcy ?: 0;
+        $accruedInterest = $account->accrued_interest_lcy ?: 0;
+        $accruedInterest = $account->accrued_interest_lcy ?: 0;
+
+
     }
 
 }

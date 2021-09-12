@@ -4,10 +4,12 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientIRSProfileController;
+use App\Http\Controllers\ClientStagingProfileController;
 use App\Http\Controllers\HelpController;
 use App\Http\Controllers\IRSController;
 use App\Http\Controllers\PDController;
 use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\StagingController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -35,14 +37,33 @@ Route::group(['middleware' => 'auth:api',], function () {
     Route::group(['prefix' => 'irs'], function () {
         Route::get('class-type-percentage', [IRSController::class, 'classTypePercentage']);
         Route::get('show', [IRSController::class, 'show']);
+        Route::get('client-profile/all/{id}', [ClientIRSProfileController::class, 'index']);
     });
-    Route::resource('irs/client-profile', ClientIRSProfileController::class)->except('index', 'update');
+    Route::resource('irs/client-profile', ClientIRSProfileController::class)->except('update');
 
 
     Route::resource('irs', IRSController::class)->except('update', 'show');
 
-    // ************************************* Question Routes ******************************
-    Route::resource('questions', QuestionController::class);
+    // ************************************* IRS Question Routes ******************************
+    Route::resource('irs/questions', QuestionController::class);
+
+    // ************************************* Staging Routes ******************************
+
+    Route::group(['prefix' => 'staging'], function () {
+        Route::group(['prefix' => 'questions'], function () {
+            Route::post('', [StagingController::class, 'store']);
+            Route::put('{id}', [StagingController::class, 'update']);
+            Route::get('{id}', [StagingController::class, 'show']);
+            Route::delete('{id}', [StagingController::class, 'destroy']);
+        });
+        Route::group(['prefix' => 'client-profile'], function () {
+            Route::get('all/{id}', [ClientStagingProfileController::class, 'index']);
+            Route::post('', [ClientStagingProfileController::class, 'store']);
+            Route::get('{id}', [ClientStagingProfileController::class, 'show']);
+            Route::delete('{id}', [ClientStagingProfileController::class, 'destroy']);
+        });
+        Route::get('{id}', [StagingController::class, 'index']);
+    });
 
     // ************************************* PD Routes ******************************
     Route::group(['prefix' => 'pd'], function () {

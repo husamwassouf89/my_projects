@@ -11,6 +11,15 @@ class ClassType extends Model
 
     public static $QUARTERS = ['q1', 'q2', 'q3', 'q4'];
 
+    public static function getYears()
+    {
+        $allYears = [];
+        for ($i = 1990; $i <= Date('Y'); $i++) {
+            array_push($allYears, $i);
+        }
+        return $allYears;
+    }
+
     public $timestamps = false;
     protected $guarded = ['id'];
 
