@@ -7,9 +7,26 @@ namespace App\Services;
 use App\Models\Client\Client;
 use App\Models\Staging\ClientStagingProfile;
 use App\Models\Staging\StagingOption;
+use App\Traits\HelpKit;
 
 class ClientStagingProfileService extends Service
 {
+    use HelpKit;
+
+    public function calculateStagingScore($year, $quarter, $clientId): int
+    {
+        $dateRange = $this->getDateRange($year, $quarter);
+        $profile   = ClientStagingProfile::where('client_id', $clientId)
+                                         ->where('created_at', '<=', $dateRange['last_date'])
+                                         ->orderBy('id', 'desc')
+                                         ->with('answers')
+                                         ->first();
+        $score     = 0;
+        foreach ($profile->answers as $item) {
+            $score += $item->answer_value;
+        }
+        return $score;
+    }
 
     public function index($id)
     {
