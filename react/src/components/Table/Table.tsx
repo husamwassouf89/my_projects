@@ -18,9 +18,10 @@ interface DashboardTableProps {
     body: {
         [key: string]: { [key: string]: any } // Cells
     }, // Rows
-    onSelect?: Function, // Fire this function when the user selects a raw,
-    hasMore?: boolean,
-    loadMore?: Function
+    onSelect?: Function; // Fire this function when the user selects a raw,
+    hasMore?: boolean;
+    loadMore?: Function;
+    selectable?: boolean;
 }
 
 type TableHandle = {
@@ -35,6 +36,10 @@ export const DashboardTable = forwardRef<TableHandle, DashboardTableProps>((prop
     let scroll: any = null;
 
     const selectRow = (e: React.MouseEvent<HTMLTableRowElement>, id?: string) => {
+
+        if(!props.selectable)
+            return
+
         // Toggle active class
         e.currentTarget.classList.toggle("active")
 
@@ -62,7 +67,7 @@ export const DashboardTable = forwardRef<TableHandle, DashboardTableProps>((prop
                 { /* props.hasMore && */ Object.keys(props.body).length === 0 ? "" :
                 <thead>
                     <tr>
-                        <th></th>
+                        { props.selectable && <th></th> }
                         {props.header.map((item, index) => (
                             <th style={item ? {} : {width: "200px"}} key={index}>{item}</th>
                         ))}
@@ -83,7 +88,7 @@ export const DashboardTable = forwardRef<TableHandle, DashboardTableProps>((prop
                     }}>
                 { Object.keys(props.body).map( ( id, tr_index ) => (
                     <tr key={id} style={{ zIndex: Object.keys(props.body).length - tr_index }} onClick={(e: React.MouseEvent<HTMLTableRowElement>) => selectRow(e, id) }>
-                        <td width="50"><SimpleCheckbox className="select-row" onClick={(e: React.MouseEvent<HTMLTableDataCellElement>) => e.stopPropagation()} /></td>
+                        { props.selectable && <td width="50"><SimpleCheckbox className="select-row" onClick={(e: React.MouseEvent<HTMLTableDataCellElement>) => e.stopPropagation()} /></td> }
                         { Object.keys(props.body[id]).map( ( key, td_index ) => (
                             <td key={tr_index + "_" + td_index}>{props.body[id][key]}</td>
                         ) ) }

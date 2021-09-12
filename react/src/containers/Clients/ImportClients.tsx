@@ -16,6 +16,14 @@ export default () => {
     // Hooks
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [importFile, setImportFile] = useState<string | null>(null)
+    const [submitError, setSubmitError] = useState<boolean>(false)
+    const [year, setYear] = useState<number | null>(null)
+    const [quarter, setQuarter] = useState<'q1' | 'q2' | 'q3' | 'q4' | null>(null)
+
+    // Years
+    let currentYear = (new Date()).getFullYear()
+    let oldestYear = currentYear - 50
+    let years = Array.from({ length: (oldestYear - currentYear) / -1 + 1}, (_, i) => ({ value: currentYear + (i * -1), label: currentYear + (i * -1) }))
 
     // Translation
     const t = useTranslation()
@@ -31,6 +39,8 @@ export default () => {
 
         ENDPOINTS.clients().store({
             path: importFile || "",
+            year: String(year) || "",
+            quarter: quarter || "q1"
         })
         .then((response: any) => {
             toast("Your clients file has been imported successfully!", {
@@ -49,6 +59,13 @@ export default () => {
             <form style={{ maxWidth: 500, background: "#F9F9F9", padding: "100px 40px", borderRadius: 10, position: 'relative' }} onSubmit={importClients}>
                 {isLoading ? <WhiteboxLoader /> : ""}
                 <h1 className="text-center" style={{ margin: "0 0 40px" }}>{t("import_clients")}</h1>
+                <SelectField error={ submitError && !year ? t("required_error") : "" } onChange={(selected: { value: number; }) => setYear(selected.value)} bg="white" placeholder="Year" options={years} />
+                <SelectField error={ submitError && !quarter ? t("required_error") : "" } onChange={(selected: { value: 'q1' | 'q2' | 'q3' | 'q4'; }) => setQuarter(selected.value)} bg="white" placeholder="Quarter" options={[
+                    { label: "Q1", value: "q1" },
+                    { label: "Q2", value: "q2" },
+                    { label: "Q3", value: "q3" },
+                    { label: "Q4", value: "q4" }
+                ]} />
                 <FileUploader
                     required
                     type="clients"
