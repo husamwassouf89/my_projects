@@ -1,0 +1,17 @@
+.profile-questions { text-align: left; padding-bottom: 50px; }
+.profile-questions header { padding: 20px; font-weight: bold; }
+.profile-questions li { padding: 10px 20px; position: relative; }
+.profile-questions li span.value { position: absolute; top: 50%; right: 20px; transform: translateY(-50%); color: #555; }
+.profile-questions li span.value.active { color: #1ABC9C; font-weight: bold; }
+
+.profile-questions .save {
+    position: fixed;
+    background: #FFF;
+    box-shadow: 0 -3px 3px rgba(0, 0, 0, .05);
+    width: 600px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 30px;
+    bottom: 5vh;
+    border-radius: 5px;
+}

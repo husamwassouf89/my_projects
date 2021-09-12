@@ -88,7 +88,7 @@ class API {
         index( query: pagination ): any;
         show( query: { id: number } ): any;
         search_cif( query: { cif: number } ): any;
-        store( query: { path: string; } ): any;
+        store( query: { path: string; year: string; quarter: "q1" | "q2" | "q3" | "q4"; } ): any;
     } {
         var endpoints:any = {}
 
@@ -142,9 +142,27 @@ class API {
 
         endpoints.irs = ( query: any, name='irs/show' ) => axios.get( `${this.url}/${name}`, { params: query } )
         
-        endpoints.store = ( query: any, name='questions' ) => axios.post( `${this.url}/${name}`, query )
+        endpoints.store = ( query: any, name='irs/questions' ) => axios.post( `${this.url}/${name}`, query )
         
-        endpoints.update = ( query: any, name='questions' ) => axios.put( `${this.url}/${name}/${query.id}`, query )
+        endpoints.update = ( query: any, name='irs/questions' ) => axios.put( `${this.url}/${name}/${query.id}`, query )
+
+        return endpoints
+    }
+
+
+    /**
+     * Client IRS profile APIs
+     * @param {}
+     */
+     irs_profile(): {
+        index( query: pagination, id: number ): any;
+        store( query: { client_id: number; answers: number[] } ): any;
+    } {
+        var endpoints:any = {}
+
+        endpoints.index = ( query: any, id: number, name='irs/client-profile/all' ) => axios.get( `${this.url}/${name}/${id}`, { params: query } )
+
+        endpoints.store = ( query: any, name='irs/client-profile' ) => axios.post( `${this.url}/${name}`, query )
 
         return endpoints
     }

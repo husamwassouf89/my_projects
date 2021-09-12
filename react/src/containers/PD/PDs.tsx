@@ -55,6 +55,7 @@ export default () => {
         .then((response: any) => {
             let pds: pd[] = response.data.data.pds.map((pd: any): pd => ({
                 id: pd.id,
+                class_type: pd.class_type_name,
                 quarter: pd.quarter,
                 year: pd.year
             }))
@@ -73,6 +74,7 @@ export default () => {
         let data: tableDataType = {}
         state.pds.map((pd, index) => {
             data[pd.id] = {
+                class_type: pd.class_type,
                 year: pd.year,
                 quarter: pd.quarter,
                 actions: <div className="show-on-hover">
@@ -112,7 +114,7 @@ export default () => {
                 
                 <DashboardTable
                     ref={tableRef}
-                    header={[ t("year"), t("quarter"), "" ]}
+                    header={[ t("class_type"), t("year"), t("quarter"), "" ]}
                     body={generateData()}
                     hasMore={false}
                     // loadMore={fetchData}

@@ -11,6 +11,7 @@ import API from '../../services/api/api'
 import { toast } from 'react-toastify'
 import { useHistory } from 'react-router-dom'
 import { useEffect } from 'react'
+import ClientProfile from './ClientProfle/ClientProfile'
 
 export default () => {
     
@@ -23,6 +24,14 @@ export default () => {
     const [cif, setCIF] = useState<number | null>(null)
     const [client, setClient] = useState<any>(null)
     const [active_account, setActiveAccount] = useState<number>(0)
+    
+    // Years & Quarters
+    const [years, setYears] = useState<any>()
+    const [selectedYear, setSelectedYear] = useState<any>()
+    const [selectedQuarter, setSelectedQuarter] = useState<any>()
+    const [activeAccountInfo, setActiveAcountInfo] = useState<any>()
+
+    const [isOpenEditRate, setIsOpenEditRate] = useState<boolean>(false)
 
     // Translation
     const t = useTranslation()
@@ -67,6 +76,40 @@ export default () => {
         }
     }, [])
 
+    useEffect(() => {
+        if(!client)
+            return
+        let new_years: any = {}
+        let current: number | null = null
+        client.client_accounts[active_account].account_infos?.map((item: any, index: number) => {
+            if(typeof new_years[item.year] === "undefined") {
+                new_years[item.year] = { label: item.year, value: item.year, quarters: [] }
+            }
+            new_years[item.year].quarters.push({
+                label: item.quarter,
+                value: index
+            })
+            if(!current) {
+                current = index
+                setSelectedYear({ label: item.year, value: item.year })
+                setSelectedQuarter({ label: item.quarter, value: index })
+            }
+        })
+        setYears(new_years)
+        setActiveAcountInfo(current)
+    }, [client, active_account])
+
+    const changeYear = (selected: any) => {
+        setSelectedYear(selected)
+        setSelectedQuarter(years[selected.value].quarters[0])
+        setActiveAcountInfo(years[selected.value].quarters[0].value)
+    }
+
+    const changeQuarter = (selected: any) => {
+        setSelectedQuarter(selected)
+        setActiveAcountInfo(selected.value)
+    }
+
     return (
         <div className="search-client">
 
@@ -95,29 +138,15 @@ export default () => {
                                                 placeholder={t("client_cif")} />
                                         </Col>
                                         <Col md={3}>
-                                            <SelectField placeholder="PD year" options={[
-                                                { label: "2021", value: "2021" },
-                                                { label: "2020", value: "2020" },
-                                                { label: "2019", value: "2019" },
-                                                { label: "2018", value: "2018" },
-                                                { label: "2017", value: "2017" },
-                                                { label: "2016", value: "2016" },
-                                                { label: "2015", value: "2015" },
-                                                { label: "2014", value: "2014" }
-                                            ]} />
+                                            <SelectField placeholder="Year" options={Object.values(years)} value={selectedYear} onChange={(selected: any) => changeYear(selected)} />
                                         </Col>
                                         <Col md={3}>
-                                            <SelectField placeholder="PD quarter" options={[
-                                                { label: "Q1", value: "Q1" },
-                                                { label: "Q2", value: "Q2" },
-                                                { label: "Q3", value: "Q3" },
-                                                { label: "Q4", value: "Q4" },
-                                            ]} />
+                                            <SelectField placeholder="Quarter" options={years[selectedYear.value].quarters} value={selectedQuarter} onChange={(selected: any) => changeQuarter(selected)} />
                                         </Col>
                                         <Col md={4} style={{ position: "relative", top: 11, textAlign: "right" }}>
-                                            <button className="button color-gold">IRS history</button>
+                                            <button className="button color-gold">Client stage</button>
                                             <span className="margin-10" />
-                                            <button className="button bg-gold color-white">Edit client rate</button>
+                                            <button className="button bg-gold color-white" onClick={() => setIsOpenEditRate(true)}>Client rate</button>
                                         </Col>
                                     </Row>
                                 </form>
@@ -154,65 +183,66 @@ export default () => {
                                 <td>type</td>
                                 <td>{client.client_accounts[active_account]?.type_name}</td>
                                 <td>80_per_estimated_value_of_real_estate_collateral</td>
-                                <td>{client.client_accounts[active_account]['80_per_estimated_value_of_real_estate_collateral']}</td>
+                                <td>{client.client_accounts[active_account].account_infos[activeAccountInfo]['80_per_estimated_value_of_real_estate_collateral']}</td>
                             </tr>
                             <tr>
                                 <td>accrued_interest_lcy</td>
-                                <td>{client.client_accounts[active_account]?.accrued_interest_lcy}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].accrued_interest_lcy}</td>
                                 <td>cm_guarantee</td>
-                                <td>{client.client_accounts[active_account]?.cm_guarantee}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].cm_guarantee}</td>
                             </tr>
                             <tr>
                                 <td>currency_name</td>
                                 <td>{client.client_accounts[active_account]?.currency_name}</td>
                                 <td>estimated_value_of_real_estate_collateral</td>
-                                <td>{client.client_accounts[active_account]?.estimated_value_of_real_estate_collateral}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].estimated_value_of_real_estate_collateral}</td>
                             </tr>
                             <tr>
                                 <td>guarantee_ccy</td>
-                                <td>{client.client_accounts[active_account]?.guarantee_ccy}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].guarantee_ccy}</td>
                                 <td>estimated_value_of_stock_collateral</td>
-                                <td>{client.client_accounts[active_account]?.estimated_value_of_stock_collateral}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].estimated_value_of_stock_collateral}</td>
                             </tr>
                             <tr>
                                 <td>interest_rate</td>
-                                <td>{client.client_accounts[active_account]?.interest_rate}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].interest_rate}</td>
                                 <td>interest_received_in_advance_lcy</td>
-                                <td>{client.client_accounts[active_account]?.interest_received_in_advance_lcy}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].interest_received_in_advance_lcy}</td>
                             </tr>
                             <tr>
                                 <td>mat_date</td>
-                                <td>{client.client_accounts[active_account]?.mat_date}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].mat_date}</td>
                                 <td>mortgages</td>
-                                <td>{client.client_accounts[active_account]?.number_of_installments}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].number_of_installments}</td>
                             </tr>
                             <tr>
                                 <td>number_of_reschedule</td>
-                                <td>{client.client_accounts[active_account]?.number_of_reschedule}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].number_of_reschedule}</td>
                                 <td>outstanding_fcy</td>
-                                <td>{client.client_accounts[active_account]?.outstanding_fcy}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].outstanding_fcy}</td>
                             </tr>
                             <tr>
                                 <td>past_due_days</td>
-                                <td>{client.client_accounts[active_account]?.past_due_days}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].past_due_days}</td>
                                 <td>pay_method</td>
-                                <td>{client.client_accounts[active_account]?.pay_method}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].pay_method}</td>
                             </tr>
                             <tr>
                                 <td>pv_re_guarantees</td>
-                                <td>{client.client_accounts[active_account]?.pv_re_guarantees}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].pv_re_guarantees}</td>
                                 <td>pv_securities_guarantees</td>
-                                <td>{client.client_accounts[active_account]?.sp_date}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].sp_date}</td>
                             </tr>
                             <tr>
                                 <td>st_date</td>
-                                <td>{client.client_accounts[active_account]?.st_date}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].st_date}</td>
                                 <td>suspended_lcy</td>
-                                <td>{client.client_accounts[active_account]?.suspended_lcy}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].suspended_lcy}</td>
                             </tr>
                         </tbody>
                     </table>
                     <br /><br />
+                    <ClientProfile isOpen={isOpenEditRate} toggle={() => setIsOpenEditRate(prev => !prev)} client_id={client.id} class_type={client.class_type_id} />
                 </> :
                 <>
                     <form style={{ maxWidth: 500, background: "#F9F9F9", padding: "100px 40px", borderRadius: 10, position: 'relative' }} onSubmit={search}>

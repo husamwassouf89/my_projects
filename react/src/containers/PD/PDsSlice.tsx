@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 // Models
 export interface pd {
     id: number;
+    class_type: string;
     year: number;
     quarter: "Q1" | "Q2" | "Q3" | "Q4";
 }
