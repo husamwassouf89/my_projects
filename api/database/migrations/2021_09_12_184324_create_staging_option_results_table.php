@@ -18,6 +18,7 @@ class CreateStagingOptionResultsTable extends Migration
         Schema::create('staging_option_results', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(StagingOption::class)->constrained()->cascadeOnDelete();
+            $table->enum('with_range', ['Yes', 'No'])->default('No');
             $table->float('range_start')->nullable();
             $table->float('range_end')->nullable();
             $table->foreignIdFor(Stage::class);
