@@ -4,7 +4,7 @@ import { EllipsisLoader } from "../../../components/Loader/Loader"
 import Modal from "../../../components/Modal/Modal"
 import { DashboardTable } from "../../../components/Table/Table"
 import API from "../../../services/api/api"
-import AddRate from "./AddRate"
+import AddRate from "./AddStage"
 
 interface IProps {
     isOpen: boolean;
@@ -16,12 +16,12 @@ interface IProps {
 export default (props: IProps) => {
     
     // Hooks
-    const [classType, setClassType] = useState<number | null>(null)
     const [isLoaded, setIsLoaded] = useState<boolean>(false)
 
     const [showQuestions, setShowQuestions] = useState<boolean>(false)
     const [editable, setEditable] = useState<boolean>(true)
     const [answers, setAnswers] = useState<number[]>([])
+    const [values, setValues] = useState<any>({})
 
     const [profiles, setProfiles] = useState<any>()
 
@@ -31,7 +31,7 @@ export default (props: IProps) => {
     useEffect(() => {
         if(!isLoaded) {
             // Fetch data
-            ENDPOINTS.irs_profile().index({ page: 1, page_size: 1000 }, props.client_id)
+            ENDPOINTS.staging_profile().index({ page: 1, page_size: 1000 }, props.client_id)
             .then((response: any) => {
                 setProfiles(response.data.data)
                 setIsLoaded(true)
@@ -41,10 +41,16 @@ export default (props: IProps) => {
 
     const getProfiles = () => {
         return profiles.reduce((profilesObject: any, profile: any) => {
-            profilesObject[profile.id] = { date: new Date(profile.created_at).toLocaleDateString(), class_type: profile.answers.map((answer: any) => answer.answer_value).reduce((a: number, b: number) => a + b, 0), actions: <div className="show-on-hover"><i className="icon-info" onClick={() => {
+            profilesObject[profile.id] = { date: new Date(profile.created_at).toLocaleDateString(), stage: profile.stage || 1, actions: <div className="show-on-hover"><i className="icon-info" onClick={() => {
+                let tmp = {...values}
+                setAnswers(profile.answers.map((answer: any) => {
+                    if(answer.with_value === "Yes")
+                        tmp[answer.staging_option_id] = answer.value
+                    return answer.staging_option_id
+                }))
+                setValues(tmp)
                 setEditable(false)
                 setShowQuestions(true)
-                setAnswers(profile.answers.map((answer: any) => answer.option_id))
             }} /></div> };
             return profilesObject;
         }, {});
@@ -55,6 +61,7 @@ export default (props: IProps) => {
             setShowQuestions(false)
             setEditable(true)
             setAnswers([])
+            setValues({})
         }
     }, [props.isOpen])
 
@@ -64,20 +71,20 @@ export default (props: IProps) => {
             <>
             { isLoaded ?
             <div style={{ minWidth: 500, textAlign: "left" }}>
-                <h2 style={{ margin: "0 0 20px", display: "inline-block" }}>Client's rates</h2>
+                <h2 style={{ margin: "0 0 20px", display: "inline-block" }}>Client's stages</h2>
                 <button className="button bg-gold color-white" style={{ float: "right", position: "relative", top: -7 }} onClick={() => {
                     setShowQuestions(true)
                     setEditable(true)
-                }}>Add new rate</button>
+                }}>Edit stage</button>
                 <div style={{ marginRight: -30, marginBottom: -20 }}>
                     <DashboardTable
-                        header={["Date", "Rate", ""]}
+                        header={["Date", "Stage", ""]}
                         body={getProfiles()}
                         />
                 </div>
             </div> : <EllipsisLoader /> }
             </> : 
-            <AddRate class_type={props.class_type} client_id={props.client_id} defaultAnswers={answers} readonly={!editable} /> }
+            <AddRate class_type={props.class_type} client_id={props.client_id} defaultAnswers={answers} readonly={!editable} defaultValues={values} /> }
         </Modal>
     )
 }

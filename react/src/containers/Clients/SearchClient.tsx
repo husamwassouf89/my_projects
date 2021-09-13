@@ -12,6 +12,7 @@ import { toast } from 'react-toastify'
 import { useHistory } from 'react-router-dom'
 import { useEffect } from 'react'
 import ClientProfile from './ClientProfle/ClientProfile'
+import ClientStage from './StagingProfle/ClientStage'
 
 export default () => {
     
@@ -32,6 +33,7 @@ export default () => {
     const [activeAccountInfo, setActiveAcountInfo] = useState<any>()
 
     const [isOpenEditRate, setIsOpenEditRate] = useState<boolean>(false)
+    const [isOpenEditStage, setIsOpenEditStage] = useState<boolean>(false)
 
     // Translation
     const t = useTranslation()
@@ -144,7 +146,7 @@ export default () => {
                                             <SelectField placeholder="Quarter" options={years[selectedYear.value].quarters} value={selectedQuarter} onChange={(selected: any) => changeQuarter(selected)} />
                                         </Col>
                                         <Col md={4} style={{ position: "relative", top: 11, textAlign: "right" }}>
-                                            <button className="button color-gold">Client stage</button>
+                                            <button className="button color-gold" onClick={() => setIsOpenEditStage(true)}>Client stage</button>
                                             <span className="margin-10" />
                                             <button className="button bg-gold color-white" onClick={() => setIsOpenEditRate(true)}>Client rate</button>
                                         </Col>
@@ -243,6 +245,7 @@ export default () => {
                     </table>
                     <br /><br />
                     <ClientProfile isOpen={isOpenEditRate} toggle={() => setIsOpenEditRate(prev => !prev)} client_id={client.id} class_type={client.class_type_id} />
+                    <ClientStage isOpen={isOpenEditStage} toggle={() => setIsOpenEditStage(prev => !prev)} client_id={client.id} class_type={client.class_type_id} />
                 </> :
                 <>
                     <form style={{ maxWidth: 500, background: "#F9F9F9", padding: "100px 40px", borderRadius: 10, position: 'relative' }} onSubmit={search}>

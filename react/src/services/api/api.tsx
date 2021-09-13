@@ -167,6 +167,27 @@ class API {
         return endpoints
     }
 
+
+    /**
+     * Staging profile APIs
+     * @param {}
+     */
+     staging_profile(): {
+         index( query: pagination, id: number ): any;
+         questions( query: { class_type_id: number; } ): any;
+        store( query: { client_id: number; answers: { id: number; value?: number; }[] } ): any;
+    } {
+        var endpoints:any = {}
+
+        endpoints.index = ( query: any, id: number, name='staging/client-profile/all' ) => axios.get( `${this.url}/${name}/${id}`, { params: query } )
+
+        endpoints.questions = ( query: any, name='staging' ) => axios.get( `${this.url}/${name}/${query.class_type_id}`, { params: query } )
+
+        endpoints.store = ( query: any, name='staging/client-profile' ) => axios.post( `${this.url}/${name}`, query )
+
+        return endpoints
+    }
+
     /**
      * Other APIs
      * @param {}
