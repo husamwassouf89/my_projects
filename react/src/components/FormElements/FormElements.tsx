@@ -219,7 +219,7 @@ export const NumberField = (props: any) => {
     
     return(
         <div className={"input-box" + ( props.className ? " " + props.className : "" )}>
-            <input style={props.bg ? { background: props.bg } : {}} {...field} value={props.value?.toString()} type="number" autoComplete="" id={id} onBlur={enforceMinMax} onChange={validate} />
+            <input style={ props.style || (props.bg ? { background: props.bg } : {})} {...field} value={props.value?.toString()} type="number" autoComplete="" id={id} onBlur={enforceMinMax} onChange={validate} />
             { inputLabel ? <label className={props.value || Number(props.value) === 0 ? "active" : ''} htmlFor={id}>{inputLabel}</label> : ''}
             {props.error || error ? <i className="icon-error" data-tip={error ? error : props.error}></i> : ''}
             {props.error || error ? <ReactTooltip place="left" type="error" effect="solid" delayHide={500} /> : ''}
