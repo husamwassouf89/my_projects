@@ -13,5 +13,10 @@ class StagingOption extends Model
     public $timestamps = false;
     public $guarded = ['id'];
 
+    public function results(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(StagingOptionResult::class);
+    }
+
 
 }

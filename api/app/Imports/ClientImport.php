@@ -33,12 +33,12 @@ class ClientImport implements ToCollection
                                             ]);
 
             $account = $client->clientAccounts()->firstOrCreate([
-                                                             'loan_key'         => $row[0],
-                                                             'type_id'          => Type::firstOrCreate(['name' => $row[4]])->id,
-                                                             'main_currency_id' => Currency::firstOrCreate(['name' => $row[7]])->id,
-                                                         ]);
+                                                                    'loan_key'         => $row[0],
+                                                                    'type_id'          => Type::firstOrCreate(['name' => $row[4]])->id,
+                                                                    'main_currency_id' => Currency::firstOrCreate(['name' => $row[7]])->id,
+                                                                ]);
 
-            $account->accountInfos()->create(
+            $account->accountInfos()->firstOrCreate(
                 [
                     'year'                                             => request()->year,
                     'quarter'                                          => request()->quarter,
