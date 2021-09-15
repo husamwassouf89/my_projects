@@ -33,9 +33,11 @@ class ClientImport implements ToCollection
                                             ]);
 
             $account = $client->clientAccounts()->firstOrCreate([
-                                                                    'loan_key'         => $row[0],
-                                                                    'type_id'          => Type::firstOrCreate(['name' => $row[4]])->id,
-                                                                    'main_currency_id' => Currency::firstOrCreate(['name' => $row[7]])->id,
+                                                                    'loan_key'              => $row[0],
+                                                                    'type_id'               => Type::firstOrCreate(['name' => $row[4]])->id,
+                                                                    'main_currency_id'      => Currency::firstOrCreate(['name' => $row[7]])->id,
+                                                                    'guarantee_currency_id' => $row[18]?Currency::firstOrCreate(['name' => $row[18]])->id:null,
+
                                                                 ]);
 
             $account->accountInfos()->firstOrCreate(
@@ -52,7 +54,6 @@ class ClientImport implements ToCollection
                     'sp_date'                                          => Carbon::instance(Date::excelToDateTimeObject($row[15])),
                     'past_due_days'                                    => $row[16],
                     'number_of_reschedule'                             => $row[17],
-                    'guarantee_ccy'                                    => $row[18],
                     'cm_guarantee'                                     => $row[19],
                     'estimated_value_of_stock_collateral'              => $row[20],
                     'pv_securities_guarantees'                         => $row[21],

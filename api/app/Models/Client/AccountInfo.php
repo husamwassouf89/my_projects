@@ -12,4 +12,8 @@ class AccountInfo extends Model
     protected $guarded = ['id'];
 
     protected $hidden = ['updated_at'];
+
+    public function account(){
+        return $this->belongsTo(ClientAccount::class);
+    }
 }

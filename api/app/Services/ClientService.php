@@ -8,11 +8,13 @@ use App\Imports\ClientImport;
 use App\Models\Client\Client;
 use App\Models\Client\Grade;
 use App\Models\Staging\Stage;
+use App\Traits\IFRS9;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ClientService extends Service
 {
 
+    use IFRS9;
     public function index($input)
     {
         $data = Client::allJoins()->selectIndex()->paginate($input['page_size']);
@@ -29,56 +31,57 @@ class ClientService extends Service
     public function show($id)
     {
         $client = Client::where('clients.id', $id)->joins()->selectShow()->first();
+        return $this->calculate($client);
 
+    }
+
+    private function calculate($client)
+    {
         foreach ($client->clientAccounts as $account) {
             foreach ($account->accountInfos as $info) {
-                $info->irs_score   = (new ClientIRSProfileService())
+                $info->irs_score = (new ClientIRSProfileService())
                     ->calculateIrsScore($info->year, $info->quarter, $client->id);
-                $grade             = (new ClientIRSProfileService())
-                    ->getClientGradeId($client->financial_data, $info->irs_score);
-                $info->grade       = Grade::where('class_type_id', $client->class_type_id)
-                                          ->where('serial_no', $grade)->first()->name;
-                $info->final_grade = (new ClientIRSProfileService())
-                    ->gradePastDueDays($grade, $account->past_due_days, $client->class_type_id);
-                $info->pd          = (new PDService())->getPdByYearQuarter($info->year, $info->quarter)['final_calibrated_used_PD'][$grade];
+                if ($info->irs_score) {
+                    $grade             = (new ClientIRSProfileService())
+                        ->getClientGradeId($client->financial_data, $info->irs_score);
+                    $info->grade       = Grade::where('class_type_id', $client->class_type_id)
+                                              ->where('serial_no', $grade)->first()->name;
+                    $info->final_grade = (new ClientIRSProfileService())
+                        ->gradePastDueDays($grade, $account->past_due_days, $client->class_type_id);
+                    $info->pd          = (new PDService())->getPdByYearQuarter($info->year, $info->quarter);
+                    if ($info->pd) {
+                        $info->pd = $info->pd['final_calibrated_used_PD'][$grade];
+                    } else {
+                        $info->pd = null;
+                    }
 
-                $stage = (new ClientStagingProfileService())->calculateStaging($info->year, $info->quarter, $client, $grade);
+                    $stage = (new ClientStagingProfileService())->calculateStaging($info->year, $info->quarter, $client, $grade);
 
-                $info->stage = Stage::where('serial_no', $stage)->first()->name??null;
+                    $info->stage = Stage::where('serial_no', $stage)->first()->name ?? null;
 
-                $info->ead = 47730188;
-                $info->lgd = 4773018.79;
-                $info->ecl = 407139;
+                    $info->ead = $this->calculateEAD($info);
+                    $info->lgd = 4773018.79;
+                    $info->ecl = 407139;
+                } else {
+                    $info->stage       = null;
+                    $info->grade       = null;
+                    $info->final_grade = null;
+                    $info->pd          = null;
+                }
+
             }
         }
+
         return $client;
     }
 
+
+
     public function showByCif($cif)
     {
-        $client =  Client::where('clients.cif', $cif)->joins()->selectShow()->first();
-        foreach ($client->clientAccounts as $account) {
-            foreach ($account->accountInfos as $info) {
-                $info->irs_score   = (new ClientIRSProfileService())
-                    ->calculateIrsScore($info->year, $info->quarter, $client->id);
-                $grade             = (new ClientIRSProfileService())
-                    ->getClientGradeId($client->financial_data, $info->irs_score);
-                $info->grade       = Grade::where('class_type_id', $client->class_type_id)
-                                          ->where('serial_no', $grade)->first()->name;
-                $info->final_grade = (new ClientIRSProfileService())
-                    ->gradePastDueDays($grade, $account->past_due_days, $client->class_type_id);
-                $info->pd          = (new PDService())->getPdByYearQuarter($info->year, $info->quarter)['final_calibrated_used_PD'][$grade];
+        $client = Client::where('clients.cif', $cif)->joins()->selectShow()->first();
 
-                $stage = (new ClientStagingProfileService())->calculateStaging($info->year, $info->quarter, $client, $grade);
-
-                $info->stage = Stage::where('serial_no', $stage)->first()->name??null;
-
-                $info->ead = 47730188;
-                $info->lgd = 4773018.79;
-                $info->ecl = 407139;
-            }
-        }
-        return $client;
+        return $this->calculate($client);
     }
 
     public function getAccountClient($account)
@@ -90,17 +93,6 @@ class ClientService extends Service
                      ->first();
     }
 
-    private function calculateLGD($account)
-    {
 
-    }
-
-
-    private function calculateEAD($account)
-    {
-        $outstanding     = $account->outstanding_lcy ?: 0;
-        $accruedInterest = $account->accrued_interest_lcy ?: 0;
-        $accruedInterest = $account->accrued_interest_lcy ?: 0;
-    }
 
 }
