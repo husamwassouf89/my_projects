@@ -15,6 +15,7 @@ class ClientService extends Service
 {
 
     use IFRS9;
+
     public function index($input)
     {
         $data = Client::allJoins()->selectIndex()->paginate($input['page_size']);
@@ -35,10 +36,15 @@ class ClientService extends Service
 
     }
 
+    private function calculateInfo($info)
+    {
+
+    }
+
     private function calculate($client)
     {
         foreach ($client->clientAccounts as $account) {
-            foreach ($account->accountInfos as $info) {
+            foreach ($account->accountInfos as $key => $info) {
                 $info->irs_score = (new ClientIRSProfileService())
                     ->calculateIrsScore($info->year, $info->quarter, $client->id);
                 if ($info->irs_score) {
@@ -59,9 +65,8 @@ class ClientService extends Service
 
                     $info->stage = Stage::where('serial_no', $stage)->first()->name ?? null;
 
-                    $info->ead = $this->calculateEAD($info);
-                    $info->lgd = 4773018.79;
-                    $info->ecl = 407139;
+                    $info = $this->finalLGD($info);
+                    $info->ecl = $info->pd*$info->ead*$info->lgd;
                 } else {
                     $info->stage       = null;
                     $info->grade       = null;
@@ -74,7 +79,6 @@ class ClientService extends Service
 
         return $client;
     }
-
 
 
     public function showByCif($cif)
@@ -92,7 +96,6 @@ class ClientService extends Service
                      ->select('clients.*')
                      ->first();
     }
-
 
 
 }
