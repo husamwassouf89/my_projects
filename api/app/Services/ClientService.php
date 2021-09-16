@@ -36,11 +36,6 @@ class ClientService extends Service
 
     }
 
-    private function calculateInfo($info)
-    {
-
-    }
-
     private function calculate($client)
     {
         foreach ($client->clientAccounts as $account) {
