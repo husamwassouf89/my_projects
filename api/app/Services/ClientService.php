@@ -31,7 +31,7 @@ class ClientService extends Service
 
     public function show($id)
     {
-        $client = Client::where('clients.id', $id)->joins()->selectShow()->first();
+        $client = Client::where('clients.id', $id)->joins()->selectShow()->firstOrFail();
         return $this->calculate($client);
 
     }
@@ -78,7 +78,7 @@ class ClientService extends Service
 
     public function showByCif($cif)
     {
-        $client = Client::where('clients.cif', $cif)->joins()->selectShow()->first();
+        $client = Client::where('clients.cif', $cif)->joins()->selectShow()->firstOrFail();
 
         return $this->calculate($client);
     }
