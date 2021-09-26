@@ -242,12 +242,17 @@ class PDService extends Service
 
     public function getPdByYearQuarter($year, $quarter)
     {
-        $pd = PD::where('year', $year)->where('quarter', $quarter)->orderBy('id','desc')->first();
+        $pd = PD::where('year', $year)->where('quarter', $quarter)->orderBy('id', 'desc')->first();
         if ($pd) {
             return $this->handleShow($pd);
         } else {
             return -1;
         }
+    }
+
+    public function showRaw($id)
+    {
+        return PD::where('id', $id)->with('values')->first();
     }
 
 

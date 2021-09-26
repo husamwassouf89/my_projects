@@ -36,6 +36,11 @@ class PDController extends Controller
         return $this->response('success', $this->service->show($id));
     }
 
+    public function showRaw($id)
+    {
+        return $this->response('success', $this->service->showRaw($id));
+    }
+
     public function classTypeYears(ClassTypeIdRequest $request)
     {
         if ($data = $this->service->classTypeYears($request->id)) {

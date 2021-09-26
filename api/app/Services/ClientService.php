@@ -13,14 +13,12 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ClientService extends Service
 {
-
     use IFRS9;
 
     public function index($input)
     {
         $data = Client::allJoins()->selectIndex()->paginate($input['page_size']);
         return $this->handlePaginate($data, 'clients');
-
     }
 
     public function store($input)
@@ -33,14 +31,14 @@ class ClientService extends Service
     {
         $client = Client::where('clients.id', $id)->joins()->selectShow()->firstOrFail();
         return $this->calculate($client);
-
     }
 
     private function calculate($client)
     {
         foreach ($client->clientAccounts as $account) {
             foreach ($account->accountInfos as $key => $info) {
-                $info->irs_score = (new ClientIRSProfileService())
+                $info->class_type_id = $client->class_type_id;
+                $info->irs_score     = (new ClientIRSProfileService())
                     ->calculateIrsScore($info->year, $info->quarter, $client->id);
                 if ($info->irs_score) {
                     $grade             = (new ClientIRSProfileService())
@@ -56,12 +54,13 @@ class ClientService extends Service
                         $info->pd = null;
                     }
 
-                    $stage = (new ClientStagingProfileService())->calculateStaging($info->year, $info->quarter, $client, $grade);
+                    $stage          = (new ClientStagingProfileService())->calculateStaging($info->year, $info->quarter, $client, $grade);
+                    $stageModel     = Stage::where('serial_no', $stage)->first();
+                    $info->stage    = $stageModel->name ?? null;
+                    $info->stage_id = $stageModel->id ?? null;
 
-                    $info->stage = Stage::where('serial_no', $stage)->first()->name ?? null;
-
-                    $info = $this->finalLGD($info);
-                    $info->ecl = $info->pd*$info->ead*$info->lgd;
+                    $info      = $this->finalLGD($info);
+                    $info->ecl = $info->pd * $info->ead * $info->lgd;
                 } else {
                     $info->stage       = null;
                     $info->grade       = null;

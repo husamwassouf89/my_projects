@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use App\Models\Client\AccountInfo;
 use App\Models\Client\ClientAccount;
+use App\Models\Client\GuaranteeLGD;
 
 trait IFRS9
 {
@@ -17,12 +18,12 @@ trait IFRS9
 
     public function ead(AccountInfo $account)
     {
-        $outstanding        = $account->outstanding_lcy ?: 0;
-        $accruedInterest    = $account->accrued_interest_lcy ?: 0;
-        $accruedInterestLcy = $account->accrued_interest_lcy ?: 0;
-        $suspendedLcy       = $account->suspended_lcy ?: 0;
+        $outstanding      = $account->outstanding_lcy ?: 0;
+        $accruedInterest  = $account->accrued_interest_lcy ?: 0;
+        $interestReceived = $account->interest_received_in_advance_lcy ?: 0;
+        $suspendedLcy     = $account->suspended_lcy ?: 0;
 
-        $account->ead = $outstanding + $accruedInterest - $accruedInterestLcy - $suspendedLcy;
+        $account->ead = $outstanding + $accruedInterest - $interestReceived - $suspendedLcy;
         return $account;
     }
 
@@ -32,25 +33,25 @@ trait IFRS9
         $account      = $this->lgdRe($account);
         $account      = $this->lgdSec($account);
         $account      = $this->lgdCm($account);
-        $account->lgd = $account->lgd_cm + $account->lgd_sec + $account->lgd_un + $account->lgd;
+        $account->lgd = $account->lgd_cm + $account->lgd_sec + $account->lgd_un + $account->lgd_re;
         return $account;
     }
 
     public function lgdUn($account)
     {
-        $account = $this->uncovered($account);
-//       X5*Classification-IFRS9
-        $account->lgd_un = $account->uncovered;
+        $account         = $this->uncovered($account);
+        $c               = $this->getLGDRatio($account->stage_id, $account->class_type_id, 4);
+        $account->lgd_un = $account->uncovered * $c;
         return $account;
     }
 
     public function uncovered($account)
     {
-        $account           = $this->coveredByRe($account);
+        $account            = $this->coveredByRe($account);
         $account->uncovered = $account->ead
-                             - $account->covered_by_cm
-                             - $account->covered_by_sec
-                             - $account->covered_by_re;
+                              - $account->covered_by_cm
+                              - $account->covered_by_sec
+                              - $account->covered_by_re;
         return $account;
     }
 
@@ -59,11 +60,12 @@ trait IFRS9
         $account = $this->coveredBySec($account);
         $account = $this->allocationOfReGuarantee($account);
 
+
         if ($this->clientAccount($account)->main_currency_id == $this->clientAccount($account)->guarntee_currency_id) {
             $account->covered_by_re = min($account->ead
                                           - $account->covered_by_cm
                                           - $account->covered_by_sec,
-                                          $account->pv_guarantee_amount_by_re
+                                          $account->pv_re_guarantees
                                           *
                                           $account->allocation_re_guarantee
 
@@ -72,7 +74,7 @@ trait IFRS9
             $account->covered_by_re = min($account->ead
                                           - $account->covered_by_cm
                                           - $account->covered_by_sec,
-                                          $account->pv_guarantee_amount_by_re *
+                                          $account->pv_re_guarantees *
                                           $account->allocation_re_guarantee * 0.9);
         }
 
@@ -94,9 +96,9 @@ trait IFRS9
             );
         } else {
             $account->covered_by_sec = min($account->ead
-                                          - $account->covered_by_cm,
-                                          $account->pv_securities_guarantees *
-                                          $account->allocation_sec_guarantee * 0.9);
+                                           - $account->covered_by_cm,
+                                           $account->pv_securities_guarantees *
+                                           $account->allocation_sec_guarantee * 0.9);
         }
         return $account;
 
@@ -108,9 +110,9 @@ trait IFRS9
 
         if ($this->clientAccount($account)->main_currency_id == $this->clientAccount($account)->guarntee_currency_id) {
             $account->covered_by_cm = min($account->ead,
-                                           $account->cm_guarantee
-                                           *
-                                           $account->allocation_cm_guarantee
+                                          $account->cm_guarantee
+                                          *
+                                          $account->allocation_cm_guarantee
 
             );
         } else {
@@ -190,25 +192,35 @@ trait IFRS9
         return $account;
     }
 
+    private function getLGDRatio($stageId, $classTypeId, $guaranteeId): float
+    {
+        $c = GuaranteeLGD::where('stage_id', $stageId)->where('class_type_id', $classTypeId)->where('guarantee_id', $guaranteeId)->first();
+        if ($c) {
+            return $c->ratio;
+        } else {
+            return 0;
+        }
+    }
+
     public function lgdRe($account)
     {
-        $account = $this->coveredByRe($account);
-//       X5*Classification-IFRS9
-        $account->lgd_re = $account->covered_by_re;
+        $account         = $this->coveredByRe($account);
+        $c               = $this->getLGDRatio($account->stage_id, $account->class_type_id, 3);
+        $account->lgd_re = $account->covered_by_re * $c;
         return $account;
     }
 
     public function lgdSec($account)
     {
-//       X5*Classification-IFRS9
-        $account->lgd_sec = $account->covered_by_sec;
+        $c                = $this->getLGDRatio($account->stage_id, $account->class_type_id, 2);
+        $account->lgd_sec = $account->covered_by_sec * $c;
         return $account;
     }
 
     public function lgdCm($account)
     {
-//       X5*Classification-IFRS9
-        $account->lgd_cm = $account->covered_by_cm;
+        $c               = $this->getLGDRatio($account->stage_id, $account->class_type_id, 1);
+        $account->lgd_cm = $account->covered_by_cm * $c;
         return $account;
     }
 
