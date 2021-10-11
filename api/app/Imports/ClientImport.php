@@ -37,7 +37,6 @@ class ClientImport implements ToCollection
                                                                     'type_id'               => Type::firstOrCreate(['name' => $row[4]])->id,
                                                                     'main_currency_id'      => Currency::firstOrCreate(['name' => $row[7]])->id,
                                                                     'guarantee_currency_id' => $row[18]?Currency::firstOrCreate(['name' => $row[18]])->id:null,
-
                                                                 ]);
 
             $account->accountInfos()->firstOrCreate(
@@ -61,7 +60,7 @@ class ClientImport implements ToCollection
                     'estimated_value_of_real_estate_collateral'        => $row[23],
                     '80_per_estimated_value_of_real_estate_collateral' => $row[24],
                     'pv_re_guarantees'                                 => $row[25],
-                    'interest_rate'                                    => $row[16],
+                    'interest_rate'                                    => (double)$row[26],
                     'pay_method'                                       => $row[27],
                     'number_of_installments'                           => $row[28],
 

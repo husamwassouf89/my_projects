@@ -18,7 +18,7 @@ class ClientAccount extends Model
     {
         return $query->join('types', 'types.id', '=', 'client_accounts.type_id')
                      ->join('currencies', 'currencies.id', '=', 'client_accounts.main_currency_id')
-                     ->join('currencies as gu_currencies', 'gu_currencies.id', '=', 'client_accounts.guarantee_currency_id');
+                     ->leftJoin('currencies as gu_currencies', 'gu_currencies.id', '=', 'client_accounts.guarantee_currency_id');
     }
 
     public function scopeSelectShow(Builder $query)

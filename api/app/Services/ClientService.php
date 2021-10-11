@@ -57,15 +57,18 @@ class ClientService extends Service
                     $stage          = (new ClientStagingProfileService())->calculateStaging($info->year, $info->quarter, $client, $grade);
                     $stageModel     = Stage::where('serial_no', $stage)->first();
                     $info->stage    = $stageModel->name ?? null;
+                    $info->stage_no = $stageModel->serial_no ?? null;
                     $info->stage_id = $stageModel->id ?? null;
 
-                    $info      = $this->finalLGD($info);
-                    $info->ecl = $info->pd * $info->ead * $info->lgd;
+                    $info = $this->finalLGD($info);
+                    $info = $this->eclCalc($info);
                 } else {
                     $info->stage       = null;
                     $info->grade       = null;
                     $info->final_grade = null;
                     $info->pd          = null;
+                    $info->ecl         = null;
+                    $info->lgd_null    = null;
                 }
 
             }
@@ -78,7 +81,6 @@ class ClientService extends Service
     public function showByCif($cif)
     {
         $client = Client::where('clients.cif', $cif)->joins()->selectShow()->firstOrFail();
-
         return $this->calculate($client);
     }
 

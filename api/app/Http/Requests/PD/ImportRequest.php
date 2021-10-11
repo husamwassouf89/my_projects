@@ -20,9 +20,9 @@ class ImportRequest extends FormRequest
             'year'          => 'required|string|in:' . implode(',', ClassType::getYears()),
             'quarter'       => 'required|string|in:' . implode(',', ClassType::$QUARTERS),
 
-            'eco_parameter_base_value'  => 'required|numeric|min:0.0|max:1',
-            'eco_parameter_mild_value'  => 'required|numeric|min:0.0|max:1',
-            'eco_parameter_heavy_value' => 'required|numeric|min:0.0|max:1',
+            'eco_parameter_base_value'  => 'required|numeric',
+            'eco_parameter_mild_value'  => 'required|numeric',
+            'eco_parameter_heavy_value' => 'required|numeric',
 
             'eco_parameter_base_weight'  => 'required|numeric|min:0.0|max:100',
             'eco_parameter_mild_weight'  => 'required|numeric|min:0.0|max:100',

@@ -77,6 +77,8 @@ class PDService extends Service
             $grades[$key] = (int)$item;
         }
 
+        if (count($values) <= 0) return [];
+
 
         foreach ($values as $value) {
             $row    = $value->row;
@@ -134,6 +136,7 @@ class PDService extends Service
         $norm       = new    \PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions\StandardNormal();
         $error      = new \PhpOffice\PhpSpreadsheet\Calculation\Logical\Conditional();
 
+
         for ($i = 0; $i < count($pdTTCAfterRegression); $i++) {
 
             if ($i >= 7) {
@@ -142,6 +145,7 @@ class PDService extends Service
                 $ttc_to_pit[$i] = $error->IFERROR($norm->cumulative($norm->inverse($pdTTCAfterRegression[$i]) / sqrt(1 - $assetCorrelation[$i])), 0);
             }
         }
+
 
         $inclusion = [
             'base'  => [],
