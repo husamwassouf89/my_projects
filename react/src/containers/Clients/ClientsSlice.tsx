@@ -25,70 +25,7 @@ const initialState: clientsState = {
     isFetching: false,
     hasMore: true,
     clients: [
-        {
-            id: 1,
-            loan_key: "3214109000002",
-            cif: 20268,
-            name: "كريم خفيف صندل الشحماني",
-            class_type: "Corporate",
-            type: "Loans"
-        },
-        {
-            id: 2,
-            loan_key: "3214109000003",
-            cif: 20882,
-            name: "سعد جبار سالم",
-            class_type: "Corporate",
-            type: "Loans"
-        },
-        {
-            id: 3,
-            loan_key: "3214109000004",
-            cif: 20120,
-            name: "شركة المصالح للخدمات النفطية ",
-            class_type: "Corporate",
-            type: "Loans"
-        },
-        {
-            id: 4,
-            loan_key: "3214110000002",
-            cif: 20099,
-            name: "شركة صناعات علاء الدين",
-            class_type: "Corporate",
-            type: "Loans"
-        },
-        {
-            id: 5,
-            loan_key: "3214109000002",
-            cif: 20268,
-            name: "كريم خفيف صندل الشحماني",
-            class_type: "Corporate",
-            type: "Loans"
-        },
-        {
-            id: 6,
-            loan_key: "3214109000003",
-            cif: 20882,
-            name: "سعد جبار سالم",
-            class_type: "Corporate",
-            type: "Loans"
-        },
-        {
-            id: 7,
-            loan_key: "3214109000004",
-            cif: 20120,
-            name: "شركة المصالح للخدمات النفطية ",
-            class_type: "Corporate",
-            type: "Loans"
-        },
-        {
-            id: 8,
-            loan_key: "3214110000002",
-            cif: 20099,
-            name: "شركة صناعات علاء الدين",
-            class_type: "Corporate",
-            type: "Loans"
-        }
+        
     ]
 }
 

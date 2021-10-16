@@ -8,6 +8,7 @@ import { Collapse } from "react-collapse"
 import { InputField, NumberField, RadioButton } from "../../../components/FormElements/FormElements"
 
 import './AddStage.css'
+import { t } from "react-multi-lang"
 
 interface IProps {
     class_type: number;
@@ -69,9 +70,9 @@ export default (props: IProps) => {
     }
 
     return(
-        <div style={{ minWidth: 500 }} ref={questionsRef}>
+        <div style={{ minWidth: 500 }} ref={questionsRef} className="add-profile">
             { submitting && <WhiteboxLoader /> }
-            <h2 style={{ margin: "0 0 20px", textAlign: "left" }}>{ props.readonly ? "Show stage" : "Edit stage" }</h2>
+            <h2 style={{ margin: "0 0 20px" }}>{ props.readonly ? t("show_stage") : t("edit_stage") }</h2>
             <>
             { isLoaded ?
             <div className="profile-questions questions">
@@ -111,7 +112,7 @@ export default (props: IProps) => {
                         </div>
                     ))
                 }
-                { !props.readonly && <div className="save" ref={saveRef}><button className="button bg-gold color-white" onClick={submit}>Submit data</button></div> }
+                { !props.readonly && <div className="save" ref={saveRef}><button className="button bg-gold color-white" onClick={submit}>{t("submit_data")}</button></div> }
             </div> : <EllipsisLoader /> }
             </>
         </div>

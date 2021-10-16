@@ -102,3 +102,11 @@ export const numberToWordsArabic = (y: number) => {
 export const getPercentage = (n: number) => {
     return Number(n * 100).toFixed(2) + "%"
 }
+
+export const toFixed = (n: number, digits: number): number => {
+    return Number((Math.round(n * 100) / 100).toFixed(digits))
+}
+
+export const numberWithCommas = (n: number) => {
+    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}

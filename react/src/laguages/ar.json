@@ -161,7 +161,7 @@
     
     "string": "نص",
     "number": "رقم",
-    "date": "تاريخ",
+    "date": "التاريخ",
     "predefined": "قيم محددة مسبقا",
     "placeholder": "Placeholder",
     "min": "الحد الأدنى",
@@ -324,11 +324,11 @@
 
     "no_attributes": "لا يوجد واصفات.",
 
-    "client_orders_report": "تقرير طلبيات العميل",
+    "client_orders_report": "تقرير طلبيات الزبون",
     "generating_your_report": "توليد التقرير",
-    "client_name": "اسم العميل",
+    "client_name": "اسم الزبون",
     "reports": "التقارير",
-    "client_bills_report": "تقرير فواتير العميل",
+    "client_bills_report": "تقرير فواتير الزبون",
 
     "price_list": "قائمة الأسعار",
     "grouped_price_list": "قائمة الأسعار المجمعة",
@@ -339,8 +339,71 @@
     "suppliers_debt": "الديون المستحقة للموردين",
     "sales": "المبيعات",
     "fund_flow": "حركة الصندوق",
-    "client_account_statement": "كشف حساب العميل",
+    "client_account_statement": "كشف حساب الزبون",
     "supplier_account_statement": "كشف حساب المورد",
-    "account_statment": "كشف حساب"
+    "account_statment": "كشف حساب",
+
+    "search_client": "بحث",
+    "all_clients": "عرض الكل",
+    "import_clients": "استيراد",
+
+    "search_for_client": "بحث عن زبون",
+    "client_cif": "رقم الحساب",
+
+    "import": "استيراد",
+    "view_all": "عرض الكل",
+    "pd": "PD",
+    
+    "irs": "التصنيف الإتماني الداخلي",
+    "settings": "الإعدادات",
+
+    "client_stage": "مرحلة الزبون",
+    "client_rate": "تقييم الزبون",
+    "cif": "رقم الحساب",
+    "branch": "الفرع",
+    "class_type": "نوع الزبون",
+    "stage": "المرحلة",
+    "grade": "التقييم",
+
+    "client_stages": "مراحل الزبون",
+    "edit_stage": "تعديل المرحلة",
+    "client_rates": "تقيمات الزبون",
+    "add_new_rate": "إضافة تقييم جديد",
+    "rate": "التقييم",
+
+    "submit_data": "إدخال البيانات",
+    "show_stage": "إظهار المرحلة",
+
+    "factor": "العامل",
+    "show_rate": "إضهار التقييم",
+    "no_questions": "لا يوجد أسئلة ضمن هذا العامل.",
+    "please_select_a_category": "الرجاء اختيار أحد العوامل",
+
+    "account": "حساب",
+
+    "80_per_estimated_value_of_real_estate_collateral": "80% من قيمة الضمانة العقارية",
+    "accrued_interest_lcy": "فوائد مستحقة وغير مقبوضة",
+    "cm_guarantee": "تأمينات نقدية",
+    "currency_name": "العملة الاصلية",
+    "estimated_value_of_real_estate_collateral": " القيمة التقديرية للضمانات العقارية",
+    "guarantee_ccy": "عملة الضمانة",
+    "estimated_value_of_stock_collateral": "القيمة التقديرية لضمانات الأسهم",
+    "interest_rate": "معدل الفائدة",
+    "interest_received_in_advance_lcy": "فوائد مقبوضة مقدما",
+    "mat_date": "تاريخ الاستحقاق",
+    "mortgages": "الرهونات العقارية",
+    "number_of_reschedule": "عدد مرات التمديد (إعادة الجدولة)",
+    "outstanding_fcy": "الرصيد بالعملة الاصلية",
+    "past_due_days": "عدد ايام التأخير",
+    "pay_method": "طريقة التسديد",
+    "pv_re_guarantees": "النسبة المعتمدة للضمانة العقارية (ايهما اقل)",
+    "pv_securities_guarantees": "القيمة المعتمدة لضمانة الأسهم",
+    "st_date": "تاريخ المنح",
+    "suspended_lcy": "فوائد معلقة",
+
+    "loan_key": "Loan Key",
+    "year": "السنة",
+    "quarter": "الربع",
+    "weight": "الوزن"
 
 }

@@ -58,7 +58,7 @@
 .simple-checkbox label { display: inline-block; position: relative; width: 20px; height: 20px; background: #FFF; border: 1px solid #DDD; border-radius: 3px; transition: all .3s ease; }
 .dark .simple-checkbox label { background: #343b49; border-color: #3a4252; }
 .simple-checkbox label i { position: absolute; top: 50%; left: 50%; transform: translate( -50%, -50% ) scale(0); font-size: 9px; margin-top: 1.5px; color: #FFF; transition: transform 500ms cubic-bezier(.26,2,.46,.71); }
-.simple-checkbox input:checked ~ label { background: #1ABC9C; border-color: #1ABC9C; }
+.simple-checkbox input:checked ~ label { background: #925b97; border-color: #925b97; }
 .simple-checkbox input:checked ~ label i { transform: translate( -50%, -50% ) scale(1.1); }
 
 
@@ -233,7 +233,7 @@ form .react-select.white .react-select__control { background: #FFF; border: 1px 
 .react-select .react-select__menu-list .react-select__option--is-focused { background: #F7F7F7!important; }
 .dark .react-select .react-select__menu-list .react-select__option--is-focused { background: #64708b!important; }
 .dark .react-select .react-select__menu-list .react-select__option--is-selected,
-.react-select .react-select__menu-list .react-select__option--is-selected { background: #1ABC9C!important; opacity: 1; }
+.react-select .react-select__menu-list .react-select__option--is-selected { background: #925b97!important; opacity: 1; }
 
 .select-holder { position: relative; }
 .select-holder .icon-error { position: absolute; top: 50%; transform: translateY(-50%); right: 20px; color: tomato; cursor: pointer; }
@@ -304,7 +304,7 @@ form .react-select.white .react-select__control { background: #FFF; border: 1px 
     content: '';
     width: 12px;
     height: 12px;
-    background: #1ABC9C;
+    background: #925b97;
     position: absolute;
     top: 4px;
     left: 4px;

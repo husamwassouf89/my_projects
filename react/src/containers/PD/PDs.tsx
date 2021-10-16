@@ -14,7 +14,7 @@ import { DashboardTable } from '../../components/Table/Table'
 import { EllipsisLoader, WhiteboxLoader } from '../../components/Loader/Loader'
 import Modal from '../../components/Modal/Modal'
 import { Col, Row } from 'react-grid-system'
-import { getPercentage } from '../../services/hoc/helpers'
+import { getPercentage, toFixed } from '../../services/hoc/helpers'
 
 export default () => {
 
@@ -30,7 +30,7 @@ export default () => {
     const [showDetails, setShowDetails] = useState<boolean>(false)
     const [loadingDetails, setLoadingDetails] = useState<boolean>(true)
     const [PDDetails, setPDDetails] = useState<any>(null)
-    const [activeTab, setActiveTab] = useState<'default_calculation' | 'final_pd' | 'cumulative_pd'>('default_calculation')
+    const [activeTab, setActiveTab] = useState<'default_calculation' | 'final_pd' | 'cumulative_pd'>('cumulative_pd')
 
     // API
     const ENDPOINTS = new API()
@@ -125,9 +125,9 @@ export default () => {
                         loadingDetails ? <EllipsisLoader /> :
                         <div style={{ width: "90vw" }}>
                             <ul className="tabs text-left" style={{ marginTop: 0, marginBottom: 40 }}>
+                                <li className={activeTab === "cumulative_pd" ? "active" : ""} onClick={() => setActiveTab("cumulative_pd")}>Migration Matrix</li>
                                 <li className={activeTab === "default_calculation" ? "active" : ""} onClick={() => setActiveTab("default_calculation")}>Corpr Default Calculation</li>
                                 <li className={activeTab === "final_pd" ? "active" : ""} onClick={() => setActiveTab("final_pd")}>Corpr Final PD</li>
-                                <li className={activeTab === "cumulative_pd" ? "active" : ""} onClick={() => setActiveTab("cumulative_pd")}>Cumulative PD</li>
                             </ul>
                             { activeTab === "default_calculation" ?
                             <table className="table">
@@ -145,11 +145,11 @@ export default () => {
                                     {[...Array(10)].map((x, i) =>    
                                         <tr>
                                             <td>{i + 1}</td>
-                                            <td>{getPercentage(PDDetails?.default_rate[i])}</td>
-                                            <td>{getPercentage(PDDetails?.pd_ttc[i])}</td>
-                                            <td>{getPercentage(PDDetails?.pd_ttc_after_regression[i])}</td>
-                                            <td>{getPercentage(PDDetails?.asset_correlation[i])}</td>
-                                            <td>{getPercentage(PDDetails?.ttc_to_pit[i])}</td>
+                                            <td title={PDDetails?.default_rate[i]}>{getPercentage(PDDetails?.default_rate[i])}</td>
+                                            <td title={PDDetails?.pd_ttc[i]}>{getPercentage(PDDetails?.pd_ttc[i])}</td>
+                                            <td title={PDDetails?.pd_ttc_after_regression[i]}>{getPercentage(PDDetails?.pd_ttc_after_regression[i])}</td>
+                                            <td title={PDDetails?.asset_correlation[i]}>{getPercentage(PDDetails?.asset_correlation[i])}</td>
+                                            <td title={PDDetails?.ttc_to_pit[i]}>{getPercentage(PDDetails?.ttc_to_pit[i])}</td>
                                         </tr>
                                     )}
                                 </tbody>
@@ -158,17 +158,17 @@ export default () => {
                                 <thead>
                                     <tr>
                                         <th colSpan={4}></th>
-                                        <th>{getPercentage( PDDetails?.eco_parameter_base_weight )}</th>
-                                        <th>{getPercentage( PDDetails?.eco_parameter_mild_weight )}</th>
-                                        <th>{getPercentage( PDDetails?.eco_parameter_heavy_weight )}</th>
+                                        <th title={PDDetails?.eco_parameter_base_weight}>{getPercentage( PDDetails?.eco_parameter_base_weight )}</th>
+                                        <th title={PDDetails?.eco_parameter_mild_weight}>{getPercentage( PDDetails?.eco_parameter_mild_weight )}</th>
+                                        <th title={PDDetails?.eco_parameter_heavy_weight}>{getPercentage( PDDetails?.eco_parameter_heavy_weight )}</th>
                                         <th colSpan={2}></th>
                                     </tr>
                                     <tr>
                                         <th rowSpan={2}>Degree</th>
                                         <th colSpan={3}>FX Macroeconomic Parameter</th>
                                         <th colSpan={3}>Inclusion to the FX Percentages</th>
-                                        <th rowSpan={2}>Final Calibrated wieghted PD</th>
-                                        <th rowSpan={2}>Final Calibrated Used PD</th>
+                                        <th style={{ background: '#723b77' }} rowSpan={2}>Final Calibrated wieghted PD</th>
+                                        <th style={{ background: '#723b77' }} rowSpan={2}>Final Calibrated Used PD</th>
                                     </tr>
                                     <tr>
                                         <th style={{ background: "#3498db", borderColor: "#3498db" }}>Base</th>
@@ -183,14 +183,14 @@ export default () => {
                                     {[...Array(10)].map((x, i) =>    
                                         <tr>
                                             <td>{i + 1}</td>
-                                            <td>{getPercentage( PDDetails?.eco_parameter_base_value )}</td>
-                                            <td>{getPercentage( PDDetails?.eco_parameter_mild_value )}</td>
-                                            <td>{getPercentage( PDDetails?.eco_parameter_heavy_value )}</td>
-                                            <td>{getPercentage(PDDetails?.inclusion.base[i])}</td>
-                                            <td>{getPercentage(PDDetails?.inclusion.mild[i])}</td>
-                                            <td>{getPercentage(PDDetails?.inclusion.heavy[i])}</td>
-                                            <td>{getPercentage(PDDetails?.final_calibrated_weighted_pd[i])}</td>
-                                            <td>{getPercentage(PDDetails?.final_calibrated_used_PD[i])}</td>
+                                            <td title={ PDDetails?.eco_parameter_base_value }>{toFixed( PDDetails?.eco_parameter_base_value, 2 )}</td>
+                                            <td title={ PDDetails?.eco_parameter_mild_value }>{toFixed( PDDetails?.eco_parameter_mild_value, 2 )}</td>
+                                            <td title={ PDDetails?.eco_parameter_heavy_value }>{toFixed( PDDetails?.eco_parameter_heavy_value, 2 )}</td>
+                                            <td title={PDDetails?.inclusion.base[i]}>{getPercentage(PDDetails?.inclusion.base[i])}</td>
+                                            <td title={PDDetails?.inclusion.mild[i]}>{getPercentage(PDDetails?.inclusion.mild[i])}</td>
+                                            <td title={PDDetails?.inclusion.heavy[i]}>{getPercentage(PDDetails?.inclusion.heavy[i])}</td>
+                                            <td title={PDDetails?.final_calibrated_weighted_pd[i]} style={{ fontWeight: 'bold' }}>{getPercentage(PDDetails?.final_calibrated_weighted_pd[i])}</td>
+                                            <td title={PDDetails?.final_calibrated_used_PD[i]} style={{ fontWeight: 'bold' }}>{getPercentage(PDDetails?.final_calibrated_used_PD[i])}</td>
                                         </tr>
                                     )}
                                 </tbody>
@@ -198,23 +198,25 @@ export default () => {
                             <table className="table">
                                 <thead>
                                     <tr>
-                                        <th>Y1</th>
-                                        <th>Y2</th>
-                                        <th>Y3</th>
-                                        <th>Y4</th>
-                                        <th>Y5</th>
-                                        <th>Y6</th>
-                                        <th>Y7</th>
-                                        <th>Y8</th>
-                                        <th>Y9</th>
-                                        <th>Y10</th>
+                                        <th>Degree</th>
+                                        <th>1</th>
+                                        <th>2</th>
+                                        <th>3</th>
+                                        <th>4</th>
+                                        <th>5</th>
+                                        <th>6</th>
+                                        <th>7</th>
+                                        <th>8</th>
+                                        <th>9</th>
+                                        <th>10</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {[...Array(10)].map((x, i) =>
                                         <tr>
+                                            <td>{i + 1}</td>
                                             {[...Array(10)].map((x, j) =>
-                                                <td>{getPercentage(PDDetails?.pd[i][j])}</td>
+                                                <td title={PDDetails?.pd[i][j]}>{getPercentage(PDDetails?.pd[i][j])}</td>
                                             )}
                                         </tr>
                                     )}

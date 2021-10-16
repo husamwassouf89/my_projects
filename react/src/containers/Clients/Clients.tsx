@@ -14,6 +14,8 @@ import { DashboardTable } from '../../components/Table/Table'
 import { EllipsisLoader, WhiteboxLoader } from '../../components/Loader/Loader'
 import { Link } from 'react-router-dom'
 
+import './Clients.css'
+
 export default () => {
 
     // Translation

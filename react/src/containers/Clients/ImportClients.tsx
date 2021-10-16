@@ -44,7 +44,7 @@ export default () => {
         })
         .then((response: any) => {
             toast("Your clients file has been imported successfully!", {
-                progressStyle: { background: "#1ABC9C" }
+                progressStyle: { background: "#925b97" }
             })
         })
         .finally(() => {
@@ -59,8 +59,8 @@ export default () => {
             <form style={{ maxWidth: 500, background: "#F9F9F9", padding: "100px 40px", borderRadius: 10, position: 'relative' }} onSubmit={importClients}>
                 {isLoading ? <WhiteboxLoader /> : ""}
                 <h1 className="text-center" style={{ margin: "0 0 40px" }}>{t("import_clients")}</h1>
-                <SelectField error={ submitError && !year ? t("required_error") : "" } onChange={(selected: { value: number; }) => setYear(selected.value)} bg="white" placeholder="Year" options={years} />
-                <SelectField error={ submitError && !quarter ? t("required_error") : "" } onChange={(selected: { value: 'q1' | 'q2' | 'q3' | 'q4'; }) => setQuarter(selected.value)} bg="white" placeholder="Quarter" options={[
+                <SelectField error={ submitError && !year ? t("required_error") : "" } onChange={(selected: { value: number; }) => setYear(selected.value)} bg="white" placeholder={t("year")} options={years} />
+                <SelectField error={ submitError && !quarter ? t("required_error") : "" } onChange={(selected: { value: 'q1' | 'q2' | 'q3' | 'q4'; }) => setQuarter(selected.value)} bg="white" placeholder={t("quarter")} options={[
                     { label: "Q1", value: "q1" },
                     { label: "Q2", value: "q2" },
                     { label: "Q3", value: "q3" },
@@ -77,7 +77,7 @@ export default () => {
                     }} />
                 <div className="text-center margin-top-40"><button className="button bg-gold color-white round" style={{ padding: "0 50px" }}>{t("import")}</button></div>
             </form>
-            <img src={Import} alt="Import" style={{ position: 'fixed', top: 150, right: 0, height: "calc(100vh - 150px)" }} />
+            <img src={Import} alt="Import" className="search-image" />
 
         </div>
     )

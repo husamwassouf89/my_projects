@@ -15,7 +15,7 @@
 .details-table tr td ul { padding: 0; list-style: none; padding-left: 15px; }
 .rtl .details-table tr td ul { padding-left: 0; padding-right: 15px; }
 .details-table tr td ul li { padding: 5px 0; position: relative; }
-.details-table tr td ul li::before { content: "• "; color: #1ABC9C; font-size: 30px; position: absolute; top: 50%; left: -15px; transform: translateY(-50%); }
+.details-table tr td ul li::before { content: "• "; color: #925b97; font-size: 30px; position: absolute; top: 50%; left: -15px; transform: translateY(-50%); }
 .rtl .details-table tr td ul li::before { right: 0; left: auto; }
 
 .details-table tr td:nth-of-type(even) { background: #EEE; }
