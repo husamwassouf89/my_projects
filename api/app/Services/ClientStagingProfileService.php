@@ -37,15 +37,15 @@ class ClientStagingProfileService extends Service
                             break;
                         } else {
                             if ($result->range_start and $result->range_end) {
-                                if ($item->value > $result->range_start and $item->value < $result->range_end) {
+                                if ($item->value >= $result->range_start and $item->value <= $result->range_end) {
                                     $stage = max($stage, $result->stage_id);
                                 }
                             } else if ($result->range_start) {
-                                if ($item->value > $result->range_start) {
+                                if ($item->value < $result->range_start) {
                                     $stage = max($stage, $result->stage_id);
                                 }
                             } else if ($result->range_end) {
-                                if ($item->value < $result->range_end) {
+                                if ($item->value > $result->range_end) {
                                     $stage = max($stage, $result->stage_id);
                                 }
                             }

@@ -37,3 +37,18 @@ Artisan::command('go', function () {
 
     echo "Database is ready, go go 🌠🌠!";
 })->describe('Migrate with passport!');
+
+
+Artisan::command('go-all', function () {
+    // exec('cd dash-tenancy && composer dump-autoload');
+
+    Artisan::call('db:wipe');
+    Artisan::call('migrate');
+    Artisan::call('passport:install');
+    Artisan::call('db:seed');
+    Artisan::call('db:seed StageSeeder');
+    Artisan::call('db:seed GuaranteeSeeder');
+    Artisan::call('db:seed QuestionSeeder');
+
+    echo "Database is ready, go go 🌠🌠!";
+})->describe('Migrate with passport!');

@@ -2,10 +2,9 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePermissionsTable extends Migration
+class CreateGuaranteesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,9 +13,12 @@ class CreatePermissionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('permissions', function (Blueprint $table) {
+        Schema::create('guarantees', function (Blueprint $table) {
             $table->id();
+            $table->string('code');
             $table->string('name');
+            $table->integer('order');
+            $table->float('ratio')->default(0);
         });
     }
 
@@ -27,6 +29,6 @@ class CreatePermissionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('permissions');
+        Schema::dropIfExists('guarantees');
     }
 }

@@ -22,6 +22,7 @@ class CreateClientAccountsTable extends Migration
             $table->string('loan_key');
             $table->foreignIdFor(Type::class);
             $table->foreignIdFor(Currency::class, 'main_currency_id');
+            $table->foreignIdFor(Currency::class, 'guarantee_currency_id')->nullable();
 
         });
     }

@@ -21,7 +21,6 @@ class CreateStagingOptionsTable extends Migration
             $table->string('text');
             $table->enum('type', StagingOption::$TYPES);
             $table->enum('with_value', ['Yes', 'No'])->default('No');
-            $table->enum('with_range', ['Yes', 'No'])->default('No');
         });
     }
 

@@ -17,7 +17,8 @@ class ClientAccount extends Model
     public function scopeJoins(Builder $query)
     {
         return $query->join('types', 'types.id', '=', 'client_accounts.type_id')
-                     ->join('currencies', 'currencies.id', '=', 'client_accounts.main_currency_id');
+                     ->join('currencies', 'currencies.id', '=', 'client_accounts.main_currency_id')
+                     ->leftJoin('currencies as gu_currencies', 'gu_currencies.id', '=', 'client_accounts.guarantee_currency_id');
     }
 
     public function scopeSelectShow(Builder $query)
@@ -28,6 +29,21 @@ class ClientAccount extends Model
     public function accountInfos()
     {
         return $this->hasMany(AccountInfo::class);
+    }
+
+    public function mainCurrency()
+    {
+        return $this->belongsTo(Currency::class, 'main_currency_id');
+    }
+
+    public function guaranteeCurrency()
+    {
+        return $this->belongsTo(Currency::class, 'guarantee_currency_id');
+    }
+
+    public function client()
+    {
+        return $this->belongsTo(Client::class);
     }
 
 }

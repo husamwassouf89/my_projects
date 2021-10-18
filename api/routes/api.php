@@ -68,6 +68,7 @@ Route::group(['middleware' => 'auth:api',], function () {
     // ************************************* PD Routes ******************************
     Route::group(['prefix' => 'pd'], function () {
         Route::get('class-type-years', [PDController::class, 'classTypeYears']);
+        Route::get('show-raw/{id}', [PDController::class, 'showRaw']);
     });
     Route::resource('pd', PDController::class);
 

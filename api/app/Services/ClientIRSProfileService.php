@@ -51,8 +51,9 @@ class ClientIRSProfileService extends Service
                                      ->with('answers')
                                      ->first();
 
-        $score     = 0;
-        if($profile and count($profile->answers) > 0){
+        $score = null;
+        if ($profile and count($profile->answers) > 0) {
+            $score = 0;
             foreach ($profile->answers as $item) {
                 $score += $item->answer_value;
             }
