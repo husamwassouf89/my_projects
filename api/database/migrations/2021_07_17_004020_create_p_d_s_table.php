@@ -21,13 +21,13 @@ class CreatePDSTable extends Migration
             $table->string('quarter');
             $table->string('path');
 
-            $table->float('eco_parameter_base_value');
-            $table->float('eco_parameter_mild_value');
-            $table->float('eco_parameter_heavy_value');
+            $table->double('eco_parameter_base_value', 20,20);
+            $table->double('eco_parameter_mild_value', 20,20);
+            $table->double('eco_parameter_heavy_value', 20,20);
 
-            $table->float('eco_parameter_base_weight');
-            $table->float('eco_parameter_mild_weight');
-            $table->float('eco_parameter_heavy_weight');
+            $table->double('eco_parameter_base_weight', 20,20);
+            $table->double('eco_parameter_mild_weight', 20,20);
+            $table->double('eco_parameter_heavy_weight', 20,20);
 
             $table->timestamps();
 

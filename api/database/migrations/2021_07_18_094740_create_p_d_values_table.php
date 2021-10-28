@@ -20,7 +20,7 @@ class CreatePDValuesTable extends Migration
             $table->foreignIdFor(PD::class)->constrained('p_d_s')->cascadeOnDelete();
             $table->foreignIdFor(Grade::class, 'row_id')->constrained('grades');
             $table->foreignIdFor(Grade::class, 'column_id')->constrained('grades');
-            $table->double('value');
+            $table->double('value', 20,20);
         });
     }
 

@@ -30,6 +30,7 @@ Route::group(['middleware' => 'auth:api',], function () {
     // ************************************* Client Routes ******************************
     Route::group(['prefix' => 'clients'], function () {
         Route::get('cif/{cif}', [ClientController::class, 'showByCif']);
+        Route::post('change-financial-data-status', [ClientController::class, 'changeFinancialDataStatus']);
     });
     Route::resource('clients', ClientController::class);
 
@@ -62,7 +63,7 @@ Route::group(['middleware' => 'auth:api',], function () {
             Route::get('{id}', [ClientStagingProfileController::class, 'show']);
             Route::delete('{id}', [ClientStagingProfileController::class, 'destroy']);
         });
-        Route::get('{id}', [StagingController::class, 'index']);
+        Route::get('', [StagingController::class, 'index']);
     });
 
     // ************************************* PD Routes ******************************

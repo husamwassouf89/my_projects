@@ -82,7 +82,8 @@ class ClientIRSProfileService extends Service
 
     public function getClientGradeId($financialData, $score): int
     {
-        if ($financialData == 'Yes') {
+        if ($financialData == 'Sufficient financial data' or $financialData
+                                                             == 'Insufficient financial data') {
             if ($score >= 90.1 and $score <= 100) {
                 $serialNo = 0;
             } else if ($score >= 85.1 and $score <= 90) {

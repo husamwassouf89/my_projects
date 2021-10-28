@@ -2,6 +2,7 @@
 
 use App\Models\Client\Client;
 use App\Models\Client\Currency;
+use App\Models\Client\DocumentType;
 use App\Models\Client\Type;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -21,6 +22,7 @@ class CreateClientAccountsTable extends Migration
             $table->foreignIdFor(Client::class)->constrained()->cascadeOnDelete();
             $table->string('loan_key');
             $table->foreignIdFor(Type::class);
+            $table->foreignIdFor(DocumentType::class)->nullable();
             $table->foreignIdFor(Currency::class, 'main_currency_id');
             $table->foreignIdFor(Currency::class, 'guarantee_currency_id')->nullable();
 

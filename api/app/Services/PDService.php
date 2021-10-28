@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Imports\PDImport;
 use App\Models\Attachment;
 use App\Models\Client\ClassType;
+use App\Models\Client\Grade;
 use App\Models\PD\PD;
 use App\Traits\FilesKit;
 use App\Traits\MathKit;
@@ -67,14 +68,16 @@ class PDService extends Service
         $pdArray              = [];
         $defaultRate          = [];
         $pdTTCAfterRegression = [];
-        $grades               = $pd->classType->grades()->orderBy('serial_no')->select('name')->get()->pluck('name')->toArray();
+        $classType            = $pd->classType;
+        $grades               = $classType->grades()->orderBy('serial_no')->select('serial_no')->get()->pluck('serial_no')->toArray();
 
+        $factor = 7;
         foreach ($grades as $key => $item) {
-            if ($key >= 7) {
+            if ($key >= $factor) {
                 unset($grades[$key]);
                 continue;
             }
-            $grades[$key] = (int)$item;
+            $grades[$key] = (int)$item + 1;
         }
 
         if (count($values) <= 0) return [];
@@ -86,21 +89,23 @@ class PDService extends Service
 
             $pdArray[$row->serial_no][$column->serial_no] = $value->value;
 
-            if ($column->serial_no >= 7) {
+            if ($column->serial_no >= $factor) {
                 if (!isset($defaultRate[$row->serial_no])) $defaultRate[$row->serial_no][0] = 0;
                 $defaultRate[$row->serial_no][0] = $value->value + $defaultRate[$row->serial_no][0];
             }
 
         }
+
+        $mm    = new \PhpOffice\PhpSpreadsheet\Calculation\MathTrig\MatrixFunctions();
+        $pdTTC = $mm->multiply($pdArray, $defaultRate);
         $pdTTC = $this->matrixMultiplication($pdArray, $defaultRate);
         for ($i = 0; $i < count($defaultRate); $i++) {
             $defaultRate[$i] = $defaultRate[$i][0];
         }
 
-
         $newPdTTC = [];
         for ($i = 0; $i < count($pdTTC); $i++) {
-            if ($i >= 7) {
+            if ($i >= $factor) {
                 $pdTTC[$i] = 1;
             } else {
                 $pdTTC[$i]    = $pdTTC[$i][0];
@@ -113,7 +118,7 @@ class PDService extends Service
         $slope = $trend->LINEST($newPdTTC, $grades, TRUE, TRUE)[0][0];
 
         for ($i = 0; $i < count($pdTTC); $i++) {
-            if ($i >= 7) {
+            if ($i >= $factor) {
                 $pdTTCAfterRegression[$i] = 1;
             } else {
                 $pdTTCAfterRegression[$i] = 0.0005 + $grades[$i] * $slope;
@@ -123,7 +128,7 @@ class PDService extends Service
 
         for ($i = 0; $i < count($pdTTCAfterRegression); $i++) {
 
-            if ($i >= 7) {
+            if ($i >= $factor) {
                 $assetCorrelation[$i] = 1;
             } else {
                 $firstPart            = (0.12 * (1 - exp(-50 * $pdTTCAfterRegression[$i]))) / (1 - exp(-50));
@@ -139,7 +144,7 @@ class PDService extends Service
 
         for ($i = 0; $i < count($pdTTCAfterRegression); $i++) {
 
-            if ($i >= 7) {
+            if ($i >= $factor) {
                 $ttc_to_pit[$i] = 1;
             } else {
                 $ttc_to_pit[$i] = $error->IFERROR($norm->cumulative($norm->inverse($pdTTCAfterRegression[$i]) / sqrt(1 - $assetCorrelation[$i])), 0);
@@ -153,7 +158,7 @@ class PDService extends Service
             'heavy' => [],
         ];
         for ($i = 0; $i < count($pdTTCAfterRegression); $i++) {
-            if ($i >= 7) {
+            if ($i >= $factor) {
                 $inclusion['base'][$i]  = 1;
                 $inclusion['mild'][$i]  = 1;
                 $inclusion['heavy'][$i] = 1;
@@ -165,7 +170,7 @@ class PDService extends Service
         }
         $finalCalibratedWeightedPD = [];
         for ($i = 0; $i < count($pdTTCAfterRegression); $i++) {
-            if ($i >= 7) {
+            if ($i >= $factor) {
                 $finalCalibratedWeightedPD[$i] = 1;
                 $finalCalibratedWeightedPD[$i] = 1;
                 $finalCalibratedWeightedPD[$i] = 1;

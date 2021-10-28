@@ -15,57 +15,12 @@ class QuestionSeeder extends Seeder
     public function run()
     {
         $classType = ClassType::where(['name' => 'Corporate'])->first();
-        $question  = $classType->stagingQuestions()->create(['text' => 'عدد ايام التأخير']);
-        $option    = $question->options()->create([
-                                                      'text'       => 'مربوطة',
-                                                      'type'       => 'Linked',
-                                                      'with_value' => 'Yes',
-                                                  ]);
-
-        $option->results()->create([
-                                       'with_range' => 'Yes',
-                                       'range_end'  => 30,
-                                       'stage_id'   => 1
-                                   ]);
-        $option->results()->create([
-                                       'with_range' => 'Yes',
-                                       'range_start'  => 30,
-                                       'range_end'  => 89,
-                                       'stage_id'   => 2
-                                   ]);
-        $option->results()->create([
-                                       'with_range' => 'Yes',
-                                       'range_end'  => 89,
-                                       'stage_id'   => 3
-                                   ]);
-
-        $question = $classType->stagingQuestions()->create(['text' => 'هل يوجد بيانات مالية']);
-        $option = $question->options()->create([
-                                         'text'       => 'نعم',
-                                         'type'       => 'Yes',
-                                         'with_value' => 'No',
-                                     ]);
-        $option->results()->create([
-                                       'with_range' => 'No',
-                                       'stage_id'   => 1
-                                   ]);
-        $option = $question->options()->create([
-                                         'text'       => 'لا',
-                                         'type'       => 'No',
-                                         'with_value' => 'No',
-                                     ]);
-        $option->results()->create([
-                                       'with_range' => 'No',
-                                       'stage_id'   => 2
-                                   ]);
-
-
         $question = $classType->stagingQuestions()->create(['text' => 'التعرضات موثقة بعقود اصولية']);
-        $option = $question->options()->create([
-                                                   'text'       => 'نعم',
-                                                   'type'       => 'Yes',
-                                                   'with_value' => 'No',
-                                               ]);
+        $option   = $question->options()->create([
+                                                     'text'       => 'نعم',
+                                                     'type'       => 'Yes',
+                                                     'with_value' => 'No',
+                                                 ]);
         $option->results()->create([
                                        'with_range' => 'No',
                                        'stage_id'   => 1
@@ -81,20 +36,20 @@ class QuestionSeeder extends Seeder
                                    ]);
 
         $question = $classType->stagingQuestions()->create(['text' => 'التزام العميل بشروط منح التسيهلات الائتمانية']);
-        $option = $question->options()->create([
-                                         'text'       => 'نعم',
-                                         'type'       => 'Yes',
-                                         'with_value' => 'No',
-                                     ]);
+        $option   = $question->options()->create([
+                                                     'text'       => 'نعم',
+                                                     'type'       => 'Yes',
+                                                     'with_value' => 'No',
+                                                 ]);
         $option->results()->create([
                                        'with_range' => 'No',
                                        'stage_id'   => 1
                                    ]);
-        $option =$question->options()->create([
-                                         'text'       => 'لا',
-                                         'type'       => 'No',
-                                         'with_value' => 'No',
-                                     ]);
+        $option = $question->options()->create([
+                                                   'text'       => 'لا',
+                                                   'type'       => 'No',
+                                                   'with_value' => 'No',
+                                               ]);
         $option->results()->create([
                                        'with_range' => 'No',
                                        'stage_id'   => 2
@@ -112,10 +67,10 @@ class QuestionSeeder extends Seeder
                                        'stage_id'   => 1
                                    ]);
         $option->results()->create([
-                                       'with_range' => 'Yes',
-                                       'range_start'  => 30,
-                                       'range_end'  => 89,
-                                       'stage_id'   => 2
+                                       'with_range'  => 'Yes',
+                                       'range_start' => 30,
+                                       'range_end'   => 89,
+                                       'stage_id'    => 2
                                    ]);
         $option->results()->create([
                                        'with_range' => 'Yes',
@@ -142,14 +97,11 @@ class QuestionSeeder extends Seeder
                                    ]);
 
 
-
-
-
         $question = $classType->stagingQuestions()->create(['text' => 'جاري مدين نشط']);
         $question->options()->create([
                                          'text'       => 'نعم',
                                          'type'       => 'Yes',
-                                         'with_value' => 'Yes',
+                                         'with_value' => 'No',
                                      ]);
         $option->results()->create([
                                        'with_range' => 'No',
@@ -158,7 +110,7 @@ class QuestionSeeder extends Seeder
         $question->options()->create([
                                          'text'       => 'لا',
                                          'type'       => 'No',
-                                         'with_value' => 'No',
+                                         'with_value' => 'Yes',
                                      ]);
         $option->results()->create([
                                        'with_range' => 'No',
@@ -186,10 +138,10 @@ class QuestionSeeder extends Seeder
                                        'stage_id'   => 1
                                    ]);
         $option->results()->create([
-                                       'with_range' => 'Yes',
-                                       'range_start'  => 30,
-                                       'range_end'  => 89,
-                                       'stage_id'   => 2
+                                       'with_range'  => 'Yes',
+                                       'range_start' => 30,
+                                       'range_end'   => 89,
+                                       'stage_id'    => 2
                                    ]);
         $option->results()->create([
                                        'with_range' => 'Yes',
@@ -228,10 +180,10 @@ class QuestionSeeder extends Seeder
                                        'stage_id'   => 1
                                    ]);
         $option->results()->create([
-                                       'with_range' => 'Yes',
-                                       'range_start'  => 30,
-                                       'range_end'  => 89,
-                                       'stage_id'   => 2
+                                       'with_range'  => 'Yes',
+                                       'range_start' => 30,
+                                       'range_end'   => 89,
+                                       'stage_id'    => 2
                                    ]);
         $option->results()->create([
                                        'with_range' => 'Yes',
@@ -270,10 +222,10 @@ class QuestionSeeder extends Seeder
                                        'stage_id'   => 1
                                    ]);
         $option->results()->create([
-                                       'with_range' => 'Yes',
-                                       'range_start'  => 30,
-                                       'range_end'  => 89,
-                                       'stage_id'   => 2
+                                       'with_range'  => 'Yes',
+                                       'range_start' => 30,
+                                       'range_end'   => 89,
+                                       'stage_id'    => 2
                                    ]);
         $option->results()->create([
                                        'with_range' => 'Yes',
@@ -312,10 +264,10 @@ class QuestionSeeder extends Seeder
                                        'stage_id'   => 1
                                    ]);
         $option->results()->create([
-                                       'with_range' => 'Yes',
-                                       'range_start'  => 30,
-                                       'range_end'  => 89,
-                                       'stage_id'   => 2
+                                       'with_range'  => 'Yes',
+                                       'range_start' => 30,
+                                       'range_end'   => 89,
+                                       'stage_id'    => 2
                                    ]);
         $option->results()->create([
                                        'with_range' => 'Yes',
@@ -342,22 +294,21 @@ class QuestionSeeder extends Seeder
                                    ]);
 
 
-
         $question = $classType->stagingQuestions()->create(['text' => 'التغيرات السلبية للزبون أو بيئة عمله']);
-        $option = $question->options()->create([
-                                                   'text'       => 'نعم',
-                                                   'type'       => 'Yes',
-                                                   'with_value' => 'No',
-                                               ]);
+        $option   = $question->options()->create([
+                                                     'text'       => 'نعم',
+                                                     'type'       => 'Yes',
+                                                     'with_value' => 'No',
+                                                 ]);
         $option->results()->create([
                                        'with_range' => 'No',
                                        'stage_id'   => 2
                                    ]);
-        $option =$question->options()->create([
-                                                  'text'       => 'لا',
-                                                  'type'       => 'No',
-                                                  'with_value' => 'No',
-                                              ]);
+        $option = $question->options()->create([
+                                                   'text'       => 'لا',
+                                                   'type'       => 'No',
+                                                   'with_value' => 'No',
+                                               ]);
         $option->results()->create([
                                        'with_range' => 'No',
                                        'stage_id'   => 1
@@ -365,43 +316,20 @@ class QuestionSeeder extends Seeder
 
 
         $question = $classType->stagingQuestions()->create(['text' => 'إنخفاض قيمة الضمانات المقدمة']);
-        $option = $question->options()->create([
-                                                   'text'       => 'نعم',
-                                                   'type'       => 'Yes',
-                                                   'with_value' => 'No',
-                                               ]);
+        $option   = $question->options()->create([
+                                                     'text'       => 'نعم',
+                                                     'type'       => 'Yes',
+                                                     'with_value' => 'No',
+                                                 ]);
         $option->results()->create([
                                        'with_range' => 'No',
                                        'stage_id'   => 2
                                    ]);
-        $option =$question->options()->create([
-                                                  'text'       => 'لا',
-                                                  'type'       => 'No',
-                                                  'with_value' => 'No',
-                                              ]);
-        $option->results()->create([
-                                       'with_range' => 'No',
-                                       'stage_id'   => 1
-                                   ]);
-
-
-
-
-        $question = $classType->stagingQuestions()->create(['text' => 'إنخفاض قيمة الضمانات المقدمة']);
         $option = $question->options()->create([
-                                                   'text'       => 'نعم',
-                                                   'type'       => 'Yes',
+                                                   'text'       => 'لا',
+                                                   'type'       => 'No',
                                                    'with_value' => 'No',
                                                ]);
-        $option->results()->create([
-                                       'with_range' => 'No',
-                                       'stage_id'   => 2
-                                   ]);
-        $option =$question->options()->create([
-                                                  'text'       => 'لا',
-                                                  'type'       => 'No',
-                                                  'with_value' => 'No',
-                                              ]);
         $option->results()->create([
                                        'with_range' => 'No',
                                        'stage_id'   => 1
@@ -409,20 +337,20 @@ class QuestionSeeder extends Seeder
 
 
         $question = $classType->stagingQuestions()->create(['text' => 'الإلتزام بشروط إعاة الهيكلة']);
-        $option = $question->options()->create([
-                                                   'text'       => 'نعم',
-                                                   'type'       => 'Yes',
-                                                   'with_value' => 'No',
-                                               ]);
+        $option   = $question->options()->create([
+                                                     'text'       => 'نعم',
+                                                     'type'       => 'Yes',
+                                                     'with_value' => 'No',
+                                                 ]);
         $option->results()->create([
                                        'with_range' => 'No',
                                        'stage_id'   => 1
                                    ]);
-        $option =$question->options()->create([
-                                                  'text'       => 'لا',
-                                                  'type'       => 'No',
-                                                  'with_value' => 'No',
-                                              ]);
+        $option = $question->options()->create([
+                                                   'text'       => 'لا',
+                                                   'type'       => 'No',
+                                                   'with_value' => 'No',
+                                               ]);
         $option->results()->create([
                                        'with_range' => 'No',
                                        'stage_id'   => 2
@@ -439,22 +367,21 @@ class QuestionSeeder extends Seeder
                                    ]);
 
 
-
         $question = $classType->stagingQuestions()->create(['text' => 'هل التصنيف في بقية المصارف مرحلة ثالثة']);
-        $option = $question->options()->create([
-                                                   'text'       => 'نعم',
-                                                   'type'       => 'Yes',
-                                                   'with_value' => 'No',
-                                               ]);
+        $option   = $question->options()->create([
+                                                     'text'       => 'نعم',
+                                                     'type'       => 'Yes',
+                                                     'with_value' => 'No',
+                                                 ]);
         $option->results()->create([
                                        'with_range' => 'No',
                                        'stage_id'   => 2
                                    ]);
-        $option =$question->options()->create([
-                                                  'text'       => 'لا',
-                                                  'type'       => 'No',
-                                                  'with_value' => 'No',
-                                              ]);
+        $option = $question->options()->create([
+                                                   'text'       => 'لا',
+                                                   'type'       => 'No',
+                                                   'with_value' => 'No',
+                                               ]);
         $option->results()->create([
                                        'with_range' => 'No',
                                        'stage_id'   => 1
@@ -462,24 +389,25 @@ class QuestionSeeder extends Seeder
 
 
         $question = $classType->stagingQuestions()->create(['text' => 'تعرض العميل لدعوى قضائية تكبده مبالغ كبيرة']);
-        $option = $question->options()->create([
-                                                   'text'       => 'نعم',
-                                                   'type'       => 'Yes',
-                                                   'with_value' => 'No',
-                                               ]);
+        $option   = $question->options()->create([
+                                                     'text'       => 'نعم',
+                                                     'type'       => 'Yes',
+                                                     'with_value' => 'No',
+                                                 ]);
         $option->results()->create([
                                        'with_range' => 'No',
                                        'stage_id'   => 2
                                    ]);
-        $option =$question->options()->create([
-                                                  'text'       => 'لا',
-                                                  'type'       => 'No',
-                                                  'with_value' => 'No',
-                                              ]);
+        $option = $question->options()->create([
+                                                   'text'       => 'لا',
+                                                   'type'       => 'No',
+                                                   'with_value' => 'No',
+                                               ]);
         $option->results()->create([
                                        'with_range' => 'No',
                                        'stage_id'   => 1
                                    ]);
+
 
 
 

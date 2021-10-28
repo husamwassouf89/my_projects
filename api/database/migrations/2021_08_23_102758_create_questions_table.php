@@ -17,6 +17,7 @@ class CreateQuestionsTable extends Migration
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(IRS::class, 'irs_id');
+            $table->enum('financial_status', \App\Models\Client\Client::$FINANCIAL_STATUS)->default(\App\Models\Client\Client::$FINANCIAL_STATUS[0]);
             $table->string('text');
             $table->float('max_options_value')->default(0);
         });

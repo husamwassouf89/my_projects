@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Client\ClientIdRequest;
+use App\Http\Requests\Client\FinancialData;
 use App\Http\Requests\Client\ImportRequest;
 use App\Http\Requests\PaginateRequest;
 use App\Services\ClientService;
@@ -39,5 +40,10 @@ class ClientController extends Controller
     public function showByCif($cif)
     {
         return $this->response('success', $this->service->showByCif($cif));
+    }
+
+    public function changeFinancialDataStatus(FinancialData $request)
+    {
+        return $this->response('success', $this->service->changeFinancialDataStatus($request->validated()));
     }
 }

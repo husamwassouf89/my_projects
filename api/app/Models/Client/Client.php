@@ -10,6 +10,8 @@ class Client extends Model
 {
     use HasFactory;
 
+    public static $FINANCIAL_STATUS = ['None', 'Sufficient financial data', 'Insufficient financial data', 'Without Financial Data'];
+
     public $timestamps = false;
     protected $guarded = ['id'];
 
@@ -28,13 +30,13 @@ class Client extends Model
 
     public function scopeJoins(Builder $query)
     {
-        return $query->join('branches', 'branches.id', '=', 'clients.branch_id')
+        return $query->leftJoin('branches', 'branches.id', '=', 'clients.branch_id')
                      ->join('class_types', 'class_types.id', '=', 'clients.class_type_id');
     }
 
     public function scopeAllJoins(Builder $query)
     {
-        return $query->join('branches', 'branches.id', '=', 'clients.branch_id')
+        return $query->leftJoin('branches', 'branches.id', '=', 'clients.branch_id')
                      ->join('class_types', 'class_types.id', '=', 'clients.class_type_id')
                      ->join('client_accounts', 'client_accounts.client_id', '=', 'clients.id')
                      ->join('types', 'client_accounts.type_id', '=', 'types.id');
@@ -48,5 +50,10 @@ class Client extends Model
     public function clientIRSProfiles()
     {
         return $this->hasMany(Client::class);
+    }
+
+    public function grade()
+    {
+        return $this->belongsTo(Grade::class);
     }
 }

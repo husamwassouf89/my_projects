@@ -5,15 +5,31 @@ namespace App\Traits;
 use App\Models\Client\AccountInfo;
 use App\Models\Client\ClientAccount;
 use App\Models\Client\GuaranteeLGD;
+use App\Models\Client\Predefined;
 use Carbon\Carbon;
 
 trait IFRS9
 {
-    public function finalLGD($account)
+    public function finalLGD($account, $clientClassTypeId = null)
     {
         $this->ead($account);
-        $this->lgd($account);
-        $account->final_lgd = $account->ead ? $account->lgd / $account->ead : 1;
+        if ($clientClassTypeId and $clientClassTypeId > 4) {
+
+            if (!$account->lgd) {
+                $value = Predefined::where('grade_id', $account->grade_id)->where('class_type_id', $clientClassTypeId)->where('stage_id', $account->stage_id)->first();
+                if ($value) {
+                    $account->lgd = $value->lgd;
+                } else {
+                    $account->lgd = -1;
+                }
+            }
+
+            $account->final_lgd = $account->lgd;
+        } else {
+            $this->lgd($account);
+            $account->final_lgd = $account->ead ? $account->lgd / $account->ead : 1;
+
+        }
         return $account;
     }
 
@@ -25,6 +41,10 @@ trait IFRS9
         $suspendedLcy     = $account->suspended_lcy ?: 0;
 
         $account->ead = $outstanding + $accruedInterest - $interestReceived - $suspendedLcy;
+        if ($account->document_type_id) {
+            $ccf          = $account->documentType->ccf;
+            $account->ead = $account->ead * $ccf;
+        }
         return $account;
     }
 
@@ -108,6 +128,7 @@ trait IFRS9
     public function coveredByCm($account)
     {
         $account = $this->allocationOfCmGuarantee($account);
+
 
         if ($this->clientAccount($account)->main_currency_id == $this->clientAccount($account)->guarntee_currency_id) {
             $account->covered_by_cm = min($account->ead,
@@ -245,8 +266,8 @@ trait IFRS9
 
         $repayments    = [];
         $date          = Carbon::createFromDate($account->mat_date);
-        $valuationDate = Carbon::createFromDate('2021-3-31');
-        $temp          = Carbon::createFromDate('2021-3-31');
+        $valuationDate = Carbon::now();
+        $temp          = Carbon::now();
         $temp->addDays(365);
         if ($temp < $date) {
             $date12 = $temp;
@@ -265,7 +286,7 @@ trait IFRS9
         $year         = $date->format('Y');
         array_push($repayments, $date->toDateString());
         while (true) {
-            if ($month <= 1) {
+            if ($month - $freq <= 0) {
                 $nextMonth = ($month - $freq) + 12;
             } else {
                 $nextMonth = $month - $freq;

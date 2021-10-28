@@ -15,8 +15,6 @@ class GuaranteeSeeder extends Seeder
      */
     public function run()
     {
-
-
         $guarantee = Guarantee::create(['code' => 'cm', 'name' => 'نقدي', 'order' => '1',]);
         GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 1, 'stage_id' => 1, 'ratio' => 0]);
         GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 1, 'stage_id' => 2, 'ratio' => 0]);
