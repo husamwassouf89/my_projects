@@ -168,7 +168,7 @@ export const TagsField = (props: any) => {
 
 export const NumberField = (props: any) => {
     
-    let field: object = (({ onChange, defaultValue, disabled, max, min, value }) => ({ onChange, defaultValue, disabled, max, min, value }))(props);
+    let field: object = (({ onChange, defaultValue, disabled, value }) => ({ onChange, defaultValue, disabled, value }))(props);
     let inputLabel: string = props.placeholder ? props.placeholder : props.label ? props.label : '';
     let id = uid('input')
 
@@ -219,7 +219,7 @@ export const NumberField = (props: any) => {
     
     return(
         <div className={"input-box" + ( props.className ? " " + props.className : "" )}>
-            <input style={ props.style || (props.bg ? { background: props.bg } : {})} {...field} value={props.value?.toString()} type="number" autoComplete="" id={id} onBlur={enforceMinMax} onChange={validate} />
+            <input style={ props.style || (props.bg ? { background: props.bg } : {})} {...field} value={props.value?.toString()} type="number" autoComplete="" id={id} onBlur={enforceMinMax} onChange={validate} step="0.1" />
             { inputLabel ? <label className={props.value || Number(props.value) === 0 ? "active" : ''} htmlFor={id}>{inputLabel}</label> : ''}
             {props.error || error ? <i className="icon-error" data-tip={error ? error : props.error}></i> : ''}
             {props.error || error ? <ReactTooltip place="left" type="error" effect="solid" delayHide={500} /> : ''}

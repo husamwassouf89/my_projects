@@ -51,7 +51,7 @@ export default () => {
 
         if(questions.length === 0) {
             toast("Your data is already saved!", {
-                progressStyle: { background: "#1ABC9C" }
+                progressStyle: { background: "#925b97" }
             })
         }
         

@@ -1,0 +1,7 @@
+.search-image { position: fixed; top: 150px; right: 0; height: calc(100vh - 150px); }
+.rtl .search-image { right: auto; left: 0; transform: rotateY(180deg); }
+.rtl .search-client-actions .actions { text-align: left!important; }
+
+.rtl .profiles { text-align: right!important; }
+.rtl .profiles > button { float: left!important; }
+.profiles .dashboard-table { padding: 0; }

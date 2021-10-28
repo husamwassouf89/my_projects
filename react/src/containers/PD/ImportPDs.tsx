@@ -58,7 +58,7 @@ export default () => {
             attachments,
             path: importFile,
             quarter,
-            year,
+            year: "" + year,
             eco_parameter_base_value: ecoParameterBaseValue,
             eco_parameter_base_weight: ecoParameterBaseWeight,
             eco_parameter_mild_value: ecoParameterMildValue,
@@ -68,7 +68,7 @@ export default () => {
         })
         .then((response: any) => {
             toast("Your PD file has been imported successfully!", {
-                progressStyle: { background: "#1ABC9C" }
+                progressStyle: { background: "#925b97" }
             })
         })
         .finally(() => {
@@ -83,9 +83,9 @@ export default () => {
             <form style={{ maxWidth: 500, background: "#F9F9F9", padding: "40px", borderRadius: 10, position: 'relative' }} onSubmit={importPD}>
                 {isLoading ? <WhiteboxLoader /> : ""}
                 <h1 className="text-center" style={{ margin: "0 0 40px" }}>{t("import_clients")}</h1>
-                <ClassesMenu error={ submitError && !classType ? t("required_error") : "" } onChange={(selected: { value: number; }) => setClassType(selected.value)} bg="white" placeholder="Class type" />
-                <SelectField error={ submitError && !year ? t("required_error") : "" } onChange={(selected: { value: number; }) => setYear(selected.value)} bg="white" placeholder="PD year" options={years} />
-                <SelectField error={ submitError && !quarter ? t("required_error") : "" } onChange={(selected: { value: 'q1' | 'q2' | 'q3' | 'q4'; }) => setQuarter(selected.value)} bg="white" placeholder="PD quarter" options={[
+                <ClassesMenu error={ submitError && !classType ? t("required_error") : "" } onChange={(selected: { value: number; }) => setClassType(selected.value)} bg="white" placeholder={t("class_type")} />
+                <SelectField error={ submitError && !year ? t("required_error") : "" } onChange={(selected: { value: number; }) => setYear(selected.value)} bg="white" placeholder={t("year")} options={years} />
+                <SelectField error={ submitError && !quarter ? t("required_error") : "" } onChange={(selected: { value: 'q1' | 'q2' | 'q3' | 'q4'; }) => setQuarter(selected.value)} bg="white" placeholder={t("quarter")} options={[
                     { label: "Q1", value: "q1" },
                     { label: "Q2", value: "q2" },
                     { label: "Q3", value: "q3" },
@@ -96,10 +96,10 @@ export default () => {
                     <label>Eco parameter - <strong>Base</strong></label>
                     <Row>
                         <Col md={6}>
-                            <NumberField bg={"white"} min={0} max={1} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEcoParameterBaseWeight(Number(e.target.value))} value={ecoParameterBaseWeight} placeholder="Weight" />
+                            <NumberField bg={"white"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEcoParameterBaseWeight(Number(e.target.value))} value={ecoParameterBaseWeight} placeholder={t("weight")} />
                         </Col>
                         <Col md={6}>
-                            <NumberField bg={"white"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEcoParameterBaseValue(Number(e.target.value))} value={ecoParameterBaseValue} placeholder="Value" />
+                            <NumberField bg={"white"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEcoParameterBaseValue(Number(e.target.value))} value={ecoParameterBaseValue} placeholder={t("value")} />
                         </Col>
                     </Row>
                 </div>
@@ -108,10 +108,10 @@ export default () => {
                     <label>Eco parameter - <strong>Mild</strong></label>
                     <Row>
                         <Col md={6}>
-                            <NumberField bg={"white"} min={0} max={1} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEcoParameterMildWeight(Number(e.target.value))} value={ecoParameterMildWeight} placeholder="Weight" />
+                            <NumberField bg={"white"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEcoParameterMildWeight(Number(e.target.value))} value={ecoParameterMildWeight} placeholder={t("weight")} />
                         </Col>
                         <Col md={6}>
-                            <NumberField bg={"white"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEcoParameterMildWeight(Number(e.target.value))} value={ecoParameterMildValue} placeholder="Value" />
+                            <NumberField bg={"white"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEcoParameterMildValue(Number(e.target.value))} value={ecoParameterMildValue} placeholder={t("value")} />
                         </Col>
                     </Row>
                 </div>
@@ -120,10 +120,10 @@ export default () => {
                     <label>Eco parameter - <strong>Heavy</strong></label>
                     <Row>
                         <Col md={6}>
-                            <NumberField bg={"white"} min={0} max={1} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEcoParameterHeavyWeight(Number(e.target.value))} value={ecoParameterHeavyWeight} placeholder="Weight" />
+                            <NumberField bg={"white"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEcoParameterHeavyWeight(Number(e.target.value))} value={ecoParameterHeavyWeight} placeholder={t("weight")} />
                         </Col>
                         <Col md={6}>
-                            <NumberField bg={"white"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEcoParameterHeavyWeight(Number(e.target.value))} value={ecoParameterHeavyValue} placeholder="Value" />
+                            <NumberField bg={"white"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEcoParameterHeavyValue(Number(e.target.value))} value={ecoParameterHeavyValue} placeholder={t("value")} />
                         </Col>
                     </Row>
                 </div>
@@ -151,7 +151,7 @@ export default () => {
                 <div className="text-center margin-top-40"><button className="button bg-gold color-white round" style={{ padding: "0 50px" }}>{t("import")}</button></div>
             </form>
             <br /> <br />
-            <img src={Import} alt="Import" style={{ position: 'fixed', top: 150, right: 0, height: "calc(100vh - 150px)" }} />
+            <img src={Import} alt="Import" className="search-image" />
 
         </div>
     )

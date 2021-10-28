@@ -1,8 +1,12 @@
+.add-profile h2 { text-align: left; }
+.rtl .add-profile h2 { text-align: right; }
 .profile-questions { text-align: left; padding-bottom: 50px; }
+.rtl .profile-questions {text-align: right;  }
 .profile-questions header { padding: 20px; font-weight: bold; }
 .profile-questions li { padding: 10px 20px; position: relative; }
 .profile-questions li span.value { position: absolute; top: 50%; right: 20px; transform: translateY(-50%); color: #555; }
-.profile-questions li span.value.active { color: #1ABC9C; font-weight: bold; }
+.rtl .profile-questions li span.value { right: auto; left: 20px; }
+.profile-questions li span.value.active { color: #925b97; font-weight: bold; }
 
 .profile-questions .save {
     position: fixed;
@@ -11,7 +15,7 @@
     width: 600px;
     left: 50%;
     transform: translateX(-50%);
-    padding: 10px 30px;
+    padding: 10px 50px;
     bottom: 5vh;
     border-radius: 5px;
 }

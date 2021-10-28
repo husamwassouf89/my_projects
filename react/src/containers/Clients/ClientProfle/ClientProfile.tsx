@@ -1,5 +1,6 @@
 import { useEffect } from "react"
 import { useState } from "react"
+import { useTranslation } from "react-multi-lang"
 import { EllipsisLoader } from "../../../components/Loader/Loader"
 import Modal from "../../../components/Modal/Modal"
 import { DashboardTable } from "../../../components/Table/Table"
@@ -14,6 +15,9 @@ interface IProps {
 }
 
 export default (props: IProps) => {
+
+    // Translation
+    const t = useTranslation()
     
     // Hooks
     const [classType, setClassType] = useState<number | null>(null)
@@ -63,15 +67,15 @@ export default (props: IProps) => {
             { !showQuestions ?
             <>
             { isLoaded ?
-            <div style={{ minWidth: 500, textAlign: "left" }}>
-                <h2 style={{ margin: "0 0 20px", display: "inline-block" }}>Client's rates</h2>
+            <div style={{ minWidth: 500, textAlign: "left" }} className="profiles">
+                <h2 style={{ margin: "0 0 20px", display: "inline-block" }}>{t("client_rates")}</h2>
                 <button className="button bg-gold color-white" style={{ float: "right", position: "relative", top: -7 }} onClick={() => {
                     setShowQuestions(true)
                     setEditable(true)
-                }}>Add new rate</button>
-                <div style={{ marginRight: -30, marginBottom: -20 }}>
+                }}>{t("add_new_rate")}</button>
+                <div style={{ marginBottom: -20 }}>
                     <DashboardTable
-                        header={["Date", "Rate", ""]}
+                        header={[t("date"), t("rate"), ""]}
                         body={getProfiles()}
                         />
                 </div>

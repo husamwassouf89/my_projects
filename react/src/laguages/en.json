@@ -356,6 +356,55 @@
     "pd": "PD",
     
     "irs": "IRS",
-    "settings": "Settings"
+    "settings": "Settings",
+
+    "client_stage": "Client stage",
+    "client_rate": "Client rate",
+    "cif": "CIF",
+    "branch": "Branch",
+    "class_type": "Class type",
+    "stage": "Stage",
+    "grade": "Grade",
+
+    "client_stages": "Clinet's stages",
+    "edit_stage": "Edit stage",
+    "client_rates": "Client's rates",
+    "add_new_rate": "Add new rate",
+    "rate": "Rate",
+
+    "submit_data": "Submit data",
+    "show_stage": "Show stage",
+
+    "factor": "Factor",
+    "show_rate": "Show Rate",
+    "no_questions": "No questions in this category.",
+    "please_select_a_category": "Please select a category",
+
+    "account": "Account",
+
+    "80_per_estimated_value_of_real_estate_collateral": "80% Per estimated value of real-estate collateral",
+    "accrued_interest_lcy": "Accrued interest LCY",
+    "cm_guarantee": "CM Guarantee",
+    "currency_name": "CCY",
+    "estimated_value_of_real_estate_collateral": "Estimated value of real-estate collateral",
+    "guarantee_ccy": "Guarantee CCY",
+    "estimated_value_of_stock_collateral": "Estimated value of stocks collateral",
+    "interest_rate": "Interest Rate",
+    "interest_received_in_advance_lcy": "Interest received in advance LCY",
+    "mat_date": "Mat. Date",
+    "mortgages": "Mortgages",
+    "number_of_reschedule": "Number Of Reschedule",
+    "outstanding_fcy": "Outstanding FCY",
+    "past_due_days": "Past due days",
+    "pay_method": "Pay method",
+    "pv_re_guarantees": "PV RE Guarantees",
+    "pv_securities_guarantees": "PV Securities Guarantees",
+    "st_date": "St. Date",
+    "suspended_lcy": "Suspended LCY",
+
+    "loan_key": "Loan key",
+    "year": "Year",
+    "quarter": "Quarter",
+    "weight": "Weight"
 
 }

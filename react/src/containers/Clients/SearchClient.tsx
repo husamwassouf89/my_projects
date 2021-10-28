@@ -13,6 +13,8 @@ import { useHistory } from 'react-router-dom'
 import { useEffect } from 'react'
 import ClientProfile from './ClientProfle/ClientProfile'
 import ClientStage from './StagingProfle/ClientStage'
+import Modal from '../../components/Modal/Modal'
+import { getPercentage, numberWithCommas, toFixed } from '../../services/hoc/helpers'
 
 export default () => {
     
@@ -34,6 +36,9 @@ export default () => {
 
     const [isOpenEditRate, setIsOpenEditRate] = useState<boolean>(false)
     const [isOpenEditStage, setIsOpenEditStage] = useState<boolean>(false)
+    const [isOpenECL, setIsOpenECL] = useState<boolean>(false)
+
+    const [moreECLDetails, setMoreECLDetails] = useState<boolean>(false)
 
     // Translation
     const t = useTranslation()
@@ -122,10 +127,10 @@ export default () => {
                     {isLoading ? <WhiteboxLoader /> : ""}
                     <div className="search-client-actions">
                         <Row>
-                            <Col md={3}>
+                            <Col md={2.5}>
                                 <h2>{t("search_for_client")}</h2>
                             </Col>
-                            <Col md={9}>
+                            <Col md={9.5}>
                                 <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => e.preventDefault()}>
                                     <Row>
                                         <Col md={2}>
@@ -139,16 +144,16 @@ export default () => {
                                                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => { setCIF(Number(e.target.value)) }}
                                                 placeholder={t("client_cif")} />
                                         </Col>
-                                        <Col md={3}>
+                                        <Col md={2.5}>
                                             <SelectField placeholder="Year" options={Object.values(years)} value={selectedYear} onChange={(selected: any) => changeYear(selected)} />
                                         </Col>
-                                        <Col md={3}>
+                                        <Col md={2.5}>
                                             <SelectField placeholder="Quarter" options={years[selectedYear.value].quarters} value={selectedQuarter} onChange={(selected: any) => changeQuarter(selected)} />
                                         </Col>
-                                        <Col md={4} style={{ position: "relative", top: 11, textAlign: "right" }}>
-                                            <button className="button color-gold" onClick={() => setIsOpenEditStage(true)}>Client stage</button>
+                                        <Col md={5} style={{ position: "relative", top: 11, textAlign: "right" }} className="actions">
+                                            <button className="button color-gold" onClick={() => setIsOpenEditStage(true)}>{t("client_stage")}</button>
                                             <span className="margin-10" />
-                                            <button className="button bg-gold color-white" onClick={() => setIsOpenEditRate(true)}>Client rate</button>
+                                            <button className="button bg-gold color-white" onClick={() => setIsOpenEditRate(true)}>{t("client_rate")}</button>
                                         </Col>
                                     </Row>
                                 </form>
@@ -159,14 +164,20 @@ export default () => {
                     <table className="details-table margin-top-50" style={{ width: "100%" }}>
                         <tbody>
                             <tr>
-                                <td>CIF</td>
+                                <td>{t("cif")}</td>
                                 <td>{client.cif}</td>
-                                <td>Name</td>
+                                <td>{t("name")}</td>
                                 <td>{client.name}</td>
-                                <td>Branch</td>
+                                <td>{t("branch")}</td>
                                 <td>{client.branch_name}</td>
-                                <td>Class type</td>
+                            </tr>
+                            <tr>
+                                <td>{t("class_type")}</td>
                                 <td>{client.class_type_name}</td>
+                                <td>Financial data</td>
+                                <td>{client.financial_data}</td>
+                                <td style={{ background: '#1abc62', color: "#FFF" }}>ECL</td>
+                                <td style={{ background: '#17a656', color: "#FFF" }}>{numberWithCommas(toFixed(client.client_accounts.map((account: any) => Number(account?.account_infos[activeAccountInfo]?.ecl || 0)).reduce((a: number, b: number) => a + b, 0), 2))}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -174,78 +185,145 @@ export default () => {
                     <ul className="tabs">
                         {
                             client.client_accounts?.map((account: any, index: number) => (
-                                <li className={active_account === index ? "active" : ""} onClick={() => setActiveAccount(index)}>Account: {account.loan_key}</li>
+                                <li className={active_account === index ? "active" : ""} onClick={() => setActiveAccount(index)}>{t("account")}: {account.loan_key} / {account.type_name}</li>
                             ))
                         }
                     </ul>
+                    
+                    <table className="details-table margin-top-50" style={{ width: "100%" }}>
+                        <tbody>
+                            <tr>
+                                <td>Stage</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].stage_no}</td>
+                                <td>Grade</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].final_grade}</td>
+                                <td>PD</td>
+                                <td>{getPercentage(client.client_accounts[active_account]?.account_infos[activeAccountInfo].pd)}</td>
+                            </tr>
+                            <tr>
+                                <td>LGD</td>
+                                <td>{getPercentage(client.client_accounts[active_account]?.account_infos[activeAccountInfo].final_lgd)}</td>
+                                <td>EAD</td>
+                                <td>{numberWithCommas(toFixed(Number(client.client_accounts[active_account]?.account_infos[activeAccountInfo].ead), 2))}</td>
+                                <td style={{ background: "#3595f6", color: "#FFF" }}>Account ECL</td>
+                                <td style={{ background: "#2478ce", color: "#FFF" }}>{numberWithCommas(toFixed(Number(client.client_accounts[active_account]?.account_infos[activeAccountInfo].ecl), 2))}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <button className="button color-gold margin-top-30" onClick={() => setIsOpenECL(true)}>Show ECL Details</button>
 
                     <table className="details-table margin-top-30" style={{ width: "100%" }}>
                         <tbody>
                             <tr>
-                                <td>type</td>
+                                <td>{t("type")}</td>
                                 <td>{client.client_accounts[active_account]?.type_name}</td>
-                                <td>80_per_estimated_value_of_real_estate_collateral</td>
-                                <td>{client.client_accounts[active_account].account_infos[activeAccountInfo]['80_per_estimated_value_of_real_estate_collateral']}</td>
+                                <td>{t("80_per_estimated_value_of_real_estate_collateral")}</td>
+                                <td>{numberWithCommas(client.client_accounts[active_account].account_infos[activeAccountInfo]['80_per_estimated_value_of_real_estate_collateral'])}</td>
                             </tr>
                             <tr>
-                                <td>accrued_interest_lcy</td>
-                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].accrued_interest_lcy}</td>
-                                <td>cm_guarantee</td>
-                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].cm_guarantee}</td>
+                                <td>{t("accrued_interest_lcy")}</td>
+                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].accrued_interest_lcy)}</td>
+                                <td>{t("cm_guarantee")}</td>
+                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].cm_guarantee)}</td>
                             </tr>
                             <tr>
-                                <td>currency_name</td>
+                                <td>{t("currency_name")}</td>
                                 <td>{client.client_accounts[active_account]?.currency_name}</td>
-                                <td>estimated_value_of_real_estate_collateral</td>
-                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].estimated_value_of_real_estate_collateral}</td>
+                                <td>{t("estimated_value_of_real_estate_collateral")}</td>
+                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].estimated_value_of_real_estate_collateral)}</td>
                             </tr>
                             <tr>
-                                <td>guarantee_ccy</td>
-                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].guarantee_ccy}</td>
-                                <td>estimated_value_of_stock_collateral</td>
-                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].estimated_value_of_stock_collateral}</td>
+                                <td>{t("guarantee_ccy")}</td>
+                                <td>{client.client_accounts[active_account]?.guarantee_ccy}</td>
+                                <td>{t("estimated_value_of_stock_collateral")}</td>
+                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].estimated_value_of_stock_collateral)}</td>
                             </tr>
                             <tr>
-                                <td>interest_rate</td>
-                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].interest_rate}</td>
-                                <td>interest_received_in_advance_lcy</td>
+                                <td>{t("interest_rate")}</td>
+                                <td>{getPercentage(client.client_accounts[active_account]?.account_infos[activeAccountInfo].interest_rate)}</td>
+                                <td>{t("interest_received_in_advance_lcy")}</td>
                                 <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].interest_received_in_advance_lcy}</td>
                             </tr>
                             <tr>
-                                <td>mat_date</td>
+                                <td>{t("mat_date")}</td>
                                 <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].mat_date}</td>
-                                <td>mortgages</td>
+                                <td>{t("mortgages")}</td>
                                 <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].number_of_installments}</td>
                             </tr>
                             <tr>
-                                <td>number_of_reschedule</td>
+                                <td>{t("number_of_reschedule")}</td>
                                 <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].number_of_reschedule}</td>
-                                <td>outstanding_fcy</td>
-                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].outstanding_fcy}</td>
+                                <td>{t("outstanding_fcy")}</td>
+                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].outstanding_fcy)}</td>
                             </tr>
                             <tr>
-                                <td>past_due_days</td>
+                                <td>{t("past_due_days")}</td>
                                 <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].past_due_days}</td>
-                                <td>pay_method</td>
+                                <td>{t("pay_method")}</td>
                                 <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].pay_method}</td>
                             </tr>
                             <tr>
-                                <td>pv_re_guarantees</td>
-                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].pv_re_guarantees}</td>
-                                <td>pv_securities_guarantees</td>
-                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].sp_date}</td>
+                                <td>{t("pv_re_guarantees")}</td>
+                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].pv_re_guarantees)}</td>
+                                <td>{t("pv_securities_guarantees")}</td>
+                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].pv_securities_guarantees)}</td>
                             </tr>
                             <tr>
-                                <td>st_date</td>
+                                <td>{t("st_date")}</td>
                                 <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].st_date}</td>
-                                <td>suspended_lcy</td>
-                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].suspended_lcy}</td>
+                                <td>{t("suspended_lcy")}</td>
+                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].suspended_lcy)}</td>
                             </tr>
                         </tbody>
                     </table>
                     <br /><br />
                     <ClientProfile isOpen={isOpenEditRate} toggle={() => setIsOpenEditRate(prev => !prev)} client_id={client.id} class_type={client.class_type_id} />
                     <ClientStage isOpen={isOpenEditStage} toggle={() => setIsOpenEditStage(prev => !prev)} client_id={client.id} class_type={client.class_type_id} />
+                    <Modal open={isOpenECL} toggle={() => setIsOpenECL(false)}>
+                        <div className="text-right"><button className={ moreECLDetails ? "button color-white bg-gold" : "button color-gold" } onClick={() => setMoreECLDetails(!moreECLDetails)}>{ moreECLDetails ? "Less Details" : "More Details" }</button></div>
+                        <div className="margin-top-20" />
+                        <table className="table margin-top-30" style={{ width: "90vw", margin: 0 }}>
+                            <thead>
+                                <tr>
+                                    <th>Repayment date</th>
+                                    { moreECLDetails && <th>Days Between</th> }
+                                    { moreECLDetails && <th>Repayment Indicator</th> }
+                                    <th>Repayment</th>
+                                    <th>EAD</th>
+                                    { moreECLDetails && <th>Days for Discounting</th> }
+                                    <th>PD cum</th>
+                                    <th>PD Marginal</th>
+                                    <th>LGD</th>
+                                    <th>Discount rate</th>
+                                    <th>EL</th>
+                                    <th>CUM EL</th>
+                                    { moreECLDetails && <th>12-M Selector</th> }
+                                    <th>12-M EL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {client.client_accounts[active_account]?.account_infos[activeAccountInfo].ecl_data?.map((item: any) => (
+                                    <tr>
+                                        <td>{item.repayment_date}</td>
+                                        { moreECLDetails && <td>{item.days_between}</td> }
+                                        { moreECLDetails && <td>{item.repayment_indicator}</td> }
+                                        <td title={item.repayment}>{numberWithCommas(toFixed(Number(item.repayment), 2))}</td>
+                                        <td title={item.ead_end_of_period}>{numberWithCommas(toFixed(Number(item.ead_end_of_period), 2))}</td>
+                                        { moreECLDetails && <td>{item.days_for_discount}</td> }
+                                        <td title={item.pd_cum}>{getPercentage(item.pd_cum)}</td>
+                                        <td title={item.pd_marginal}>{getPercentage(item.pd_marginal)}</td>
+                                        <td title={item.lgd}>{getPercentage(item.lgd)}</td>
+                                        <td title={item.discount_rate}>{getPercentage(item.discount_rate)}</td>
+                                        <td title={item.el}>{numberWithCommas(toFixed(Number(item.el), 2))}</td>
+                                        <td title={item.cum_el}>{numberWithCommas(toFixed(Number(item.cum_el), 2))}</td>
+                                        { moreECLDetails && <td>{toFixed(Number(item['12_m_selector']), 2)}</td> }
+                                        <td title={item['12_m_el']}>{numberWithCommas(toFixed(Number(item['12_m_el']), 2))}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </Modal>
                 </> :
                 <>
                     <form style={{ maxWidth: 500, background: "#F9F9F9", padding: "100px 40px", borderRadius: 10, position: 'relative' }} onSubmit={search}>
@@ -258,7 +336,7 @@ export default () => {
                             placeholder={t("client_cif")} />
                         <div className="text-center margin-top-40"><button className="button bg-gold color-white round" style={{ padding: "0 50px" }}>{t("search_client")}</button></div>
                     </form>
-                    <img src={Search} alt="Search" style={{ position: 'fixed', top: 150, right: 0, height: "calc(100vh - 150px)" }} />
+                    <img src={Search} alt="Search" className="search-image" />
                 </>}
         </div>
     )

@@ -1,5 +1,6 @@
 import { useEffect } from "react"
 import { useState } from "react"
+import { useTranslation } from "react-multi-lang"
 import { EllipsisLoader } from "../../../components/Loader/Loader"
 import Modal from "../../../components/Modal/Modal"
 import { DashboardTable } from "../../../components/Table/Table"
@@ -14,6 +15,9 @@ interface IProps {
 }
 
 export default (props: IProps) => {
+
+    // Translation
+    const t = useTranslation()
     
     // Hooks
     const [isLoaded, setIsLoaded] = useState<boolean>(false)
@@ -41,7 +45,7 @@ export default (props: IProps) => {
 
     const getProfiles = () => {
         return profiles.reduce((profilesObject: any, profile: any) => {
-            profilesObject[profile.id] = { date: new Date(profile.created_at).toLocaleDateString(), stage: profile.stage || 1, actions: <div className="show-on-hover"><i className="icon-info" onClick={() => {
+            profilesObject[profile.id] = { date: new Date(profile.created_at).toLocaleDateString(), actions: <div className="show-on-hover"><i className="icon-info" onClick={() => {
                 let tmp = {...values}
                 setAnswers(profile.answers.map((answer: any) => {
                     if(answer.with_value === "Yes")
@@ -70,15 +74,15 @@ export default (props: IProps) => {
             { !showQuestions ?
             <>
             { isLoaded ?
-            <div style={{ minWidth: 500, textAlign: "left" }}>
-                <h2 style={{ margin: "0 0 20px", display: "inline-block" }}>Client's stages</h2>
+            <div style={{ minWidth: 500, textAlign: "left" }} className="profiles">
+                <h2 style={{ margin: "0 0 20px", display: "inline-block" }}>{t("client_stages")}</h2>
                 <button className="button bg-gold color-white" style={{ float: "right", position: "relative", top: -7 }} onClick={() => {
                     setShowQuestions(true)
                     setEditable(true)
-                }}>Edit stage</button>
-                <div style={{ marginRight: -30, marginBottom: -20 }}>
+                }}>{t("edit_stage")}</button>
+                <div style={{ marginBottom: -20 }}>
                     <DashboardTable
-                        header={["Date", "Stage", ""]}
+                        header={[t("date"), ""]}
                         body={getProfiles()}
                         />
                 </div>

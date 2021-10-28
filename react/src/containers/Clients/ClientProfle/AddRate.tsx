@@ -8,6 +8,7 @@ import { Collapse } from "react-collapse"
 import { RadioButton } from "../../../components/FormElements/FormElements"
 
 import './AddRate.css'
+import { t } from "react-multi-lang"
 
 interface IProps {
     class_type: number;
@@ -66,18 +67,18 @@ export default (props: IProps) => {
     }
 
     return(
-        <div style={{ minWidth: 500 }} ref={questionsRef}>
+        <div style={{ minWidth: 500 }} ref={questionsRef} className="add-profile">
             { submitting && <WhiteboxLoader /> }
-            <h2 style={{ margin: "0 0 20px", textAlign: "left" }}>{ props.readonly ? "Show rate" : "Add a new rate" }</h2>
+            <h2 style={{ margin: "0 0 20px" }}>{ props.readonly ? t("show_rate") : t("add_new_rate") }</h2>
             <form onSubmit={e => e.preventDefault()}>
-                <CategoriesMenu onChange={(selected: { value: number; }) => setCategory(selected)} placeholder="Factor" />
+                <CategoriesMenu onChange={(selected: { value: number; }) => setCategory(selected)} placeholder={t("factor")} />
             </form>
             {
                 category ?
                 <>
                 { isLoaded ?
                 <div className="profile-questions questions">
-                    { questions.length === 0 && <div className="text-center" style={{ margin: "40px 0", opacity: .5 }}>No questions in this category.</div> }
+                    { questions.length === 0 && <div className="text-center" style={{ margin: "40px 0", opacity: .5 }}>{t("no_questions")}</div> }
                     {
                         questions.map((question: any) => (
                             <div className="question margin-top-20">
@@ -102,13 +103,13 @@ export default (props: IProps) => {
                         ))
                     }
                     <br />
-                    { questions.length > 0 && <>{category.label} Rate: <strong>{ [].concat.apply([], questions.map((question: any) => question.options.filter((answer: any) => answers.includes(answer.id)).map((answer: any) => answer.value))).reduce((a, b) => a + b, 0) }</strong></> }
-                    { !props.readonly && <div className="save" ref={saveRef}><button className="button bg-gold color-white" onClick={submit}>Submit data</button></div> }
+                    { questions.length > 0 && <>{category.label} rate: <strong>{ [].concat.apply([], questions.map((question: any) => question.options.filter((answer: any) => answers.includes(answer.id)).map((answer: any) => answer.value))).reduce((a, b) => a + b, 0) }</strong></> }
+                    { !props.readonly && <div className="save" ref={saveRef}><button className="button bg-gold color-white" onClick={submit}>{t("submit_data")}</button></div> }
                 </div> : <EllipsisLoader /> }
                 </> :
                 <div className="text-center margin-top-30">
                     <img src={select_vector} style={{ maxWidth: 300 }} />
-                    <p>Please select a category</p>
+                    <p>{t("please_select_a_category")}</p>
                 </div>
             }
         </div>

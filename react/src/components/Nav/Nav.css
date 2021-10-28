@@ -1,4 +1,4 @@
-.side-nav { background: #1ABC9C; width: 120px; text-align: center; border-radius: 25px; overflow: hidden; position: fixed; top: 53%; transform: translateY(-50%); left: 20px; z-index: 11; }
+.side-nav { background: #925b97; width: 120px; text-align: center; border-radius: 25px; overflow: hidden; position: fixed; top: 53%; transform: translateY(-50%); left: 20px; z-index: 11; }
 /* RTL scrollbar */
 .rtl .side-nav > div > div { margin-right: 0!important; margin-left: -17px; }
 .rtl .side-nav { right: 20px; left: auto; }
@@ -8,10 +8,10 @@
 .side-nav ul li a { color: #FFF; display: block; height: 90px; }
 .side-nav ul li.active,
 .side-nav ul li:hover { opacity: 1; transform: scale(1.1 ); }
-.side-nav ul li span { line-height: 1; position: absolute; top: 50%; left: 50%; width: 100%; transform: translate( -50%, -50% ); font-size: 12px; }
+.side-nav ul li span { line-height: 18px; position: absolute; top: 50%; left: 50%; width: 100%; transform: translate( -50%, -50% ); font-size: 12px; }
 .side-nav ul li i { display: block; font-size: 25px; margin-bottom: 5px; }
 
-.side-nav ul ul { background: #25aa8f; padding: 0 20px; }
+.side-nav ul ul { background: #793b7e; padding: 0 20px; }
 .side-nav ul ul i { display: none; }
 .side-nav ul ul li { opacity: .6; }
 .side-nav ul ul li.active,
@@ -24,7 +24,7 @@
 
 .top-nav { padding: 10px 70px 10px 120px; box-shadow: 0 0 5px rgba(0, 0, 0, .1); }
 .rtl .top-nav { padding-left: 70px!important; padding-right: 120px; }
-.top-nav .logo { width: auto; height: 50px; }
+.top-nav .logo { width: auto; height: 60px; }
 .top-nav .actions { float: right; }
 .rtl .top-nav .actions { float: left; }
 .top-nav .actions .switchers { display: inline-block; line-height: 74px; direction: ltr; }
@@ -39,7 +39,7 @@
 .rtl .top-nav .userinfo span { float: left; margin: 0 10px 0 0; }
 .dark .top-nav .userinfo span { color: #FFF; }
 .top-nav .icon-logout::before { position: relative; left: 1px; }
-.top-nav .icon-logout::after { content: ''; position: absolute; width: 50px; height: 15px; background: #1ABC9C; opacity: .3; left: -25px; top: -10px; transform: rotate(-45deg); transition: all .2s ease; }
+.top-nav .icon-logout::after { content: ''; position: absolute; width: 50px; height: 15px; background: #925b97; opacity: .3; left: -25px; top: -10px; transform: rotate(-45deg); transition: all .2s ease; }
 .top-nav .icon-logout:hover::after { left: 5px; top: 30px; }
 .top-nav .icon-logout:hover { transform: scale(1.1); }
 
@@ -53,4 +53,4 @@
 .reports-list:hover ul { opacity: 1; visibility: visible; transform: scale(1) translateX(-40%); transition-delay: 0s; }
 .reports-list ul li { line-height: 45px; padding: 0 20px; }
 .reports-list ul li a { color: #333; text-decoration: none; display: block; transition: all .3s ease; }
-.reports-list ul li a:hover { color: #1ABC9C; }
+.reports-list ul li a:hover { color: #925b97; }

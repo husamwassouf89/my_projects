@@ -10,7 +10,7 @@ interface pagination {
 
 interface pd {
     class_type_id: number;
-    year: number;
+    year: string;
     quarter: "q1" | "q2" | "q3" | "q4";
     path: string;
     attachments: number[],
