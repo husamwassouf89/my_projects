@@ -39,6 +39,7 @@ class Client extends Model
         return $query->leftJoin('branches', 'branches.id', '=', 'clients.branch_id')
                      ->join('class_types', 'class_types.id', '=', 'clients.class_type_id')
                      ->join('client_accounts', 'client_accounts.client_id', '=', 'clients.id')
+                     ->join('account_infos', 'account_infos.client_account_id', '=', 'client_accounts.id')
                      ->join('types', 'client_accounts.type_id', '=', 'types.id');
     }
 

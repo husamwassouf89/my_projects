@@ -7,7 +7,6 @@ namespace App\Services;
 use App\Imports\PDImport;
 use App\Models\Attachment;
 use App\Models\Client\ClassType;
-use App\Models\Client\Grade;
 use App\Models\PD\PD;
 use App\Traits\FilesKit;
 use App\Traits\MathKit;
@@ -21,7 +20,12 @@ class PDService extends Service
 
     public function index(array $input)
     {
-        $data = PD::selectIndex()->paginate($input['page_size']);
+        $data = PD::query();
+        $data->selectIndex();
+        if (isset($input['year']) and $input['year']) $data->where('year', $input['year']);
+        if (isset($input['quarter']) and $input['quarter']) $data->where('quarter', $input['quarter']);
+        $data = $data->paginate($input['page_size']);
+
         return $this->handlePaginate($data, 'pds');
     }
 
@@ -81,7 +85,6 @@ class PDService extends Service
         }
 
         if (count($values) <= 0) return [];
-
 
         foreach ($values as $value) {
             $row    = $value->row;
@@ -186,7 +189,6 @@ class PDService extends Service
         for ($i = 0; $i < count($pdTTCAfterRegression); $i++) {
             if ($finalCalibratedWeightedPD[$i] >= 0.0005) $finalCalibratedUsedPD[$i] = $finalCalibratedWeightedPD[$i];
             else $finalCalibratedUsedPD[$i] = 0.0005;
-
         }
 
 
@@ -231,7 +233,7 @@ class PDService extends Service
         foreach ($availableYears as $year) {
             $quarters          = PD::where('class_type_id', $id)
                                    ->where('year', $year)
-                                   ->select('year')->get()->pluck('quarter')->toArray();
+                                   ->select('quarter')->get()->pluck('quarter')->toArray();
             $availableQuarters = array_values(array_diff($allQuarters, $quarters));
             array_push($data, ['year' => $year, 'quarters' => $availableQuarters]);
 
@@ -239,6 +241,19 @@ class PDService extends Service
 
         return $data;
 
+    }
+
+    public function insertedYears()
+    {
+        $years = PD::select('year')->get()->pluck('year')->toArray();
+        $data  = [];
+        foreach ($years as $year) {
+            $quarters = PD::where('year', $year)
+                          ->select('quarter')->get()->pluck('quarter')->toArray();
+            array_push($data, ['year' => $year, 'quarters' => $quarters]);
+        }
+
+        return $data;
     }
 
     public function destory($id)

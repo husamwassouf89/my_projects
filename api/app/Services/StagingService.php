@@ -14,9 +14,7 @@ class StagingService extends Service
     public function index($input)
     {
         $type   = ClassType::findOrFail($input['id']);
-        $client = Client::findOrFail($input['client_id']);
         return StagingQuestion::where('class_type_id', $type->id)
-                              ->where('financial_status', $client->financial_status)
                               ->with('options')->get();
     }
 
@@ -25,7 +23,6 @@ class StagingService extends Service
         $question = StagingQuestion::create([
                                                 'class_type_id'    => $input['class_type_id'],
                                                 'text'             => $input['text'],
-                                                'financial_status' => $input['financial_status'],
                                             ]);
 
         foreach ($input['options'] as $option) {

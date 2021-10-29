@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\PD\IdRequest;
 use App\Http\Requests\Client\ClassType\IdRequest as ClassTypeIdRequest;
 use App\Http\Requests\PaginateRequest;
+use App\Http\Requests\PD\IdRequest;
 use App\Http\Requests\PD\ImportRequest;
 use App\Services\PDService;
 
@@ -47,6 +47,11 @@ class PDController extends Controller
             return $this->response('success', $data);
         }
         return $this->response('failed');
+    }
+
+    public function insertedYears(): \Illuminate\Http\JsonResponse
+    {
+        return $this->response('success', $this->service->insertedYears());
     }
 
     public function destroy($id, IdRequest $request)

@@ -11,10 +11,11 @@ class QuestionService extends Service
 {
     public function store($input)
     {
-        $irs = IRS::firstOrCreate([
-                                      'class_type_id' => $input['class_type_id'],
-                                      'category_id'   => $input['category_id'],
-                                  ]);
+        $irs      = IRS::firstOrCreate([
+                                           'class_type_id'    => $input['class_type_id'],
+                                           'category_id'      => $input['category_id'],
+                                           'financial_status' => $input['financial_status'],
+                                       ]);
         $question = Question::create([
                                          'irs_id'            => $irs->id,
                                          'text'              => $input['text'],

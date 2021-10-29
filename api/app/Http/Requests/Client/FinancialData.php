@@ -10,8 +10,8 @@ class FinancialData extends FormRequest
     public function rules()
     {
         return [
-            'id'             => 'numeric|exists:clients,id',
-            'financial_data' => 'required|string|in:' . implode(',', Client::$FINANCIAL_DATA),
+            'id'               => 'required|numeric|exists:clients,id',
+            'financial_status' => 'required|string|in:' . implode(',', Client::$FINANCIAL_STATUS),
         ];
     }
 }

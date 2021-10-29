@@ -42,8 +42,8 @@ class ClientController extends Controller
         return $this->response('success', $this->service->showByCif($cif));
     }
 
-    public function changeFinancialDataStatus(FinancialData $request)
+    public function changeFinancialStatus(FinancialData $request)
     {
-        return $this->response('success', $this->service->changeFinancialDataStatus($request->validated()));
+        return $this->response('success', $this->service->changeFinancialStatus($request->validated()));
     }
 }

@@ -16,18 +16,18 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ClientService extends Service
 {
+    // All the magic is here :D
     use IFRS9;
 
     public function index($input)
     {
-        if (isset($input['class_type_id']) and $input['class_type_id']) {
-            $data = Client::where('class_type_id', $input['class_type_id'])
-                          ->allJoins()->selectIndex()
-                          ->paginate($input['page_size']);
-        } else {
-            $data = Client::allJoins()->selectIndex()->paginate($input['page_size']);
-
-        }
+        if (!isset($input['class_type_id']) or $input['class_type_id'] == null) $input['class_type_id'] = 1;
+        $data = Client::query();
+        $data->where('class_type_id', $input['class_type_id']);
+        $data->allJoins()->selectIndex();
+        if (isset($input['year']) and $input['year']) $data->where('year', $input['year']);
+        if (isset($input['quarter']) and $input['quarter']) $data->where('quarter', $input['quarter']);
+        $data = $data->paginate($input['page_size']);
         return $this->handlePaginate($data, 'clients');
     }
 
@@ -35,7 +35,6 @@ class ClientService extends Service
     {
         if ($input['type'] == 'banks') {
             Excel::import(new BankImport(), $input['path']);
-
         } else if ($input['type'] == 'documents') {
             Excel::import(new DocumentImport(), $input['path']);
         } else {
@@ -157,23 +156,23 @@ class ClientService extends Service
                      ->first();
     }
 
-    public function changeFinancialDataStatus($input)
+    public function changeFinancialStatus($input)
     {
-        return Client::where('id', $input['id'])->update(['financial_data' => $input['financial_data']]);
-
+        return Client::where('id', $input['id'])->update(['financial_status' => $input['financial_status']]);
     }
 
     public function getPredefinedValue($classTypeId, $gradeId, $stageId, $type)
     {
-        $preDefined = Predefined::where('class_type_id', $classTypeId)->where('grade_id', $gradeId)->where('stage_id', $stageId)
+        $preDefined = Predefined::where('class_type_id', $classTypeId)
+                                ->where('grade_id', $gradeId)->where('stage_id', $stageId)
                                 ->first();
         if ($preDefined) {
             if ($type == 'lgd') return $preDefined->lgd;
             else if ($type == 'pd') return $preDefined->pd;
             else return -1;
-        } else {
-            return -1;
         }
+
+        return -1;
     }
 
 

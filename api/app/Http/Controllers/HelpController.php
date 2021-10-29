@@ -44,7 +44,7 @@ class HelpController extends Controller
 
         $freq         = 1;
         $ead          = 115425000;
-        $pd           =0.027868167;
+        $pd           = 0.027868167;
         $lgd          = 0.10;
         $discountRate = 0.11;
         $lecl         = 0;
@@ -185,11 +185,12 @@ class HelpController extends Controller
 
     public function fetchPredefined()
     {
-        $data                = [];
-        $data['class_types'] = ClassType::all();
-        $data['categories']  = Category::all();
-        $data['years']       = ClassType::getYears();
-        $data['quarters']    = ClassType::$QUARTERS;
+        $data                     = [];
+        $data['class_types']      = ClassType::all();
+        $data['categories']       = Category::all();
+        $data['years']            = ClassType::getYears();
+        $data['quarters']         = ClassType::$QUARTERS;
+        $data['financial_status'] = Client::$FINANCIAL_STATUS;
 
         return $this->response('success', $data, 200);
     }
