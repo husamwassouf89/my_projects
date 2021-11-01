@@ -8,6 +8,7 @@ use App\Imports\BankImport;
 use App\Imports\ClientImport;
 use App\Imports\DocumentImport;
 use App\Models\Client\Client;
+use App\Models\Client\DocumentType;
 use App\Models\Client\Grade;
 use App\Models\Client\Predefined;
 use App\Models\Staging\Stage;
@@ -27,6 +28,7 @@ class ClientService extends Service
         $data->allJoins()->selectIndex();
         if (isset($input['year']) and $input['year']) $data->where('year', $input['year']);
         if (isset($input['quarter']) and $input['quarter']) $data->where('quarter', $input['quarter']);
+        if (isset($input['type']) and $input['type'] == 'documents') $data->whereIn('types.name', DocumentType::$OFF_BALANCE_DOCUMENTS);
         $data = $data->paginate($input['page_size']);
         return $this->handlePaginate($data, 'clients');
     }

@@ -25,7 +25,8 @@ class PaginateRequest extends FormRequest
             'class_type_id'    => 'nullable|numeric|exists:class_types,id',
             'financial_status' => 'nullable|string|in:' . implode(',', Client::$FINANCIAL_STATUS),
             'quarter'          => 'nullable|string',
-            'year'             => 'nullable|string'
+            'year'             => 'nullable|string',
+            'type'             => 'nullable|in:documents',
         ];
     }
 }

@@ -14,13 +14,14 @@ use App\Services\ClientIRSProfileService;
 use App\Services\ClientStagingProfileService;
 use App\Services\PDService;
 use App\Traits\FilesKit;
+use App\Traits\MailSender;
 use App\Traits\PDKit;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Artisan;
 
 class HelpController extends Controller
 {
-    use PDKit, FilesKit;
+    use PDKit, FilesKit, MailSender;
 
     public function clearCache()
     {
@@ -32,6 +33,11 @@ class HelpController extends Controller
 
     public function test()
     {
+
+        self::sendEmail('philip97hd@gmail.com','welcome',[]);
+
+        return "done";
+
         $date          = Carbon::createFromDate('2026-7-22');
         $valuationDate = Carbon::createFromDate('2021-3-31');
         $temp          = Carbon::createFromDate('2021-3-31');

@@ -9,6 +9,7 @@ class DocumentType extends Model
 {
     use HasFactory;
 
+    public static $OFF_BALANCE_DOCUMENTS = ['LC', 'LG', 'Document'];
     public $timestamps = false;
     protected $guarded = ['id'];
 }
