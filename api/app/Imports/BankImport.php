@@ -28,20 +28,23 @@ class BankImport implements ToCollection
 
             }
 
+            $gradeSerialNo = Grade::where('class_type_id', $classType->id)->count();
+
             $client = Client::firstOrCreate([
                                                 'cif'           => $row[2],
                                                 'country'       => $row[5],
                                                 'class_type_id' => $classType->id,
                                                 'name'          => $row[1],
-                                                'grade_id'      => $row[5] ? Grade::where('class_type_id', $classType->id)->where('name', $row[5])->firstOrCreate()->id : null,
+                                                'grade_id'      => $row[5] ? Grade::firstOrCreate(['serial_no' => $gradeSerialNo + 1, 'class_type_id' => $classType->id, 'name' => $row[5]])->id : null,
                                             ]);
 
 
-            $account = $client->clientAccounts()->firstOrCreate([
-                                                                    'loan_key'         => $row[0],
-                                                                    'type_id'          => Type::firstOrCreate(['name' => $row[6]])->id,
-                                                                    'main_currency_id' => Currency::firstOrCreate(['name' => $row[7]])->id,
-                                                                ]);
+            $account = $client->clientAccounts()
+                              ->firstOrCreate([
+                                                  'loan_key'         => $row[0],
+                                                  'type_id'          => Type::firstOrCreate(['name' => $row[6]])->id,
+                                                  'main_currency_id' => Currency::firstOrCreate(['name' => $row[7]])->id,
+                                              ]);
 
             $account->accountInfos()->firstOrCreate(
                 [
