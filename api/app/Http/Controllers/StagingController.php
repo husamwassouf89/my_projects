@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Staging\StagingQuestionRequest;
-use App\Http\Requests\Staging\StagingRequest;
+use App\Http\Requests\Staging\StagingQuestionsRequest;
 use App\Http\Requests\Staging\UpdateStagingQuestionRequest;
 use App\Services\StagingService;
 use Illuminate\Http\JsonResponse;
@@ -15,9 +15,9 @@ class StagingController extends Controller
         $this->service = $service;
     }
 
-    public function index($id): JsonResponse
+    public function index(StagingQuestionsRequest $request): JsonResponse
     {
-        return $this->response('success', $this->service->index($id));
+        return $this->response('success', $this->service->index($request->all()));
     }
 
     public function store(StagingQuestionRequest $request): JsonResponse

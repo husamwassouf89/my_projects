@@ -19,6 +19,7 @@ class ImportRequest extends FormRequest
             'path'    => 'required|string',
             'year'    => 'required|string|in:' . implode(',', ClassType::getYears()),
             'quarter' => 'required|string|in:' . implode(',', ClassType::$QUARTERS),
+            'type'    => 'required|string|in:clients,banks,documents',
         ];
     }
 }

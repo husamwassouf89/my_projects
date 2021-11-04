@@ -14,20 +14,41 @@ class ClientStagingProfileService extends Service
 {
     use HelpKit;
 
-    public function calculateStaging($year, $quarter, $client, $grade = null)
+    public function calculateStaging($year, $quarter, $client, $grade = null, $info = null)
     {
-
-        if ($client->class_typ_id > 4) {
-            $list = ['AAA', 'AA', 'A', 'BBB', 'BB', 'B', 'CCC/C', 'Default'];
+        if ($client->class_type_id > 4) {
+            $list = ['AAA' => 1, 'AA' => 1, 'A' => 1, 'BBB' => 1,
+                     'BB'  => 2, 'B' => 2, 'CCC/C' => 2, 'Default' => 3];
             return $list[$grade];
         } else {
+
             $dateRange = $this->getDateRange($year, $quarter);
             $profile   = ClientStagingProfile::where('client_id', $client->id)
                                              ->where('created_at', '>=', $dateRange['last_date'])
                                              ->orderBy('id', 'desc')
                                              ->with('answers')
                                              ->first();
-            $stage     = 0;
+
+
+            $stage = 0;
+            if ($info->past_due_days) {
+                if ($info->past_due_days < 30) {
+                    $stage = 1;
+                } else if ($info->past_due_days >= 30 and $info->past_due_days < 90) {
+                    $stage = 2;
+                } else{
+                    $stage = 3;
+                }
+
+            }
+
+            if($client->finanical_status != 'None'){
+              if($client->finanical_status == 'Without Financial Data'){
+                  $stage = max($stage, 2);
+              } else {
+                  $stage = max($stage, 1);
+              }
+            }
             if ($profile and count($profile->answers)) {
                 foreach ($profile->answers as $item) {
                     $results = StagingOptionResult::where('staging_option_id', $item->staging_option_id)->get();
@@ -76,6 +97,14 @@ class ClientStagingProfileService extends Service
             }
             $profile->answers()->create($data);
         }
+
+//        $question = Question::where()
+//        $option = StagingOption::find($item['id']);
+//        $data   = ['staging_option_id' => $item['id']];
+//        if (isset($item['value']) and $option->with_value == 'Yes') {
+//            $data['value'] = $item['value'];
+//        }
+//        $profile->answers()->create($data);
 
         return $this->show($profile->id);
     }

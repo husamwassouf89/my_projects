@@ -5,22 +5,24 @@ namespace App\Services;
 
 
 use App\Models\Client\ClassType;
+use App\Models\Client\Client;
 use App\Models\Staging\StagingQuestion;
 
 class StagingService extends Service
 {
 
-    public function index($id)
+    public function index($input)
     {
-        $type = ClassType::findOrFail($id);
-        return StagingQuestion::where('class_type_id', $type->id)->with('options')->get();
+        $type   = ClassType::findOrFail($input['id']);
+        return StagingQuestion::where('class_type_id', $type->id)
+                              ->with('options')->get();
     }
 
     public function store($input)
     {
         $question = StagingQuestion::create([
-                                                'class_type_id' => $input['class_type_id'],
-                                                'text'          => $input['text'],
+                                                'class_type_id'    => $input['class_type_id'],
+                                                'text'             => $input['text'],
                                             ]);
 
         foreach ($input['options'] as $option) {

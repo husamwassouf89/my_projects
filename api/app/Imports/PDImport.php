@@ -38,7 +38,7 @@ class PDImport implements ToCollection
                 }
             }
         } catch (\Exception $e) {
-            dd([$this->pd->class_type_id,$value]);
+            return dd($collection[0]);
         }
 
         foreach ($collection as $key => $row) {

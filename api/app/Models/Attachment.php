@@ -20,7 +20,7 @@ class Attachment extends Model
 
     public function getPathAttribute($value)
     {
-        if ($this->attributes['path'] == 'file') {
+        if ($this->attributes['type'] == 'file') {
             return asset($value, env('HTTPS', false));
         } else {
             return $value;

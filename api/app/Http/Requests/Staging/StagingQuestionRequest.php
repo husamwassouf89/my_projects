@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Staging;
 
 use App\Http\Requests\FormRequest;
+use App\Models\Client\Client;
 use App\Models\Staging\StagingOption;
 
 class StagingQuestionRequest extends FormRequest
@@ -17,6 +18,7 @@ class StagingQuestionRequest extends FormRequest
         return [
             'class_type_id'        => 'required|numeric|exists:class_types,id',
             'text'                 => 'required|string',
+            'financial_status'     => 'required|string|in:' . implode(',', Client::$FINANCIAL_STATUS),
             'options'              => 'required|array',
             'options.*.id'         => 'nullable|numeric|exists:options,id',
             'options.*.text'       => 'required|string',

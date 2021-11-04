@@ -4,10 +4,11 @@ namespace Database\Seeders;
 
 use App\Models\Client\ClassType;
 use App\Models\Client\Currency;
+use App\Models\Client\DocumentType;
+use App\Models\Client\Predefined;
 use App\Models\Client\Type;
 use App\Models\IRS\Category;
 use App\Models\Permission\Permission;
-use App\Models\Permission\PermissionRole;
 use App\Models\Permission\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -75,17 +76,56 @@ class DatabaseSeeder extends Seeder
         }
         $list = ['AAA', 'AA', 'A', 'BBB', 'BB', 'B', 'CCC/C', 'Default'];
 
-        $classType = ClassType::create(['name' => 'Internal_FI']);
+        $classType = ClassType::create(['name' => 'Internal_FI', 'fixed' => 1]);
         for ($i = 0; $i < 8; $i++) {
             $classType->grades()->create(['serial_no' => $i, 'name' => $list[$i]]);
         }
 
-        $classType = ClassType::create(['name' => 'External_FI']);
+        $classType = ClassType::create(['name' => 'Local Bank', 'fixed' => 1]);
+        for ($i = 0; $i < 8; $i++) {
+            if ($i == 7) {
+                $lgd = 1;
+            } else {
+                $lgd = 0.45;
+            }
+            $grade = $classType->grades()->create(['serial_no' => $i, 'name' => $list[$i]]);
+            Predefined::create(['stage_id' => 1, 'grade_id' => $grade->id, 'class_type_id' => $classType->id, 'lgd' => $lgd]);
+            Predefined::create(['stage_id' => 2, 'grade_id' => $grade->id, 'class_type_id' => $classType->id, 'lgd' => $lgd]);
+            Predefined::create(['stage_id' => 3, 'grade_id' => $grade->id, 'class_type_id' => $classType->id, 'lgd' => $lgd]);
+
+        }
+
+        $classType = ClassType::create(['name' => 'Abroad Bank', 'fixed' => 1]);
+        for ($i = 0; $i < 8; $i++) {
+            if ($i == 7) {
+                $lgd = 1;
+            } else {
+                $lgd = 0.45;
+            }
+            $grade = $classType->grades()->create(['serial_no' => $i, 'name' => $list[$i]]);
+            Predefined::create(['stage_id' => 1, 'grade_id' => $grade->id, 'class_type_id' => $classType->id, 'lgd' => $lgd]);
+            Predefined::create(['stage_id' => 2, 'grade_id' => $grade->id, 'class_type_id' => $classType->id, 'lgd' => $lgd]);
+            Predefined::create(['stage_id' => 3, 'grade_id' => $grade->id, 'class_type_id' => $classType->id, 'lgd' => $lgd]);
+
+        }
+
+        $classType = ClassType::create(['name' => 'Investments', 'fixed' => 1]);
         for ($i = 0; $i < 8; $i++) {
             $classType->grades()->create(['serial_no' => $i, 'name' => $list[$i]]);
         }
 
-        $classType = ClassType::create(['name' => 'Sovereign']);
+        $classType = ClassType::create(['name' => 'Central Bank', 'fixed' => 1]);
+        for ($i = 0; $i < 1; $i++) {
+            $grade = $classType->grades()->create(['serial_no' => $i, 'name' => $list[$i]]);
+            Predefined::create(['stage_id' => 1, 'grade_id' => $grade->id, 'class_type_id' => $classType->id, 'lgd' => $lgd, 'pd' => '0']);
+            Predefined::create(['stage_id' => 1, 'grade_id' => $grade->id, 'class_type_id' => $classType->id, 'lgd' => $lgd, 'pd' => '0.045', 'currency_type' => 'foreign']);
+        }
+        $classType = ClassType::create(['name' => 'External_FI', 'fixed' => 1]);
+        for ($i = 0; $i < 8; $i++) {
+            $classType->grades()->create(['serial_no' => $i, 'name' => $list[$i]]);
+        }
+
+        $classType = ClassType::create(['name' => 'Sovereign', 'fixed' => 1]);
         for ($i = 0; $i < 8; $i++) {
             $classType->grades()->create(['serial_no' => $i, 'name' => $list[$i]]);
         }
@@ -95,7 +135,7 @@ class DatabaseSeeder extends Seeder
         Type::create(['name' => 'DB']);
         Type::create(['name' => 'OD']);
 
-        Currency::create(['code' => '001', 'name' => 'IQD']);
+        Currency::create(['code' => '001', 'name' => 'IQD', 'type' => Currency::$TYPES[1]]);
         Currency::create(['code' => '002', 'name' => 'USD']);
 
 
@@ -103,5 +143,13 @@ class DatabaseSeeder extends Seeder
         Category::create(['name' => 'Quality']);
         Category::create(['name' => 'Facilitation']);
 
+
+        DocumentType::create(['name' => 'اعتماد مستندي-مؤجل الدفع يتجاوز آجله 180يوم', 'ccf' => 1]);
+        DocumentType::create(['name' => 'اعتماد مستندي-غب الاطلاع لا يتجاوز آجله 180يوم', 'ccf' => 0.2]);
+        DocumentType::create(['name' => 'كفالة دفع (LG - Payment Guarantee)', 'ccf' => 1]);
+        DocumentType::create(['name' => 'كفالة حسن تنفيد (LG - Performance Bond)', 'ccf' => 0.5]);
+        DocumentType::create(['name' => 'كفالة دخول مناقصة (LG - Bid Bond)', 'ccf' => 0.5]);
+        DocumentType::create(['name' => 'تمويل شراء الجزء غير المكتتب به من إصدارات الأوراق المالية', 'ccf' => 0.5]);
+        DocumentType::create(['name' => 'مستندات برسم التحصيل', 'ccf' => 0]);
     }
 }

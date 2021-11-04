@@ -12,7 +12,8 @@ class IRSService extends Service
 {
     public function index($input)
     {
-        $data = IRS::joins()->selectIndex()->paginate($input['page_size']);
+        $data = IRS::where('financial_status', $input['financial_status'])
+                   ->joins()->selectIndex()->paginate($input['page_size']);
         return $this->handlePaginate($data, 'irs');
     }
 
@@ -34,10 +35,11 @@ class IRSService extends Service
 
     public function store($input)
     {
-        $irs = IRS::firstOrCreate([
-                                      'class_type_id' => $input['class_type_id'],
-                                      'category_id'   => $input['category_id'],
-                                  ]);
+        $irs             = IRS::firstOrCreate([
+                                                  'class_type_id'    => $input['class_type_id'],
+                                                  'category_id'      => $input['category_id'],
+                                                  'financial_status' => $input['financial_status'],
+                                              ]);
         $irs->percentage = $input['percentage'];
         $irs->save();
 
@@ -47,11 +49,13 @@ class IRSService extends Service
     public function show($input)
     {
         IRS::firstOrCreate([
-                               'class_type_id' => $input['class_type_id'],
-                               'category_id'   => $input['category_id'],
+                               'class_type_id'    => $input['class_type_id'],
+                               'category_id'      => $input['category_id'],
+                               'financial_status' => $input['financial_status'],
                            ]);
         return IRS::where('class_type_id', $input['class_type_id'])
                   ->where('category_id', $input['category_id'])
+                  ->where('financial_status', $input['financial_status'])
                   ->joins()
                   ->selectIndex()
                   ->first();

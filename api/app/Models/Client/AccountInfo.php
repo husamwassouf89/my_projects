@@ -13,7 +13,10 @@ class AccountInfo extends Model
 
     protected $hidden = ['updated_at'];
 
-    public function account(){
+    public function account()
+    {
         return $this->belongsTo(ClientAccount::class);
     }
+
+
 }
