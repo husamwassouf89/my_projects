@@ -6,7 +6,7 @@ import { useTranslation } from 'react-multi-lang'
 import { useDispatch, useSelector } from 'react-redux'
 import { InputField, NumberField, SelectField } from '../../components/FormElements/FormElements'
 import { EllipsisLoader, WhiteboxLoader } from '../../components/Loader/Loader'
-import { CategoriesMenu, ClassesMenu } from '../../components/PredefinedMenus/PredefinedMenus'
+import { CategoriesMenu, ClassesMenu, FinancialStatusMenu } from '../../components/PredefinedMenus/PredefinedMenus'
 
 import './IRS.css'
 import { answer, IRSSlice, IRSState, question } from './IRSSlice'
@@ -23,6 +23,7 @@ export default () => {
     const [isLoaded, setIsLoaded] = useState<boolean>(false)
     const [classType, setClassType] = useState<any>(null)
     const [category, setCategory] = useState<any>(null)
+    const [financialStatus, setFinancialStatus] = useState<any>(null)
     const [ irsID, setIRSID ] = useState<number>(0)
     const [ isSaving, setIsSaving ] = useState<number>(0)
 
@@ -41,7 +42,7 @@ export default () => {
         let questions = state.questions.filter(question => question.status !== "saved" && question.question).map(question => ({
             id: question.id,
             text: question.question,
-            max_options_value: Math.max.apply(Math, question.answers?.length === 0 ? [0] : question.answers?.map(answer => answer.rate || 0) || []),
+            max_options_value: Math.max.apply(Math, question.answers?.length === 0 ? [0] : question.answers?.map(answer => Number(answer.rate) || 0) || []),
             options: question.answers?.filter(answer => answer.rate && answer.answer).map(answer => ({
                 id: answer.id,
                 text: answer.answer,
@@ -90,7 +91,8 @@ export default () => {
                 ENDPOINTS.irs().store({
                     ...question,
                     category_id: category.value,
-                    class_type_id: classType.value
+                    class_type_id: classType.value,
+                    financial_status: financialStatus.value
                 })
                 .then((response: any) => {
                     setIsSaving(prev => prev - 1)
@@ -119,11 +121,11 @@ export default () => {
     }
 
     useEffect(() => {
-        if(classType && category) {
+        if(classType && category && financialStatus) {
             setIsLoaded(false)
             
             // Fetch
-            ENDPOINTS.irs().irs({ class_type_id: classType.value, category_id: category.value })
+            ENDPOINTS.irs().irs({ class_type_id: classType.value, category_id: category.value, financial_status: financialStatus.value })
             .then(((response: any) => {
                 let irs = response.data.data
                 setIRSID(irs.id)
@@ -144,21 +146,25 @@ export default () => {
             }))
 
         }
-    }, [classType, category])
+    }, [classType, category, financialStatus])
 
     return (
         <div className="irs">
             <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => e.preventDefault()}>
                 <Row>
-                    <Col md={6}>
+                    <Col md={4}>
                         <label>{t("class_type")}</label>
                         <ClassesMenu onChange={(selected: { value: number; }) => setClassType(selected)} placeholder="Class type" />
                     </Col>
-                    <Col md={6}>
+                    <Col md={4}>
                         <label>{t("factor")}</label>
                         <CategoriesMenu onChange={(selected: { value: number; }) => setCategory(selected)} placeholder="Factor" />
                     </Col>
-                    { classType && category && isLoaded &&
+                    <Col md={4}>
+                        <label>{t("Financial Status")}</label>
+                        <FinancialStatusMenu onChange={(selected: { value: number; }) => setFinancialStatus(selected)} placeholder="Financial Status" />
+                    </Col>
+                    { classType && category && financialStatus && isLoaded &&
                     <>
                     <Col md={8}>
                         <h3 style={{ lineHeight: "50px" }}><span style={{ fontWeight: "normal" }}>Questions related to </span>{classType.label} &#x3E; {category.label} Factors</h3>
@@ -178,7 +184,7 @@ export default () => {
             
             {/* Questions */}
             {
-                classType && category ?
+                classType && category && financialStatus ?
                 isLoaded ?
                 <div className="questions">
                     
@@ -194,7 +200,7 @@ export default () => {
                                             <li>
                                                 <input className="answer" value={answer.answer} placeholder="Type an answer" onChange={(e: React.ChangeEvent<HTMLInputElement>) => dispatch(IRSSlice.actions.editAnswer({ q_index, a_index, answer: { answer: e.target.value } }))} />
                                                 <div className="percentage">
-                                                    <NumberField placeholder="Answer rate" value={answer.rate} onChange={(e: React.ChangeEvent<HTMLInputElement>) => dispatch(IRSSlice.actions.editAnswer({ q_index, a_index, answer: { rate: Number(e.target.value) } }))} />
+                                                    <InputField placeholder="Answer rate" value={answer.rate} onChange={(e: React.ChangeEvent<HTMLInputElement>) => dispatch(IRSSlice.actions.editAnswer({ q_index, a_index, answer: { rate: e.target.value } }))} />
                                                 </div>
                                             </li>
                                         )) }

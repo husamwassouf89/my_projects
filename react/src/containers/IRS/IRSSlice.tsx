@@ -4,7 +4,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 export interface answer {
     id?: number;
     answer?: string;
-    rate?: number;
+    rate?: string;
 }
 
 export interface question {
@@ -37,7 +37,7 @@ const initialState: IRSState = {
 // Calculate percentage
 const calculatePercentage = (state: IRSState): number => {
     return state.questions.map(question =>
-        Math.max.apply(Math, question.answers?.length === 0 ? [0] : question.answers?.map(answer => answer.rate || 0) || [])
+        Math.max.apply(Math, question.answers?.length === 0 ? [0] : question.answers?.map(answer => Number(answer.rate) || 0) || [])
     ).reduce((a, b) => a + b, 0)
 }
 

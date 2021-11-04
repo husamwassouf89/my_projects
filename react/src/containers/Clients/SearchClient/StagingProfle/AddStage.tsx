@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react"
-import { CategoriesMenu } from "../../../components/PredefinedMenus/PredefinedMenus"
-import API from "../../../services/api/api"
+import { CategoriesMenu } from "../../../../components/PredefinedMenus/PredefinedMenus"
+import API from "../../../../services/api/api"
 
 import select_vector from '../../../assets/images/vectors/select.svg'
-import { EllipsisLoader, WhiteboxLoader } from "../../../components/Loader/Loader"
+import { EllipsisLoader, WhiteboxLoader } from "../../../../components/Loader/Loader"
 import { Collapse } from "react-collapse"
-import { InputField, NumberField, RadioButton } from "../../../components/FormElements/FormElements"
+import { InputField, NumberField, RadioButton } from "../../../../components/FormElements/FormElements"
 
 import './AddStage.css'
 import { t } from "react-multi-lang"

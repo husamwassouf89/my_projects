@@ -9,6 +9,7 @@ import API from '../../services/api/api'
 
 // Components
 import { SelectField } from '../FormElements/FormElements'
+import { t } from 'react-multi-lang'
 
 export const ClassesMenu = (props: any) => {
 
@@ -81,6 +82,46 @@ export const CategoriesMenu = (props: any) => {
             options={state.categories.list}
             onMenuOpen={() => {
                 if (!state.categories.isLoaded && !isFetching) {
+                    setIsFetching(true)
+                    fetchData()
+                }
+
+            }}
+        />
+    )
+
+}
+
+export const FinancialStatusMenu = (props: any) => {
+
+    // Redux
+    const dispatch = useDispatch()
+    const state: predefinedState = useSelector((state: { predefined_menus: predefinedState }) => state.predefined_menus)
+
+    // Hooks
+    const [isFetching, setIsFetching] = useState<boolean>(false)
+
+    // API
+    const ENDPOINTS = new API()
+
+    const fetchData = () => {
+        
+        ENDPOINTS.other().predefined()
+        .then((response: any) => {
+            let list = response.data.data.financial_status.map((item: any) => ({ value: t(item), label: item }))
+            dispatch( predefinedMenusSlice.actions.setFinancialStatuses({ list }) )
+            setIsFetching(false)
+        })
+
+    }
+
+    return (
+        <SelectField
+            {...props}
+            isLoading={isFetching}
+            options={state.financial_statuses.list}
+            onMenuOpen={() => {
+                if (!state.financial_statuses.isLoaded && !isFetching) {
                     setIsFetching(true)
                     fetchData()
                 }

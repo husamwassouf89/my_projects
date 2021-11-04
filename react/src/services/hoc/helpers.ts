@@ -108,5 +108,9 @@ export const toFixed = (n: number, digits: number): number => {
 }
 
 export const numberWithCommas = (n: number) => {
-    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return n?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
+
+let currentYear = (new Date()).getFullYear()
+let oldestYear = currentYear - 50
+export const years = Array.from({ length: (oldestYear - currentYear) / -1 + 1}, (_, i) => ({ value: currentYear + (i * -1), label: currentYear + (i * -1) }))

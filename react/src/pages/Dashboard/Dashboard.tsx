@@ -9,9 +9,9 @@ import { useCookies } from 'react-cookie'
 
 // Components
 import { SideNav, TopNav } from '../../components/Nav/Nav'
-import SearchClient from '../../containers/Clients/SearchClient'
+import SearchClient from '../../containers/Clients/SearchClient/SearchClient'
 import Clients from '../../containers/Clients/Clients'
-import ImportClients from '../../containers/Clients/ImportClients'
+import ImportClients from '../../containers/ImportClients/ImportClients'
 import PDs from '../../containers/PD/PDs'
 import ImportPDs from '../../containers/PD/ImportPDs'
 import IRS from '../../containers/IRS/IRS'
@@ -22,16 +22,17 @@ export default (props: any) => {
 
     const navList = [
         {
+            icon: "icon-search-1",
+            name: t("search_client"),
+            link: "/search-client",
+            show: true
+        },
+        {
             icon: "icon-users",
-            name: t("clients"),
+            name: t("direct_credit_facilities"),
+            sub_name: 'Corporate – SME – Retail',
             show: true,
             childs: [
-                {
-                    icon: "icon-product",
-                    name: t("search_client"),
-                    link: "/search-client",
-                    show: true
-                },
                 {
                     icon: "icon-hammer",
                     name: t("all_clients"),
@@ -42,6 +43,46 @@ export default (props: any) => {
                     icon: "icon-tasks",
                     name: t("import_clients"),
                     link: "/import-clients",
+                    show: true
+                },
+            ]
+        },
+        {
+            icon: "icon-users",
+            name: t("Financial institutions"),
+            sub_name: 'Banks - investments',
+            show: true,
+            childs: [
+                {
+                    icon: "icon-hammer",
+                    name: t("all_clients"),
+                    link: "/institutions",
+                    show: true
+                },
+                {
+                    icon: "icon-tasks",
+                    name: t("import_clients"),
+                    link: "/import-institutions",
+                    show: true
+                },
+            ]
+        },
+        {
+            icon: "icon-users",
+            name: t("OFF-Balance"),
+            sub_name: 'Corporate – SME – Retail',
+            show: true,
+            childs: [
+                {
+                    icon: "icon-hammer",
+                    name: t("all_clients"),
+                    link: "/offbalance",
+                    show: true
+                },
+                {
+                    icon: "icon-tasks",
+                    name: t("import_clients"),
+                    link: "/import-offbalance",
                     show: true
                 },
             ]
@@ -71,12 +112,12 @@ export default (props: any) => {
             show: true,
             link: "/irs"
         },
-        {
-            icon: "icon-gears",
-            name: t("settings"),
-            show: true,
-            link: "/settings"
-        }
+        // {
+        //     icon: "icon-gears",
+        //     name: t("settings"),
+        //     show: true,
+        //     link: "/settings"
+        // }
     ]
 
     let section = props.match.params.section ? props.match.params.section.toLowerCase() : "search-client"
@@ -86,9 +127,48 @@ export default (props: any) => {
             case "search-client":
                 return(<SearchClient />)
             case "all-clients":
-                return(<Clients />)
+                return(
+                    <Clients
+                        classesList={[
+                            { label: 'Corporate', value: 1 },
+                            { label: 'Middle', value: 2 },
+                            { label: 'SME`s', value: 3 },
+                            { label: 'Retail', value: 4 }
+                        ]}
+                        defaultClass={{ label: 'Corporate', value: 1 }}
+                        />
+                )
             case "import-clients":
-                return(<ImportClients />)
+                return(<ImportClients type="clients" />)
+            case "institutions":
+                return(
+                    <Clients
+                        classesList={[
+                            { label: 'Local Bank', value: 6 },
+                            { label: 'Abroad Bank', value: 7 },
+                            { label: 'Central Bank', value: 9 },
+                            { label: 'Investments', value: 8 }
+                        ]}
+                        defaultClass={{ label: 'Local Bank', value: 6 }}
+                        />
+                )
+            case "import-institutions":
+                return(<ImportClients type="banks" />)
+            case "offbalance":
+                return(
+                    <Clients
+                        classesList={[
+                            { label: 'Corporate', value: 1 },
+                            { label: 'Middle', value: 2 },
+                            { label: 'SME`s', value: 3 },
+                            { label: 'Retail', value: 4 }
+                        ]}
+                        defaultClass={{ label: 'Corporate', value: 1 }}
+                        offbalance
+                        />
+                )
+            case "import-offbalance":
+                return(<ImportClients type="documents" />)
             case 'all-pds':
                 return(<PDs />)
             case 'import-pd':

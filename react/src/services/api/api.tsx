@@ -5,7 +5,11 @@ import { addToDate } from '../hoc/helpers';
 interface pagination {
     page: number,
     page_size: number,
-    keyword?: string
+    keyword?: string,
+    class_type_id?: number;
+    quarter?: string;
+    year?: number;
+    type?: string;
 }
 
 interface pd {
@@ -88,7 +92,8 @@ class API {
         index( query: pagination ): any;
         show( query: { id: number } ): any;
         search_cif( query: { cif: number } ): any;
-        store( query: { path: string; year: string; quarter: "q1" | "q2" | "q3" | "q4"; } ): any;
+        store( query: { path: string; year: string; quarter: "q1" | "q2" | "q3" | "q4"; type: string; } ): any;
+        change_financial_status( query: { id: number; financial_status: string; } ): any;
     } {
         var endpoints:any = {}
 
@@ -99,6 +104,8 @@ class API {
         endpoints.search_cif = ( query: any, name='clients' ) => axios.get( `${this.url}/${name}/cif/${query.cif}`, { params: query } )
         
         endpoints.store = ( query: any, name='clients' ) => axios.post( `${this.url}/${name}`, query )
+
+        endpoints.change_financial_status = ( query: any, name='clients/change-financial-status' ) => axios.post( `${this.url}/${name}`, query )
 
         return endpoints
     }
@@ -112,7 +119,7 @@ class API {
         index( query: pagination ): any;
         show( query: { id: number } ): any;
         store( query: pd ): any;
-        delete( query: { ids: number[] } ): any;
+        delete( query: { id: number } ): any;
     } {
         var endpoints:any = {}
 
@@ -122,7 +129,7 @@ class API {
         
         endpoints.store = ( query: any, name='pd' ) => axios.post( `${this.url}/${name}`, query )
 
-        endpoints.delete = ( query: any, name="pd/delete" ) => axios.delete( `${this.url}/${name}`, { params: query } )
+        endpoints.delete = ( query: any, name="pd" ) => axios.delete( `${this.url}/${name}/${query.id}`, { params: query } )
 
         return endpoints
     }
@@ -133,7 +140,7 @@ class API {
      * @param {}
      */
      irs(): {
-        irs( query: { class_type_id: number; category_id: number; } ): any;
+        irs( query: { class_type_id: number; category_id: number; financial_status: string; } ): any;
         questions( query: { id: number; } ): any;
         store( query: any ): any;
         update( query: any ): any;

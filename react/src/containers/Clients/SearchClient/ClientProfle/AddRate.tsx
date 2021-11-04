@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react"
-import { CategoriesMenu } from "../../../components/PredefinedMenus/PredefinedMenus"
-import API from "../../../services/api/api"
+import { CategoriesMenu } from "../../../../components/PredefinedMenus/PredefinedMenus"
+import API from "../../../../services/api/api"
 
-import select_vector from '../../../assets/images/vectors/select.svg'
-import { EllipsisLoader, WhiteboxLoader } from "../../../components/Loader/Loader"
+import select_vector from '../../../../assets/images/vectors/select.svg'
+import { EllipsisLoader, WhiteboxLoader } from "../../../../components/Loader/Loader"
 import { Collapse } from "react-collapse"
-import { RadioButton } from "../../../components/FormElements/FormElements"
+import { RadioButton } from "../../../../components/FormElements/FormElements"
 
 import './AddRate.css'
 import { t } from "react-multi-lang"
@@ -15,6 +15,7 @@ interface IProps {
     client_id: number;
     defaultAnswers: number[];
     readonly: boolean;
+    financial_status: string;
 }
 
 export default (props: IProps) => {
@@ -34,7 +35,7 @@ export default (props: IProps) => {
 
         if(category) {
             setIsLoaded(false)
-            ENDPOINTS.irs().irs({ class_type_id: props.class_type, category_id: category?.value })
+            ENDPOINTS.irs().irs({ class_type_id: props.class_type, category_id: category?.value, financial_status: props.financial_status })
             .then((response: any) => {
                 setQuestions(response.data.data.questions)
                 setIsLoaded(true)

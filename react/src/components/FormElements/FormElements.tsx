@@ -26,7 +26,7 @@ export const InputField = (props: any) => {
 
     return (
         <div className="input-box">
-            <input {...field} autoComplete="" id={id} />
+            <input {...field} style={ props.style || (props.bg ? { background: props.bg } : {})} autoComplete="" id={id} />
             { inputLabel ? <label className={props.value ? "active" : ''} htmlFor={id}>{inputLabel}</label> : ''}
             {props.error ? <i className="icon-error" data-tip={props.error}></i> : ''}
             {props.error ? <ReactTooltip place="left" type="error" effect="solid" delayHide={500} /> : ''}

@@ -10,8 +10,11 @@ import { Col, Row } from 'react-grid-system'
 import FileUploader from '../../components/FileUploader/FileUploader'
 import API from '../../services/api/api'
 import { toast } from 'react-toastify'
+import { years } from '../../services/hoc/helpers'
 
-export default () => {
+export default (props: { type: 'clients' | 'banks' | 'documents' }) => {
+
+    const { type } = props;
 
     // Hooks
     const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -19,11 +22,6 @@ export default () => {
     const [submitError, setSubmitError] = useState<boolean>(false)
     const [year, setYear] = useState<number | null>(null)
     const [quarter, setQuarter] = useState<'q1' | 'q2' | 'q3' | 'q4' | null>(null)
-
-    // Years
-    let currentYear = (new Date()).getFullYear()
-    let oldestYear = currentYear - 50
-    let years = Array.from({ length: (oldestYear - currentYear) / -1 + 1}, (_, i) => ({ value: currentYear + (i * -1), label: currentYear + (i * -1) }))
 
     // Translation
     const t = useTranslation()
@@ -40,7 +38,8 @@ export default () => {
         ENDPOINTS.clients().store({
             path: importFile || "",
             year: String(year) || "",
-            quarter: quarter || "q1"
+            quarter: quarter || "q1",
+            type
         })
         .then((response: any) => {
             toast("Your clients file has been imported successfully!", {

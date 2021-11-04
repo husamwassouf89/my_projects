@@ -8,7 +8,7 @@
 .side-nav ul li a { color: #FFF; display: block; height: 90px; }
 .side-nav ul li.active,
 .side-nav ul li:hover { opacity: 1; transform: scale(1.1 ); }
-.side-nav ul li span { line-height: 18px; position: absolute; top: 50%; left: 50%; width: 100%; transform: translate( -50%, -50% ); font-size: 12px; }
+.side-nav ul li span { line-height: 18px; position: absolute; top: 50%; left: 50%; width: 100%; transform: translate( -50%, -50% ); font-size: 12px; padding: 0 15px; }
 .side-nav ul li i { display: block; font-size: 25px; margin-bottom: 5px; }
 
 .side-nav ul ul { background: #793b7e; padding: 0 20px; }

@@ -1,10 +1,10 @@
 import { useEffect } from "react"
 import { useState } from "react"
 import { useTranslation } from "react-multi-lang"
-import { EllipsisLoader } from "../../../components/Loader/Loader"
-import Modal from "../../../components/Modal/Modal"
-import { DashboardTable } from "../../../components/Table/Table"
-import API from "../../../services/api/api"
+import { EllipsisLoader } from "../../../../components/Loader/Loader"
+import Modal from "../../../../components/Modal/Modal"
+import { DashboardTable } from "../../../../components/Table/Table"
+import API from "../../../../services/api/api"
 import AddRate from "./AddRate"
 
 interface IProps {
@@ -12,6 +12,7 @@ interface IProps {
     toggle: Function;
     client_id: number;
     class_type: number;
+    financial_status: string;
 }
 
 export default (props: IProps) => {
@@ -81,7 +82,7 @@ export default (props: IProps) => {
                 </div>
             </div> : <EllipsisLoader /> }
             </> : 
-            <AddRate class_type={props.class_type} client_id={props.client_id} defaultAnswers={answers} readonly={!editable} /> }
+            <AddRate class_type={props.class_type} client_id={props.client_id} defaultAnswers={answers} readonly={!editable} financial_status={props.financial_status} /> }
         </Modal>
     )
 }

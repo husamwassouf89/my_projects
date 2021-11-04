@@ -15,8 +15,17 @@ import { EllipsisLoader, WhiteboxLoader } from '../../components/Loader/Loader'
 import { Link } from 'react-router-dom'
 
 import './Clients.css'
+import { ClassesMenu } from '../../components/PredefinedMenus/PredefinedMenus'
+import { SelectField } from '../../components/FormElements/FormElements'
+import { years } from '../../services/hoc/helpers'
 
-export default () => {
+interface IProps {
+    defaultClass: { label: string; value: number; };
+    classesList: { label: string; value: number; }[];
+    offbalance?: boolean;
+}
+
+export default (props: IProps) => {
 
     // Translation
     const t = useTranslation()
@@ -26,7 +35,10 @@ export default () => {
     const state = useSelector( ( state: { clients: clientsState } ) => state.clients )
 
     // Hooks
-    const [keyword, setKeyword] = useState<string>("")
+    const [keyword, setKeyword] = useState<string>("");
+    const [classType, setClassType] = useState<number>(props.defaultClass.value);
+    const [year, setYear] = useState<number>()
+    const [quarter, setQuarter] = useState<'q1' | 'q2' | 'q3' | 'q4'>()
 
     // API
     const ENDPOINTS = new API()
@@ -47,7 +59,7 @@ export default () => {
 
         dispatch( clientsSlice.actions.setIsFetching( true ) )
 
-        ENDPOINTS.clients().index({ page, page_size })
+        ENDPOINTS.clients().index({ page, page_size, class_type_id: classType, year, quarter, type: props.offbalance ? 'documents' : undefined })
         .then((response: any) => {
             let clients: client[] = response.data.data.clients.map((client: any): client => ({
                 id: client.id,
@@ -92,11 +104,43 @@ export default () => {
             fetchData(1)
     }, [])
 
+    useEffect(() => {
+        tableRef.current?.reset()
+        dispatch( clientsSlice.actions.reset() )
+    }, [classType, year, quarter, props.offbalance])
+
+    useEffect(() => {
+        if(props.defaultClass.value !== classType)
+            setClassType(props.defaultClass.value);
+    }, [props.defaultClass]);
+
     return(
         <>
             { state.isLoaded ?
             <>
                 { state.isLoading ? <WhiteboxLoader /> : ""}
+                <form>
+                    <div className="filters">
+                        <div className="filter" key={props.defaultClass.label}>
+                            <SelectField
+                                defaultValue={props.defaultClass}
+                                onChange={(selected: any) => setClassType(selected.value)}
+                                options={props.classesList}
+                                />
+                        </div>
+                        <div className="filter">
+                            <SelectField isClearable onChange={(selected: { value: number; }) => setYear(selected?.value)} placeholder={t("year")} options={years} />
+                        </div>
+                        <div className="filter">
+                            <SelectField isClearable onChange={(selected: { value: 'q1' | 'q2' | 'q3' | 'q4'; }) => setQuarter(selected?.value)} placeholder={t("quarter")} options={[
+                                { label: "Q1", value: "q1" },
+                                { label: "Q2", value: "q2" },
+                                { label: "Q3", value: "q3" },
+                                { label: "Q4", value: "q4" }
+                            ]} />
+                        </div>
+                    </div>
+                </form>
                 <TableActionBar
                     title={t("clients")}
                     search={search}

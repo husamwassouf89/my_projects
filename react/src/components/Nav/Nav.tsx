@@ -24,11 +24,13 @@ import { LanguageSwitcher, LightDarkModeSwitcher } from '../FormElements/FormEle
 import Logo from '../../assets/images/logo/primary.svg'
 import { UnmountClosed } from 'react-collapse';
 import { useTranslation } from 'react-multi-lang';
+import ReactTooltip from 'react-tooltip';
 
 interface NavProps {
     list: {
         icon: string,
         name: string,
+        sub_name?: string;
         link?: string,
         show: boolean;
         childs?: {
@@ -76,7 +78,13 @@ export const SideNav = (props: NavProps) => {
                         if(item.childs)
                             return(
                                 <>
-                                <li key={"side-" + index} className={(item.childs.map(item => item.link.substring(1))).includes(props.active || "") ? "active" : ""} onClick={() => setActiveBox(getActiveBoxPositionByIndex(index))}><Link to={item.childs[0]?.link || ""}><span><i className={item.icon}></i> {item.name}</span></Link></li>
+                                <li key={"side-" + index} className={(item.childs.map(item => item.link.substring(1))).includes(props.active || "") ? "active" : ""} onClick={() => setActiveBox(getActiveBoxPositionByIndex(index))} data-tip={item.sub_name}>
+                                    <Link to={item.childs[0]?.link || ""}>
+                                        <span>
+                                            <i className={item.icon}></i> {item.name}
+                                        </span>
+                                    </Link>
+                                </li>
                                 <UnmountClosed key={"collapse-" + index} isOpened={(item.childs.map(item => item.link.substring(1))).includes(props.active || "")}>
                                     <ul>
                                         {
@@ -95,6 +103,7 @@ export const SideNav = (props: NavProps) => {
                     })}
                 </ul>
             </Scrollbars>
+            <ReactTooltip place="top" effect="solid" />
         </nav>
     )
 }

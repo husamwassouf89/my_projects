@@ -297,7 +297,7 @@
     "receipt_order_details": "Receipt order details",
     "edit_receipt_order": "Edit receipt order",
 
-    "delete_confirmation": "Are you sure you want to delete these items?",
+    "delete_confirmation": "Are you sure you want to delete this item?",
 
     "monthly_salaries": "Monthly salaries",
     "issue_monthly_salaries": "Issue monthly salaries",
@@ -405,6 +405,8 @@
     "loan_key": "Loan key",
     "year": "Year",
     "quarter": "Quarter",
-    "weight": "Weight"
+    "weight": "Weight",
+
+    "direct_credit_facilities": "Direct credit facilities"
 
 }

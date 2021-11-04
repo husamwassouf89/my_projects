@@ -5,3 +5,21 @@
 .rtl .profiles { text-align: right!important; }
 .rtl .profiles > button { float: left!important; }
 .profiles .dashboard-table { padding: 0; }
+
+.filters {
+    position: absolute;
+    top: 35px;
+    right: 70px;
+    z-index: 1000;
+    width: 100%;
+    text-align: right;
+}
+
+.filters .filter {
+    min-width: 200px;
+    display: inline-block;
+    margin-left: 20px;
+}
+
+.details-table form .react-select { margin: 0; }
+.details-table form .react-select .react-select__control { border-radius: 0; background: #eee; }

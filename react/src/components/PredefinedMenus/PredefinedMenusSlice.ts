@@ -16,6 +16,10 @@ export interface predefinedState {
         list: select[],
         isLoaded: boolean
     },
+    financial_statuses: {
+        list: select[],
+        isLoaded: boolean
+    },
 }
 
 const initialPredefinedState: predefinedState = {
@@ -26,7 +30,11 @@ const initialPredefinedState: predefinedState = {
     categories: {
         list: [],
         isLoaded: false
-    }
+    },
+    financial_statuses: {
+        list: [],
+        isLoaded: false
+    },
 }
 
 // Predefined slice
@@ -43,7 +51,14 @@ export const predefinedMenusSlice = createSlice({
         },
         setCategories: ( state, {payload}: PayloadAction<{ list: select[] }> ) => {
             state.categories = {
-                ...state.classes,
+                ...state.categories,
+                list: payload.list,
+                isLoaded: true
+            }
+        },
+        setFinancialStatuses: ( state, {payload}: PayloadAction<{ list: select[] }> ) => {
+            state.financial_statuses = {
+                ...state.financial_statuses,
                 list: payload.list,
                 isLoaded: true
             }

@@ -1,10 +1,10 @@
 import { useEffect } from "react"
 import { useState } from "react"
 import { useTranslation } from "react-multi-lang"
-import { EllipsisLoader } from "../../../components/Loader/Loader"
-import Modal from "../../../components/Modal/Modal"
-import { DashboardTable } from "../../../components/Table/Table"
-import API from "../../../services/api/api"
+import { EllipsisLoader } from "../../../../components/Loader/Loader"
+import Modal from "../../../../components/Modal/Modal"
+import { DashboardTable } from "../../../../components/Table/Table"
+import API from "../../../../services/api/api"
 import AddRate from "./AddStage"
 
 interface IProps {

@@ -32,12 +32,12 @@ export default () => {
     const [quarter, setQuarter] = useState<'q1' | 'q2' | 'q3' | 'q4' | null>(null)
     const [importFile, setImportFile] = useState<string | null>(null)
     const [attachments, setAttachments] = useState<number[]>([])
-    const [ecoParameterBaseValue, setEcoParameterBaseValue] = useState<number>(1)
-    const [ecoParameterBaseWeight, setEcoParameterBaseWeight] = useState<number>(1)
-    const [ecoParameterMildValue, setEcoParameterMildValue] = useState<number>(1)
-    const [ecoParameterMildWeight, setEcoParameterMildWeight] = useState<number>(1)
-    const [ecoParameterHeavyValue, setEcoParameterHeavyValue] = useState<number>(1)
-    const [ecoParameterHeavyWeight, setEcoParameterHeavyWeight] = useState<number>(1)
+    const [ecoParameterBaseValue, setEcoParameterBaseValue] = useState<string>("1")
+    const [ecoParameterBaseWeight, setEcoParameterBaseWeight] = useState<string>("0.33")
+    const [ecoParameterMildValue, setEcoParameterMildValue] = useState<string>("1")
+    const [ecoParameterMildWeight, setEcoParameterMildWeight] = useState<string>("0.33")
+    const [ecoParameterHeavyValue, setEcoParameterHeavyValue] = useState<string>("1")
+    const [ecoParameterHeavyWeight, setEcoParameterHeavyWeight] = useState<string>("0.33")
 
     // API
     const ENDPOINTS = new API()
@@ -59,12 +59,12 @@ export default () => {
             path: importFile,
             quarter,
             year: "" + year,
-            eco_parameter_base_value: ecoParameterBaseValue,
-            eco_parameter_base_weight: ecoParameterBaseWeight,
-            eco_parameter_mild_value: ecoParameterMildValue,
-            eco_parameter_mild_weight: ecoParameterMildWeight,
-            eco_parameter_heavy_value: ecoParameterHeavyValue,
-            eco_parameter_heavy_weight: ecoParameterHeavyWeight
+            eco_parameter_base_value: Number(ecoParameterBaseValue),
+            eco_parameter_base_weight: Number(ecoParameterBaseWeight),
+            eco_parameter_mild_value: Number(ecoParameterMildValue),
+            eco_parameter_mild_weight: Number(ecoParameterMildWeight),
+            eco_parameter_heavy_value: Number(ecoParameterHeavyValue),
+            eco_parameter_heavy_weight: Number(ecoParameterHeavyWeight)
         })
         .then((response: any) => {
             toast("Your PD file has been imported successfully!", {
@@ -96,10 +96,10 @@ export default () => {
                     <label>Eco parameter - <strong>Base</strong></label>
                     <Row>
                         <Col md={6}>
-                            <NumberField bg={"white"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEcoParameterBaseWeight(Number(e.target.value))} value={ecoParameterBaseWeight} placeholder={t("weight")} />
+                            <InputField bg={"white"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEcoParameterBaseWeight(e.target.value)} value={ecoParameterBaseWeight} placeholder={t("weight")} />
                         </Col>
                         <Col md={6}>
-                            <NumberField bg={"white"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEcoParameterBaseValue(Number(e.target.value))} value={ecoParameterBaseValue} placeholder={t("value")} />
+                            <InputField bg={"white"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEcoParameterBaseValue(e.target.value)} value={ecoParameterBaseValue} placeholder={t("value")} />
                         </Col>
                     </Row>
                 </div>
@@ -108,10 +108,10 @@ export default () => {
                     <label>Eco parameter - <strong>Mild</strong></label>
                     <Row>
                         <Col md={6}>
-                            <NumberField bg={"white"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEcoParameterMildWeight(Number(e.target.value))} value={ecoParameterMildWeight} placeholder={t("weight")} />
+                            <InputField bg={"white"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEcoParameterMildWeight(e.target.value)} value={ecoParameterMildWeight} placeholder={t("weight")} />
                         </Col>
                         <Col md={6}>
-                            <NumberField bg={"white"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEcoParameterMildValue(Number(e.target.value))} value={ecoParameterMildValue} placeholder={t("value")} />
+                            <InputField bg={"white"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEcoParameterMildValue(e.target.value)} value={ecoParameterMildValue} placeholder={t("value")} />
                         </Col>
                     </Row>
                 </div>
@@ -120,10 +120,10 @@ export default () => {
                     <label>Eco parameter - <strong>Heavy</strong></label>
                     <Row>
                         <Col md={6}>
-                            <NumberField bg={"white"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEcoParameterHeavyWeight(Number(e.target.value))} value={ecoParameterHeavyWeight} placeholder={t("weight")} />
+                            <InputField bg={"white"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEcoParameterHeavyWeight(e.target.value)} value={ecoParameterHeavyWeight} placeholder={t("weight")} />
                         </Col>
                         <Col md={6}>
-                            <NumberField bg={"white"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEcoParameterHeavyValue(Number(e.target.value))} value={ecoParameterHeavyValue} placeholder={t("value")} />
+                            <InputField bg={"white"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEcoParameterHeavyValue(e.target.value)} value={ecoParameterHeavyValue} placeholder={t("value")} />
                         </Col>
                     </Row>
                 </div>
