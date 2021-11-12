@@ -20,8 +20,7 @@ import { SelectField } from '../../components/FormElements/FormElements'
 import { years } from '../../services/hoc/helpers'
 
 interface IProps {
-    defaultClass: { label: string; value: number; };
-    classesList: { label: string; value: number; }[];
+    category: 'facility' | 'financial';
     offbalance?: boolean;
 }
 
@@ -36,9 +35,10 @@ export default (props: IProps) => {
 
     // Hooks
     const [keyword, setKeyword] = useState<string>("");
-    const [classType, setClassType] = useState<number>(props.defaultClass.value);
-    const [year, setYear] = useState<number>()
-    const [quarter, setQuarter] = useState<'q1' | 'q2' | 'q3' | 'q4'>()
+    const [classType, setClassType] = useState<any>();
+    const [year, setYear] = useState<number>((new Date()).getFullYear())
+    const [quarter, setQuarter] = useState<'q1' | 'q2' | 'q3' | 'q4'>('q1')
+    const [classes, setClasses] = useState<any[]>([]);
 
     // API
     const ENDPOINTS = new API()
@@ -56,10 +56,11 @@ export default (props: IProps) => {
 
     // Fetch Data
     const fetchData = (page: number, page_size: number = 10) => {
-
+        console.log(classes);
+        console.log(classType);
         dispatch( clientsSlice.actions.setIsFetching( true ) )
 
-        ENDPOINTS.clients().index({ page, page_size, class_type_id: classType, year, quarter, type: props.offbalance ? 'documents' : undefined })
+        ENDPOINTS.clients().index({ page, page_size, class_type_id: classType.id, year, quarter, type: props.offbalance ? 'documents' : undefined })
         .then((response: any) => {
             let clients: client[] = response.data.data.clients.map((client: any): client => ({
                 id: client.id,
@@ -72,7 +73,6 @@ export default (props: IProps) => {
             
             dispatch( clientsSlice.actions.addClients( clients ) )
             dispatch( clientsSlice.actions.setHasMore( page < Number(response.data.data.last_page) ) )
-            console.log(page !== Number(response.data.data.last_page))
             if( !state.isLoaded )
                 dispatch( clientsSlice.actions.setIsLoaded( true ) )
         })
@@ -90,7 +90,7 @@ export default (props: IProps) => {
                 class_type: client.class_type,
                 type: client.type,
                 actions: <div className="show-on-hover">
-                            <Link to={ "/search-client?cif=" + client.cif }><i className="icon-info" style={{ color: "#333" }} /></Link>
+                            <Link to={ `/search-client?cif=${client.cif}&year=${year}&quarter=${quarter}` }><i className="icon-info" style={{ color: "#333" }} /></Link>
                         </div>
             }
         })
@@ -100,9 +100,23 @@ export default (props: IProps) => {
 
     // First fetch
     useEffect(() => {
-        if( !state.isLoaded && !state.isFetching )
-            fetchData(1)
+        if( state.isLoaded || state.isFetching )
+            return;
+        ENDPOINTS.other().predefined()
+        .then((response: any) => {
+            setClasses(response.data?.data?.class_types);
+            setClassType(response.data?.data?.class_types?.filter((item: any) => item.category === props.category)[0]);
+        })
+        return(() => {
+            dispatch( clientsSlice.actions.setIsLoaded( false ) )
+            dispatch( clientsSlice.actions.setIsFetching( false ) )
+        })
     }, [])
+
+    useEffect(() => {
+        if(!state.isLoaded && classes?.length > 0 && classType)
+            fetchData(1);
+    }, [classes, classType]);
 
     useEffect(() => {
         tableRef.current?.reset()
@@ -110,9 +124,9 @@ export default (props: IProps) => {
     }, [classType, year, quarter, props.offbalance])
 
     useEffect(() => {
-        if(props.defaultClass.value !== classType)
-            setClassType(props.defaultClass.value);
-    }, [props.defaultClass]);
+        if(classes.filter((item: any) => item.category === props.category)[0] !== classType)
+            setClassType(classes.filter((item: any) => item.category === props.category)[0]);
+    }, [props.category]);
 
     return(
         <>
@@ -121,18 +135,20 @@ export default (props: IProps) => {
                 { state.isLoading ? <WhiteboxLoader /> : ""}
                 <form>
                     <div className="filters">
-                        <div className="filter" key={props.defaultClass.label}>
+                        <div className="filter" key={props.category}>
                             <SelectField
-                                defaultValue={props.defaultClass}
-                                onChange={(selected: any) => setClassType(selected.value)}
-                                options={props.classesList}
+                                value={classType}
+                                onChange={(selected: any) => setClassType(selected)}
+                                options={classes.filter((item: any) => item.category === props.category)}
+                                getOptionLabel={(item: any) => item.name}
+                                getOptionValue={(item: any) => item.id}
                                 />
                         </div>
                         <div className="filter">
-                            <SelectField isClearable onChange={(selected: { value: number; }) => setYear(selected?.value)} placeholder={t("year")} options={years} />
+                            <SelectField defaultValue={{ label: year, value: year }} onChange={(selected: { value: number; }) => setYear(selected?.value)} placeholder={t("year")} options={years} />
                         </div>
                         <div className="filter">
-                            <SelectField isClearable onChange={(selected: { value: 'q1' | 'q2' | 'q3' | 'q4'; }) => setQuarter(selected?.value)} placeholder={t("quarter")} options={[
+                            <SelectField defaultValue={{ label: quarter.toUpperCase(), value: quarter }} onChange={(selected: { value: 'q1' | 'q2' | 'q3' | 'q4'; }) => setQuarter(selected?.value)} placeholder={t("quarter")} options={[
                                 { label: "Q1", value: "q1" },
                                 { label: "Q2", value: "q2" },
                                 { label: "Q3", value: "q3" },

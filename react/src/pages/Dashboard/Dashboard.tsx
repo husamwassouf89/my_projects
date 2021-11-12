@@ -128,44 +128,19 @@ export default (props: any) => {
                 return(<SearchClient />)
             case "all-clients":
                 return(
-                    <Clients
-                        classesList={[
-                            { label: 'Corporate', value: 1 },
-                            { label: 'Middle', value: 2 },
-                            { label: 'SME`s', value: 3 },
-                            { label: 'Retail', value: 4 }
-                        ]}
-                        defaultClass={{ label: 'Corporate', value: 1 }}
-                        />
+                    <Clients category="facility" />
                 )
             case "import-clients":
                 return(<ImportClients type="clients" />)
             case "institutions":
                 return(
-                    <Clients
-                        classesList={[
-                            { label: 'Local Bank', value: 6 },
-                            { label: 'Abroad Bank', value: 7 },
-                            { label: 'Central Bank', value: 9 },
-                            { label: 'Investments', value: 8 }
-                        ]}
-                        defaultClass={{ label: 'Local Bank', value: 6 }}
-                        />
+                    <Clients category="financial" />
                 )
             case "import-institutions":
                 return(<ImportClients type="banks" />)
             case "offbalance":
                 return(
-                    <Clients
-                        classesList={[
-                            { label: 'Corporate', value: 1 },
-                            { label: 'Middle', value: 2 },
-                            { label: 'SME`s', value: 3 },
-                            { label: 'Retail', value: 4 }
-                        ]}
-                        defaultClass={{ label: 'Corporate', value: 1 }}
-                        offbalance
-                        />
+                    <Clients category="facility" offbalance />
                 )
             case "import-offbalance":
                 return(<ImportClients type="documents" />)

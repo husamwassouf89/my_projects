@@ -28,6 +28,7 @@ export default () => {
     const [cif, setCIF] = useState<number | null>(null)
     const [client, setClient] = useState<any>(null)
     const [active_account, setActiveAccount] = useState<number>(0)
+    const [financialStatus, setFinancialStatus] = useState<string>('');
     
     // Years & Quarters
     const [years, setYears] = useState<any>()
@@ -56,10 +57,9 @@ export default () => {
             return
 
         setIsLoading(true)
-
-        const params = new URLSearchParams({cif: String(search_cif) });
-        history.replace({ pathname: location.pathname, search: params.toString() });  
-
+        const params = new URLSearchParams(location.search);
+        params.set('cif', String(search_cif));
+        window.history.replaceState({}, '', `${location.pathname}?${params}`);
         ENDPOINTS.clients().search_cif({ cif: search_cif })
         .then((response: any) => {
             setIsLoading(false)
@@ -70,6 +70,7 @@ export default () => {
                 return
             }
             setClient(response.data.data)
+            setFinancialStatus(response.data?.data?.financial_status);
             setShowDetails(true)
         })
 
@@ -87,6 +88,9 @@ export default () => {
     useEffect(() => {
         if(!client)
             return
+        const query = new URLSearchParams(location.search);
+        const query_year = query.get('year')
+        const query_quarter = query.get('quarter')
         let new_years: any = {}
         let current: number | null = null
         client.client_accounts[active_account].account_infos?.map((item: any, index: number) => {
@@ -97,25 +101,43 @@ export default () => {
                 label: item.quarter,
                 value: index
             })
-            if(!current) {
+            if(query_year && query_quarter) {
+                if(query_year == item.year && query_quarter == item.quarter) {
+                    current = index
+                    setSelectedYear({ label: item.year, value: item.year })
+                    setSelectedQuarter({ label: item.quarter, value: index })
+                }
+            } else if(!current) {
                 current = index
                 setSelectedYear({ label: item.year, value: item.year })
                 setSelectedQuarter({ label: item.quarter, value: index })
             }
         })
+        if(!current) {
+            let year = client.client_accounts[active_account].account_infos[0]?.year;
+            let quarter = client.client_accounts[active_account].account_infos[0]?.quarter;
+            setSelectedYear({ label: year, value: year });
+            setSelectedQuarter({ label: quarter, value: quarter });
+        }
         setYears(new_years)
-        setActiveAcountInfo(current)
+        setActiveAcountInfo(current || 0)
     }, [client, active_account])
 
     const changeYear = (selected: any) => {
         setSelectedYear(selected)
         setSelectedQuarter(years[selected.value].quarters[0])
         setActiveAcountInfo(years[selected.value].quarters[0].value)
+        const params = new URLSearchParams(location.search);
+        params.set('year', String(selected.value));
+        window.history.replaceState({}, '', `${location.pathname}?${params}`);
     }
 
     const changeQuarter = (selected: any) => {
         setSelectedQuarter(selected)
         setActiveAcountInfo(selected.value)
+        const params = new URLSearchParams(location.search);
+        params.set('quarter', String(selected.value));
+        window.history.replaceState({}, '', `${location.pathname}?${params}`);
     }
 
     return (
@@ -132,11 +154,11 @@ export default () => {
                                 <h2>{t("search_for_client")}</h2>
                             </Col>
                             <Col md={9.5}>
-                                <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => e.preventDefault()}>
                                     <Row>
-                                        <Col md={2}>
+                                        <Col md={2} component="form" onSubmit={(e) => e.preventDefault()}>
                                             <InputField
                                                 onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                                                    e.stopPropagation();
                                                     if(e.key === "Enter")
                                                         search()
                                                 }}
@@ -145,10 +167,10 @@ export default () => {
                                                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => { setCIF(Number(e.target.value)) }}
                                                 placeholder={t("client_cif")} />
                                         </Col>
-                                        <Col md={2.5}>
+                                        <Col md={2.5} component="form" onSubmit={(e) => e.preventDefault()}>
                                             <SelectField placeholder="Year" options={Object.values(years)} value={selectedYear} onChange={(selected: any) => changeYear(selected)} />
                                         </Col>
-                                        <Col md={2.5}>
+                                        <Col md={2.5} component="form"onSubmit={(e) => e.preventDefault()}>
                                             <SelectField placeholder="Quarter" options={years[selectedYear.value].quarters} value={selectedQuarter} onChange={(selected: any) => changeQuarter(selected)} />
                                         </Col>
                                         <Col md={5} style={{ position: "relative", top: 11, textAlign: "right" }} className="actions">
@@ -157,7 +179,6 @@ export default () => {
                                             <button className="button bg-gold color-white" onClick={() => setIsOpenEditRate(true)}>{t("client_rate")}</button>
                                         </Col>
                                     </Row>
-                                </form>
                             </Col>
                         </Row>
                     </div>
@@ -176,15 +197,8 @@ export default () => {
                                 <td>{t("class_type")}</td>
                                 <td>{client.class_type_name}</td>
                                 <td>Financial status</td>
-                                <td style={{ padding: 0 }}>
-                                    <form>
-                                        <FinancialStatusMenu
-                                            defaultValue={{ value: client.financial_status, label: client.financial_status }}
-                                            onChange={(selected: any) => {
-                                                ENDPOINTS.clients().change_financial_status({ id: client.id, financial_status: selected.value })
-                                            }}
-                                            />
-                                    </form>
+                                <td>
+                                    {financialStatus}
                                 </td>
                                 <td style={{ background: '#1abc62', color: "#FFF" }}>ECL</td>
                                 <td style={{ background: '#17a656', color: "#FFF" }}>{numberWithCommas(toFixed(client.client_accounts.map((account: any) => Number(account?.account_infos[activeAccountInfo]?.ecl || 0)).reduce((a: number, b: number) => a + b, 0), 2))}</td>
@@ -204,17 +218,17 @@ export default () => {
                         <tbody>
                             <tr>
                                 <td>Stage</td>
-                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].stage_no}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].stage_no || 'N/A'}</td>
                                 <td>Grade</td>
-                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].final_grade}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].final_grade || 'N/A'}</td>
                                 <td>PD</td>
                                 <td>{getPercentage(client.client_accounts[active_account]?.account_infos[activeAccountInfo].pd)}</td>
                             </tr>
                             <tr>
                                 <td>LGD</td>
-                                <td>{getPercentage(client.client_accounts[active_account]?.account_infos[activeAccountInfo].final_lgd)}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].final_lgd ? getPercentage(client.client_accounts[active_account]?.account_infos[activeAccountInfo].final_lgd) : 'N/A'}</td>
                                 <td>EAD</td>
-                                <td>{numberWithCommas(toFixed(Number(client.client_accounts[active_account]?.account_infos[activeAccountInfo].ead), 2))}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].ead ? numberWithCommas(toFixed(Number(client.client_accounts[active_account]?.account_infos[activeAccountInfo].ead), 2)) : 'N/A'}</td>
                                 <td style={{ background: "#3595f6", color: "#FFF" }}>Account ECL</td>
                                 <td style={{ background: "#2478ce", color: "#FFF" }}>{numberWithCommas(toFixed(Number(client.client_accounts[active_account]?.account_infos[activeAccountInfo].ecl), 2))}</td>
                             </tr>
@@ -239,9 +253,15 @@ export default () => {
                             </tr>
                             <tr>
                                 <td>{t("guarantee_ccy")}</td>
-                                <td>{client.client_accounts[active_account]?.guarantee_ccy}</td>
+                                <td>{client.client_accounts[active_account]?.gu_currency_name}</td>
                                 <td>{t("cm_guarantee")}</td>
                                 <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].cm_guarantee)}</td>
+                            </tr>
+                            <tr>
+                                <td>{t("outstanding_lcy")}</td>
+                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].outstanding_lcy)}</td>
+                                <td>{t("past_due_days")}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].past_due_days}</td>
                             </tr>
                             <tr>
                                 <td>{t("outstanding_fcy")}</td>
@@ -280,16 +300,16 @@ export default () => {
                                 <td>{getPercentage(client.client_accounts[active_account]?.account_infos[activeAccountInfo].interest_rate)}</td>
                             </tr>
                             <tr>
-                                <td>{t("past_due_days")}</td>
-                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].past_due_days}</td>
+                                <td>{t("sp_date")}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].sp_date}</td>
                                 <td>{t("mortgages")}</td>
-                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].number_of_installments}</td>
+                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].mortgages)}</td>
                             </tr>
                         </tbody>
                     </table>
                     <br /><br />
-                    <ClientProfile isOpen={isOpenEditRate} toggle={() => setIsOpenEditRate(prev => !prev)} client_id={client.id} class_type={client.class_type_id} financial_status={client.financial_status} />
-                    <ClientStage isOpen={isOpenEditStage} toggle={() => setIsOpenEditStage(prev => !prev)} client_id={client.id} class_type={client.class_type_id} />
+                    <ClientProfile isOpen={isOpenEditRate} toggle={() => setIsOpenEditRate(false)} client_id={client.id} class_type={client.class_type_id} financial_status={client.financial_status} changeFinancialStatus={setFinancialStatus} />
+                    <ClientStage isOpen={isOpenEditStage} toggle={() => setIsOpenEditStage(false)} client_id={client.id} class_type={client.class_type_id} />
                     <Modal open={isOpenECL} toggle={() => setIsOpenECL(false)}>
                         <div className="text-right"><button className={ moreECLDetails ? "button color-white bg-gold" : "button color-gold" } onClick={() => setMoreECLDetails(!moreECLDetails)}>{ moreECLDetails ? "Less Details" : "More Details" }</button></div>
                         <div className="margin-top-20" />

@@ -33,11 +33,11 @@ export default () => {
     const [importFile, setImportFile] = useState<string | null>(null)
     const [attachments, setAttachments] = useState<number[]>([])
     const [ecoParameterBaseValue, setEcoParameterBaseValue] = useState<string>("1")
-    const [ecoParameterBaseWeight, setEcoParameterBaseWeight] = useState<string>("0.33")
+    const [ecoParameterBaseWeight, setEcoParameterBaseWeight] = useState<string>("0.3")
     const [ecoParameterMildValue, setEcoParameterMildValue] = useState<string>("1")
-    const [ecoParameterMildWeight, setEcoParameterMildWeight] = useState<string>("0.33")
+    const [ecoParameterMildWeight, setEcoParameterMildWeight] = useState<string>("0.3")
     const [ecoParameterHeavyValue, setEcoParameterHeavyValue] = useState<string>("1")
-    const [ecoParameterHeavyWeight, setEcoParameterHeavyWeight] = useState<string>("0.33")
+    const [ecoParameterHeavyWeight, setEcoParameterHeavyWeight] = useState<string>("0.4")
 
     // API
     const ENDPOINTS = new API()

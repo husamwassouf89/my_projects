@@ -395,11 +395,13 @@
     "mortgages": "Mortgages",
     "number_of_reschedule": "Number Of Reschedule",
     "outstanding_fcy": "Outstanding FCY",
+    "outstanding_lcy": "Outstanding LCY",
     "past_due_days": "Past due days",
     "pay_method": "Pay method",
     "pv_re_guarantees": "PV RE Guarantees",
     "pv_securities_guarantees": "PV Securities Guarantees",
     "st_date": "St. Date",
+    "sp_date": "Sp. Date",
     "suspended_lcy": "Suspended LCY",
 
     "loan_key": "Loan key",

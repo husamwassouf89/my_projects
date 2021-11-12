@@ -3,6 +3,7 @@ import { useState } from "react"
 import { useTranslation } from "react-multi-lang"
 import { EllipsisLoader } from "../../../../components/Loader/Loader"
 import Modal from "../../../../components/Modal/Modal"
+import { FinancialStatusMenu } from "../../../../components/PredefinedMenus/PredefinedMenus"
 import { DashboardTable } from "../../../../components/Table/Table"
 import API from "../../../../services/api/api"
 import AddRate from "./AddRate"
@@ -13,6 +14,7 @@ interface IProps {
     client_id: number;
     class_type: number;
     financial_status: string;
+    changeFinancialStatus(value: string): any;
 }
 
 export default (props: IProps) => {
@@ -68,9 +70,18 @@ export default (props: IProps) => {
             { !showQuestions ?
             <>
             { isLoaded ?
-            <div style={{ minWidth: 500, textAlign: "left" }} className="profiles">
-                <h2 style={{ margin: "0 0 20px", display: "inline-block" }}>{t("client_rates")}</h2>
-                <button className="button bg-gold color-white" style={{ float: "right", position: "relative", top: -7 }} onClick={() => {
+            <div style={{ minWidth: 500, minHeight: 400, textAlign: "left" }} className="profiles">
+                <h2 style={{ margin: "0 0 20px", display: "block" }}>{t("client_rates")}</h2>
+                <form style={{ display: 'inline-block', width: 250, margin: '-10px 0 20px', position: 'relative', zIndex: 100 }}>
+                    <FinancialStatusMenu
+                        defaultValue={{ value: props.financial_status, label: props.financial_status }}
+                        onChange={(selected: any) => {
+                            ENDPOINTS.clients().change_financial_status({ id: props.client_id, financial_status: selected.value })
+                            .then(() => props.changeFinancialStatus(selected.label))
+                        }}
+                        />
+                </form>
+                <button className="button bg-gold color-white" style={{ float: "right" }} onClick={() => {
                     setShowQuestions(true)
                     setEditable(true)
                 }}>{t("add_new_rate")}</button>
