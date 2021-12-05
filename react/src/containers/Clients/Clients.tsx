@@ -22,6 +22,7 @@ import { years } from '../../services/hoc/helpers'
 interface IProps {
     category: 'facility' | 'financial';
     offbalance?: boolean;
+    type?: 'limits';
 }
 
 export default (props: IProps) => {
@@ -60,7 +61,7 @@ export default (props: IProps) => {
         console.log(classType);
         dispatch( clientsSlice.actions.setIsFetching( true ) )
 
-        ENDPOINTS.clients().index({ page, page_size, class_type_id: classType.id, year, quarter, type: props.offbalance ? 'documents' : undefined })
+        ENDPOINTS.clients().index({ page, page_size, class_type_id: classType.id, year, quarter, type: props.offbalance && props.type !== 'limits' ? 'documents' : undefined, limits: props.type === 'limits' ? 'yes' : undefined })
         .then((response: any) => {
             let clients: client[] = response.data.data.clients.map((client: any): client => ({
                 id: client.id,
@@ -90,7 +91,7 @@ export default (props: IProps) => {
                 class_type: client.class_type,
                 type: client.type,
                 actions: <div className="show-on-hover">
-                            <Link to={ `/search-client?cif=${client.cif}&year=${year}&quarter=${quarter}` }><i className="icon-info" style={{ color: "#333" }} /></Link>
+                            <Link to={ `/search-client?cif=${client.cif}&year=${year}&quarter=${quarter}` + ( props.type === 'limits' ? ( props.offbalance ? '&limit=off' : '&limit=on' ) : '' ) }><i className="icon-info" style={{ color: "#333" }} /></Link>
                         </div>
             }
         })

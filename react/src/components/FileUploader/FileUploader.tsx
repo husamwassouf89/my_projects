@@ -123,7 +123,7 @@ export default (props: fileUploaderProps) => {
                     formData.append("file", file, file.name);
 
                     const request = new XMLHttpRequest();
-                    let url = 'https://desolate-inlet-24536.herokuapp.com/'
+                    let url = 'https://ifrs.opalcityadvisory.com/api/public/'
                     url += "help/upload-attachments"
                     request.open('POST', url);
 

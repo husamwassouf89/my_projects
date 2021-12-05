@@ -145,6 +145,18 @@ export const TopNav = () => {
 
             <div className="actions">
 
+                <div className="reports-list">
+                    <span>{t("reports")}</span>
+                    <ul>
+                        <li><a href="https://ifrs.opalcityadvisory.com/api/public/reports/cif">{t("cif")}</a></li>
+                        <li><a href="https://ifrs.opalcityadvisory.com/api/public/reports/cif-guarantee">{t("cif_guarantee")}</a></li>
+                        <li><a href="https://ifrs.opalcityadvisory.com/api/public/reports/disclosure">{t("disclosure")}</a></li>
+                        <li><a href="https://ifrs.opalcityadvisory.com/api/public/reports/ead-guarantee">{t("ead_guarantee")}</a></li>
+                        <li><a href="https://ifrs.opalcityadvisory.com/api/public/reports/ecl">{t("ecl")}</a></li>
+                        {/* <li><a href="https://ifrs.opalcityadvisory.com/api/public/reports/facility-disclosure">{t("facility_disclosure")}</a></li> */}
+                    </ul>
+                </div>
+
                 <div className="switchers">
                     <LightDarkModeSwitcher />
                     <span className="margin-10" />

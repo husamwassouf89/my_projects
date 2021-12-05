@@ -10,6 +10,7 @@ interface pagination {
     quarter?: string;
     year?: number;
     type?: string;
+    limits?: 'yes';
 }
 
 interface pd {
@@ -32,7 +33,7 @@ class API {
 
     constructor() {
         // this.url = "http://127.0.0.1:8000"
-        this.url = "https://desolate-inlet-24536.herokuapp.com"
+        this.url = "https://ifrs.opalcityadvisory.com/api/public"
 
         const [cookies, _, removeCookie] = useCookies();
 
@@ -91,8 +92,9 @@ class API {
      clients(): {
         index( query: pagination ): any;
         show( query: { id: number } ): any;
-        search_cif( query: { cif: number } ): any;
+        search_cif( query: { cif: number; limit?: 'on' | 'off'; } ): any;
         store( query: { path: string; year: string; quarter: "q1" | "q2" | "q3" | "q4"; type: string; } ): any;
+        import_limits( query: { path: string; year: string; quarter: "q1" | "q2" | "q3" | "q4"; type: string; } ): any;
         change_financial_status( query: { id: number; financial_status: string; } ): any;
     } {
         var endpoints:any = {}
@@ -104,6 +106,8 @@ class API {
         endpoints.search_cif = ( query: any, name='clients' ) => axios.get( `${this.url}/${name}/cif/${query.cif}`, { params: query } )
         
         endpoints.store = ( query: any, name='clients' ) => axios.post( `${this.url}/${name}`, query )
+
+        endpoints.import_limits = ( query: any, name='limits/import' ) => axios.post( `${this.url}/${name}`, query )
 
         endpoints.change_financial_status = ( query: any, name='clients/change-financial-status' ) => axios.post( `${this.url}/${name}`, query )
 

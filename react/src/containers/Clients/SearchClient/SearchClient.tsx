@@ -60,7 +60,9 @@ export default () => {
         const params = new URLSearchParams(location.search);
         params.set('cif', String(search_cif));
         window.history.replaceState({}, '', `${location.pathname}?${params}`);
-        ENDPOINTS.clients().search_cif({ cif: search_cif })
+        const query = new URLSearchParams(location.search);
+        const limit: any = query.get('limit')
+        ENDPOINTS.clients().search_cif({ cif: search_cif, limit })
         .then((response: any) => {
             setIsLoading(false)
             if(response.data.data === null) {
@@ -265,7 +267,7 @@ export default () => {
                             </tr>
                             <tr>
                                 <td>{t("outstanding_fcy")}</td>
-                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].outstanding_fcy)}</td>
+                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].outstanding_fcy) === numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].outstanding_lcy) ? '-' : numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].outstanding_fcy)}</td>
                                 <td>{t("pv_re_guarantees")}</td>
                                 <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].pv_re_guarantees)}</td>
                             </tr>
@@ -305,6 +307,23 @@ export default () => {
                                 <td>{t("mortgages")}</td>
                                 <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].mortgages)}</td>
                             </tr>
+
+                            { client.client_accounts[active_account]?.account_infos[activeAccountInfo].unused_direct_limit &&
+                            <>
+                                <tr>
+                                    <td>{t('unused_direct_limit')}</td>
+                                    <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].unused_direct_limit)}</td>
+                                    <td>{t('used_direct_limit')}</td>
+                                    <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].used_direct_limit)}</td>
+                                </tr>
+                                <tr>
+                                    <td>{t('unused_undirect_limit')}</td>
+                                    <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].unused_undirect_limit)}</td>
+                                    <td>{t('used_un_direct_limit')}</td>
+                                    <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].used_un_direct_limit)}</td>
+                                </tr>
+                            </> }
+
                         </tbody>
                     </table>
                     <br /><br />

@@ -12,7 +12,7 @@ import API from '../../services/api/api'
 import { toast } from 'react-toastify'
 import { years } from '../../services/hoc/helpers'
 
-export default (props: { type: 'clients' | 'banks' | 'documents' }) => {
+export default (props: { type: 'clients' | 'banks' | 'documents' | 'limits' }) => {
 
     const { type } = props;
 
@@ -34,8 +34,10 @@ export default (props: { type: 'clients' | 'banks' | 'documents' }) => {
         e.preventDefault()
         
         setIsLoading(true)
+        
+        const endpoint = type === 'limits' ? ENDPOINTS.clients().import_limits : ENDPOINTS.clients().store
 
-        ENDPOINTS.clients().store({
+        endpoint({
             path: importFile || "",
             year: String(year) || "",
             quarter: quarter || "q1",

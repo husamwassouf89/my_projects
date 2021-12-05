@@ -42,6 +42,11 @@ export default () => {
     // API
     const ENDPOINTS = new API()
 
+    const calcWeight = (weight: string): number => {
+        let n = parseFloat(weight);
+        return n > 1 ? n / 100 : n;
+    }
+
     // Import
     const importPD = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -60,11 +65,11 @@ export default () => {
             quarter,
             year: "" + year,
             eco_parameter_base_value: Number(ecoParameterBaseValue),
-            eco_parameter_base_weight: Number(ecoParameterBaseWeight),
+            eco_parameter_base_weight: calcWeight(ecoParameterBaseWeight),
             eco_parameter_mild_value: Number(ecoParameterMildValue),
-            eco_parameter_mild_weight: Number(ecoParameterMildWeight),
+            eco_parameter_mild_weight: calcWeight(ecoParameterMildWeight),
             eco_parameter_heavy_value: Number(ecoParameterHeavyValue),
-            eco_parameter_heavy_weight: Number(ecoParameterHeavyWeight)
+            eco_parameter_heavy_weight: calcWeight(ecoParameterHeavyWeight)
         })
         .then((response: any) => {
             toast("Your PD file has been imported successfully!", {

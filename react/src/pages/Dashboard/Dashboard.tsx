@@ -88,6 +88,44 @@ export default (props: any) => {
             ]
         },
         {
+            icon: "icon-users",
+            name: t("Unused limits"),
+            show: true,
+            childs: [
+                {
+                    icon: "icon-hammer",
+                    name: t("all_clients"),
+                    link: "/limits",
+                    show: true
+                },
+                {
+                    icon: "icon-tasks",
+                    name: t("import_clients"),
+                    link: "/import-limits",
+                    show: true
+                },
+            ]
+        },
+        {
+            icon: "icon-users",
+            name: t("Unused limits - Off balance"),
+            show: true,
+            childs: [
+                {
+                    icon: "icon-hammer",
+                    name: t("all_clients"),
+                    link: "/limits-offbalance",
+                    show: true
+                },
+                {
+                    icon: "icon-tasks",
+                    name: t("import_clients"),
+                    link: "/import-limits",
+                    show: true
+                },
+            ]
+        },
+        {
             icon: "icon-overview",
             name: t("pd"),
             show: true,
@@ -144,6 +182,16 @@ export default (props: any) => {
                 )
             case "import-offbalance":
                 return(<ImportClients type="documents" />)
+            case "limits":
+                return(
+                    <Clients category="facility" type="limits" />
+                )
+            case "limits-offbalance":
+                return(
+                    <Clients category="facility" type="limits" offbalance />
+                )
+            case "import-limits":
+                return(<ImportClients type="limits" />)
             case 'all-pds':
                 return(<PDs />)
             case 'import-pd':

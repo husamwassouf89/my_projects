@@ -48,7 +48,7 @@
 .reports-list { position: relative; display: inline-block; margin-right: 20px; top: -10px; color: #222; }
 .rtl .reports-list { margin-right: 0; margin-left: 20px; }
 .dark .reports-list { color: #FFF; }
-.reports-list ul { position: absolute; background: #FFF; border-radius: 5px; box-shadow: 1px 2px 4px rgba(0, 0, 0, .1); z-index: 10; padding: 10px 20px; margin: 0; top: 40px; list-style: none; opacity: 0; visibility: hidden; transform: scale(.95) translateX(-40%); width: max-content; left: 0; transition: all .3s ease .5s; }
+.reports-list ul { position: absolute; background: #FFF; border-radius: 5px; box-shadow: 1px 2px 4px rgba(0, 0, 0, .1); z-index: 1000000; padding: 10px 20px; margin: 0; top: 40px; list-style: none; opacity: 0; visibility: hidden; transform: scale(.95) translateX(-40%); width: max-content; left: 0; transition: all .3s ease .5s; }
 .reports-list span { cursor: pointer; }
 .reports-list:hover ul { opacity: 1; visibility: visible; transform: scale(1) translateX(-40%); transition-delay: 0s; }
 .reports-list ul li { line-height: 45px; padding: 0 20px; }

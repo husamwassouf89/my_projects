@@ -108,7 +108,7 @@ export const toFixed = (n: number, digits: number): number => {
 }
 
 export const numberWithCommas = (n: number) => {
-    return n?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return toFixed(n, 2)?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 let currentYear = (new Date()).getFullYear()
