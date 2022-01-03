@@ -60,7 +60,7 @@ export default () => {
 
         ENDPOINTS.pd().store({
             class_type_id: classType || 0,
-            attachments,
+            attachment_ids: attachments,
             path: importFile,
             quarter,
             year: "" + year,
@@ -72,9 +72,12 @@ export default () => {
             eco_parameter_heavy_weight: calcWeight(ecoParameterHeavyWeight)
         })
         .then((response: any) => {
-            toast("Your PD file has been imported successfully!", {
+            toast(response?.data?.message, {
                 progressStyle: { background: "#925b97" }
             })
+            // toast("Your PD file has been imported successfully!", {
+            //     progressStyle: { background: "#925b97" }
+            // })
         })
         .finally(() => {
             setIsLoading(false)
@@ -96,7 +99,8 @@ export default () => {
                     { label: "Q3", value: "q3" },
                     { label: "Q4", value: "q4" },
                 ]} />
-                
+            { classType !== 6 &&
+                <>
                 <div className="weight">
                     <label>Eco parameter - <strong>Base</strong></label>
                     <Row>
@@ -132,6 +136,8 @@ export default () => {
                         </Col>
                     </Row>
                 </div>
+                </>
+                }
 
                 <FileUploader
                     required

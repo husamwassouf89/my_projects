@@ -61,7 +61,7 @@ export default function () {
 
         ENDPOINTS.auth().login({ email: username, password: password })
         .then((response: any) => {
-            if( response.data.message === "Success :D!" ) {
+            if( response.data.message === "success" ) {
                 dispatch( loginSlice.actions.success() )
                 setShowSuccessMark(true)
                 setTimeout(() => {

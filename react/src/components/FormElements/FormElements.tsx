@@ -57,7 +57,7 @@ export const Checkbox = (props: any) => {
     let id = uid('input')
 
     return (
-        <div className="checkbox">
+        <div className="checkbox" style={props.style}>
             <input {...field} type="checkbox" id={id} />
             <div>
                 {inputLabel ? <label className={props.value ? "active" : ''} htmlFor={id}><i className="icon-checkmark" />{inputLabel}</label> : ''}

@@ -56,6 +56,7 @@ export default (props: ModalProps) => {
                                 renderTrackHorizontal={props => <div {...props} className="track-horizontal" style={{ display: "none" }} />}
                                 renderThumbHorizontal={props => <div {...props} className="thumb-horizontal" style={{ display: "none" }} />} >
                                 <div className="modal-content">
+                                    <i className="icon-close" onClick={hide} />
                                     {props.children}
                                 </div>
                                 {dasharray ?

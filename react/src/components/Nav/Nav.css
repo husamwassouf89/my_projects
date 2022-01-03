@@ -52,5 +52,5 @@
 .reports-list span { cursor: pointer; }
 .reports-list:hover ul { opacity: 1; visibility: visible; transform: scale(1) translateX(-40%); transition-delay: 0s; }
 .reports-list ul li { line-height: 45px; padding: 0 20px; }
-.reports-list ul li a { color: #333; text-decoration: none; display: block; transition: all .3s ease; }
+.reports-list ul li a { color: #333; text-decoration: none; display: block; transition: all .3s ease; cursor: pointer; }
 .reports-list ul li a:hover { color: #925b97; }

@@ -18,7 +18,7 @@ interface pd {
     year: string;
     quarter: "q1" | "q2" | "q3" | "q4";
     path: string;
-    attachments: number[],
+    attachment_ids: number[],
     eco_parameter_base_value: number;
     eco_parameter_base_weight: number;
     eco_parameter_mild_value: number;
@@ -96,6 +96,7 @@ class API {
         store( query: { path: string; year: string; quarter: "q1" | "q2" | "q3" | "q4"; type: string; } ): any;
         import_limits( query: { path: string; year: string; quarter: "q1" | "q2" | "q3" | "q4"; type: string; } ): any;
         change_financial_status( query: { id: number; financial_status: string; } ): any;
+        add_attachments( query: { id: number; attachment_ids: number[]; } ): any;
     } {
         var endpoints:any = {}
 
@@ -110,6 +111,8 @@ class API {
         endpoints.import_limits = ( query: any, name='limits/import' ) => axios.post( `${this.url}/${name}`, query )
 
         endpoints.change_financial_status = ( query: any, name='clients/change-financial-status' ) => axios.post( `${this.url}/${name}`, query )
+
+        endpoints.add_attachments = ( query: any, name='clients/add-attachments' ) => axios.post( `${this.url}/${name}/${query.id}`, query )
 
         return endpoints
     }

@@ -1,0 +1,38 @@
+.attachments {
+  text-align: start;
+
+  ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+    li {
+      background: #F1F1F1;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      transition: all .3s ease;
+
+      a {
+        display: block;
+        padding: 20px;
+        color: #333;
+        text-decoration: none;
+
+        i {
+          position: relative;
+          top: 3px;
+          margin-inline-end: 10px;
+          color: #925b97;
+        }
+      }
+    }
+
+    li:hover {
+      background: #EAEAEA;
+    }
+
+    li:last-of-type {
+      margin-bottom: 0;
+    }
+  }
+}

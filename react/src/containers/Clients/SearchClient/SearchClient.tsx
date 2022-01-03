@@ -14,8 +14,9 @@ import { useEffect } from 'react'
 import ClientProfile from './ClientProfle/ClientProfile'
 import ClientStage from './StagingProfle/ClientStage'
 import Modal from '../../../components/Modal/Modal'
-import { getPercentage, numberWithCommas, toFixed } from '../../../services/hoc/helpers'
+import { getFileName, getPercentage, numberWithCommas, toFixed } from '../../../services/hoc/helpers'
 import { FinancialStatusMenu } from '../../../components/PredefinedMenus/PredefinedMenus'
+import ImportAttachments from './ImportAttachments/ImportAttachments'
 
 export default () => {
     
@@ -29,6 +30,7 @@ export default () => {
     const [client, setClient] = useState<any>(null)
     const [active_account, setActiveAccount] = useState<number>(0)
     const [financialStatus, setFinancialStatus] = useState<string>('');
+    const [showImportAttachments, setShowImportAttachments] = useState<boolean>(false);
     
     // Years & Quarters
     const [years, setYears] = useState<any>()
@@ -327,7 +329,24 @@ export default () => {
                         </tbody>
                     </table>
                     <br /><br />
-                    <ClientProfile isOpen={isOpenEditRate} toggle={() => setIsOpenEditRate(false)} client_id={client.id} class_type={client.class_type_id} financial_status={client.financial_status} changeFinancialStatus={setFinancialStatus} />
+                    <div className='client-attachments'>
+                        <label>Attachments</label>
+                        <div className="attachments">
+                            <ul>
+                                { client.attachments?.map((attachment: any) => (
+                                    <li><a href={attachment?.path}><i className="icon-attachment"></i>{getFileName(attachment?.path)}</a></li>
+                                )) }
+                                { client.attachments?.length === 0 && <li className='text-center' style={{ padding: 20 }}>No attachments</li> }
+                            </ul>
+                            <div className="margin-top-20">
+                                <button className="button bg-gold color-white" onClick={() => setShowImportAttachments(true)}>Add attachments</button>
+                            </div>
+                        </div>
+                    </div>
+                    <br /><br />
+                    {/* Import Attachments */}
+                    <ImportAttachments open={showImportAttachments} toggle={() => setShowImportAttachments(false)} client_id={client.id} />
+                    <ClientProfile isOpen={isOpenEditRate} toggle={() => setIsOpenEditRate(false)} client_id={client.id} class_type={client.class_type_id} financial_status={financialStatus} changeFinancialStatus={setFinancialStatus} />
                     <ClientStage isOpen={isOpenEditStage} toggle={() => setIsOpenEditStage(false)} client_id={client.id} class_type={client.class_type_id} />
                     <Modal open={isOpenECL} toggle={() => setIsOpenECL(false)}>
                         <div className="text-right"><button className={ moreECLDetails ? "button color-white bg-gold" : "button color-gold" } onClick={() => setMoreECLDetails(!moreECLDetails)}>{ moreECLDetails ? "Less Details" : "More Details" }</button></div>

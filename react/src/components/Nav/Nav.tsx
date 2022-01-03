@@ -25,6 +25,7 @@ import Logo from '../../assets/images/logo/primary.svg'
 import { UnmountClosed } from 'react-collapse';
 import { useTranslation } from 'react-multi-lang';
 import ReactTooltip from 'react-tooltip';
+import ReportConfigurations from '../ReportConfigurations/ReportConfigurations';
 
 interface NavProps {
     list: {
@@ -112,6 +113,8 @@ export const TopNav = () => {
 
     // React hooks
     const [redirect, setRedirect] = useState<boolean>(false);
+    const [showReportConfig, setShowReportConfig] = useState<boolean>(false);
+    const [link, setLink] = useState<string>('');
 
     // Cookies hooks
     const [cookie, __, removeCookie] = useCookies();
@@ -129,7 +132,7 @@ export const TopNav = () => {
         dispatch( globalSlice.actions.setIsLoading(true) )
         ENDPOINTS.auth().logout(null)
         .then((response: any) => {
-            if( response.data.message ==="Success :D!" ) {
+            if( response.data.message ==="success" ) {
                 dispatch( globalSlice.actions.setIsLoading(false) )
                 removeCookie("userinfo")
                 setTimeout(() => {
@@ -148,14 +151,31 @@ export const TopNav = () => {
                 <div className="reports-list">
                     <span>{t("reports")}</span>
                     <ul>
-                        <li><a href="https://ifrs.opalcityadvisory.com/api/public/reports/cif">{t("cif")}</a></li>
-                        <li><a href="https://ifrs.opalcityadvisory.com/api/public/reports/cif-guarantee">{t("cif_guarantee")}</a></li>
-                        <li><a href="https://ifrs.opalcityadvisory.com/api/public/reports/disclosure">{t("disclosure")}</a></li>
-                        <li><a href="https://ifrs.opalcityadvisory.com/api/public/reports/ead-guarantee">{t("ead_guarantee")}</a></li>
-                        <li><a href="https://ifrs.opalcityadvisory.com/api/public/reports/ecl">{t("ecl")}</a></li>
+                        <li><a onClick={ () => {
+                            setShowReportConfig(true);
+                            setLink("https://ifrs.opalcityadvisory.com/api/public/reports/cif");
+                        }}>{t("cif")}</a></li>
+                        <li><a onClick={ () => {
+                            setShowReportConfig(true);
+                            setLink("https://ifrs.opalcityadvisory.com/api/public/reports/cif-guarantee");
+                        }}>{t("cif_guarantee")}</a></li>
+                        <li><a onClick={ () => {
+                            setShowReportConfig(true);
+                            setLink("https://ifrs.opalcityadvisory.com/api/public/reports/disclosure");
+                        }}>{t("disclosure")}</a></li>
+                        <li><a onClick={ () => {
+                            setShowReportConfig(true);
+                            setLink("https://ifrs.opalcityadvisory.com/api/public/reports/ead-guarantee");
+                        }}>{t("ead_guarantee")}</a></li>
+                        <li><a onClick={ () => {
+                            setShowReportConfig(true);
+                            setLink("https://ifrs.opalcityadvisory.com/api/public/reports/ecl");
+                        }}>{t("ecl")}</a></li>
                         {/* <li><a href="https://ifrs.opalcityadvisory.com/api/public/reports/facility-disclosure">{t("facility_disclosure")}</a></li> */}
                     </ul>
                 </div>
+
+                <ReportConfigurations open={showReportConfig} toggle={() => setShowReportConfig(false)} link={link} />
 
                 <div className="switchers">
                     <LightDarkModeSwitcher />

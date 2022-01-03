@@ -16,6 +16,7 @@ import { useEffect } from 'react'
 import API from '../../services/api/api'
 import { toast } from 'react-toastify'
 import { Prompt } from 'react-router-dom'
+import ReactTooltip from 'react-tooltip'
 
 export default () => {
 
@@ -37,7 +38,7 @@ export default () => {
     // API
     const ENDPOINTS = new API()
 
-    const save = () => {
+    const save = async () => {
 
         let questions = state.questions.filter(question => question.status !== "saved" && question.question).map(question => ({
             id: question.id,
@@ -56,8 +57,9 @@ export default () => {
             })
         }
         
-        questions.map(question => {
-            
+        for(var i = 0; i < questions.length; i++) {
+            let question = questions[i];
+
             // TODO: Change it to more efficient way
             let question_index = state.questions.findIndex(q => q.question === question.text)
             if(state.questions[question_index].isSaving)
@@ -88,31 +90,29 @@ export default () => {
                     }) )
                 })
             } else {
-                ENDPOINTS.irs().store({
+                const response = await ENDPOINTS.irs().store({
                     ...question,
                     category_id: category.value,
                     class_type_id: classType.value,
                     financial_status: financialStatus.value
-                })
-                .then((response: any) => {
-                    setIsSaving(prev => prev - 1)
-                    let q = response.data.data
-                    dispatch( IRSSlice.actions.editQuestion({
-                        index: question_index,
-                        question: {
-                            id: q.id,
-                            status: "saved",
-                            isSaving: false,
-                            answers: q.options.map((option: any): answer => ({
-                                id: option.id,
-                                answer: option.text,
-                                rate: option.value
-                            }))
-                        }
-                    }) )
-                })
+                });
+                setIsSaving(prev => prev - 1)
+                let q = response.data.data
+                dispatch( IRSSlice.actions.editQuestion({
+                    index: question_index,
+                    question: {
+                        id: q.id,
+                        status: "saved",
+                        isSaving: false,
+                        answers: q.options.map((option: any): answer => ({
+                            id: option.id,
+                            answer: option.text,
+                            rate: option.value
+                        }))
+                    }
+                }) )
             }
-        })
+        }
 
     }
 
@@ -129,7 +129,7 @@ export default () => {
             .then(((response: any) => {
                 let irs = response.data.data
                 setIRSID(irs.id)
-                dispatch( IRSSlice.actions.setPercentage(irs.percentage) )
+                dispatch( IRSSlice.actions.setPercentage(irs.questions.map((question: any) => Number(question.max_options_value)).reduce((a: number, b: number) => a + b, 0)) )
                 setIsLoaded(true)
                 dispatch(IRSSlice.actions.setQuestions(
                     irs.questions?.map((question: any): question => ({
@@ -171,11 +171,20 @@ export default () => {
                     </Col>
                     
                     <Col md={2} className="text-right">
-                        <button className="button bg-gold color-white" style={ isSaving || isSaved() ? { opacity: .5, marginTop: 12 } : { marginTop: 12 }} disabled={isSaving > 0 || isSaved()} onClick={save}>{ isSaving ? "Saving..." : "Save" }</button>
+                        { Number(state.percentage) > 100 ?
+                        <div data-tip="Your total percentage is above 100%" style={{ display: 'inline-block' }}>
+                            <button className="button bg-gold color-white" style={ isSaving || isSaved() || Number(state.percentage) > 100 ? { opacity: .5, marginTop: 12 } : { marginTop: 12 }} disabled={isSaving > 0 || isSaved() || Number(state.percentage) > 100} onClick={save}>{ isSaving ? "Saving..." : "Save" }</button>
+                            <ReactTooltip backgroundColor='tomato' effect='solid' />
+                        </div> :
+                        <div>
+                            <button className="button bg-gold color-white" style={ isSaving || isSaved() || Number(state.percentage) > 100 ? { opacity: .5, marginTop: 12 } : { marginTop: 12 }} disabled={isSaving > 0 || isSaved() || Number(state.percentage) > 100} onClick={save}>{ isSaving ? "Saving..." : "Save" }</button>
+                        </div>
+                        }
+
                     </Col>
 
                     <Col md={2}>
-                        <NumberField min={0} max={100} placeholder={t("max_percentage")} value={state.percentage} disabled />
+                        <NumberField min={0} max={100} placeholder={t("max_percentage")} value={state.percentage} disabled style={Number(state.percentage) > 100 ? { border: '1px solid tomato', color: 'tomato' } : {}} />
                     </Col>
                     </> }
 

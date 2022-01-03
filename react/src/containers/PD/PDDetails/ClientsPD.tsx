@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { getPercentage, toFixed } from '../../../services/hoc/helpers';
+import { getFileName, getPercentage, toFixed } from '../../../services/hoc/helpers';
+import './ClientsPD.scss'
 
 const BanksMap = [ "AAA", "AA", "A", "BBB", "BB", "B", "CCC", "Default" ]
 
 export default ({ PDDetails }: { PDDetails: any }) => {
     
-    const [activeTab, setActiveTab] = useState<'default_calculation' | 'final_pd' | 'cumulative_pd'>('cumulative_pd')
+    const [activeTab, setActiveTab] = useState<'default_calculation' | 'final_pd' | 'cumulative_pd' | 'attachments'>('cumulative_pd')
 
     return(
         <div style={{ width: "90vw" }}>
@@ -13,6 +14,7 @@ export default ({ PDDetails }: { PDDetails: any }) => {
                 <li className={activeTab === "cumulative_pd" ? "active" : ""} onClick={() => setActiveTab("cumulative_pd")}>Migration Matrix</li>
                 <li className={activeTab === "default_calculation" ? "active" : ""} onClick={() => setActiveTab("default_calculation")}>Corpr Default Calculation</li>
                 <li className={activeTab === "final_pd" ? "active" : ""} onClick={() => setActiveTab("final_pd")}>Corpr Final PD</li>
+                <li className={activeTab === "attachments" ? "active" : ""} onClick={() => setActiveTab("attachments")}>Attachments</li>
             </ul>
             {activeTab === "default_calculation" ?
                 <table className="table">
@@ -80,6 +82,7 @@ export default ({ PDDetails }: { PDDetails: any }) => {
                             )}
                         </tbody>
                     </table> :
+                    activeTab === "cumulative_pd" ?
                     <table className="table">
                         <thead>
                             <tr>
@@ -97,7 +100,17 @@ export default ({ PDDetails }: { PDDetails: any }) => {
                                 </tr>
                             )}
                         </tbody>
-                    </table>
+                    </table> :
+                    <div className='attachments'>
+                        <ul>
+                            { PDDetails.attachments?.map((attachment: any) => (
+                                <li><a href={attachment?.path}><i className="icon-attachment"></i>{getFileName(attachment?.path)}</a></li>
+                            )) }
+                            {
+                                PDDetails.attachments?.length === 0 && <li className='text-center' style={{ padding: 20 }}>No attachments</li>
+                            }
+                        </ul>
+                    </div>
             }
         </div>
     );

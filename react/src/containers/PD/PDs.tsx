@@ -17,6 +17,10 @@ import { Col, Row } from 'react-grid-system'
 import { getPercentage, toFixed } from '../../services/hoc/helpers'
 import ClientsPD from './PDDetails/ClientsPD'
 import { Confirm } from '../../components/Alerts/Alerts'
+import { ClassesMenu } from '../../components/PredefinedMenus/PredefinedMenus'
+import { SelectField } from '../../components/FormElements/FormElements'
+
+import { years } from '../../services/hoc/helpers'
 
 export default () => {
 
@@ -32,6 +36,10 @@ export default () => {
     const [showDetails, setShowDetails] = useState<boolean>(false)
     const [loadingDetails, setLoadingDetails] = useState<boolean>(true)
     const [PDDetails, setPDDetails] = useState<any>(null)
+
+    const [classType, setClassType] = useState<any>();
+    const [year, setYear] = useState<number>()
+    const [quarter, setQuarter] = useState<'q1' | 'q2' | 'q3' | 'q4'>()
 
     // API
     const ENDPOINTS = new API()
@@ -52,7 +60,7 @@ export default () => {
 
         dispatch( pdsSlice.actions.setIsFetching( true ) )
 
-        ENDPOINTS.pd().index({ page, page_size, keyword })
+        ENDPOINTS.pd().index({ page, page_size, class_type_id: classType?.id, year, quarter, keyword })
         .then((response: any) => {
             let pds: pd[] = response.data.data.pds.map((pd: any): pd => ({
                 id: pd.id,
@@ -68,6 +76,11 @@ export default () => {
                 dispatch( pdsSlice.actions.setIsLoaded( true ) )
         })
     }
+
+    useEffect(() => {
+        tableRef.current?.reset()
+        dispatch( pdsSlice.actions.reset() )
+    }, [classType, year, quarter])
 
     interface tableDataType { [key: string]: { [key: string]: any } }
     const generateData: () => tableDataType = () => {
@@ -126,6 +139,28 @@ export default () => {
             { state.isLoaded ?
             <>
                 { state.isLoading ? <WhiteboxLoader /> : ""}
+                <form>
+                    <div className="filters">
+                        <div className="filter" key="PDFilter">
+                            <ClassesMenu
+                                value={classType}
+                                onChange={(selected: any) => setClassType(selected)}
+                                placeholder="Filter by class type"
+                                />
+                        </div>
+                        <div className="filter">
+                            <SelectField defaultValue={year ? { label: year, value: year } : undefined} onChange={(selected: { value: number; }) => setYear(selected?.value)} placeholder={t("year")} options={years} />
+                        </div>
+                        <div className="filter">
+                            <SelectField defaultValue={quarter ? { label: quarter?.toUpperCase(), value: quarter } : undefined} onChange={(selected: { value: 'q1' | 'q2' | 'q3' | 'q4'; }) => setQuarter(selected?.value)} placeholder={t("quarter")} options={[
+                                { label: "Q1", value: "q1" },
+                                { label: "Q2", value: "q2" },
+                                { label: "Q3", value: "q3" },
+                                { label: "Q4", value: "q4" }
+                            ]} />
+                        </div>
+                    </div>
+                </form>
                 <TableActionBar
                     title={t("pds")}
                     search={search}
@@ -136,8 +171,8 @@ export default () => {
                     ref={tableRef}
                     header={[ t("class_type"), t("year"), t("quarter"), "" ]}
                     body={generateData()}
-                    hasMore={false}
-                    // loadMore={fetchData}
+                    hasMore={state.hasMore}
+                    loadMore={fetchData}
                     />
 
                 <Modal open={showDetails} toggle={() => setShowDetails(false)}>

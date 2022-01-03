@@ -85,7 +85,6 @@ export default (props: IProps) => {
         let data: tableDataType = {}
         state.clients.map((client, index) => {
             data[client.id] = {
-                loan_key: client.loan_key,
                 cif: client.cif,
                 name: client.name,
                 class_type: client.class_type,
@@ -166,7 +165,7 @@ export default (props: IProps) => {
                 
                 <DashboardTable
                     ref={tableRef}
-                    header={[ t("loan_key"), t("cif"), t("name"), t("class_type"), t("type"), "" ]}
+                    header={[ t("cif"), t("name"), t("class_type"), t("type"), "" ]}
                     body={generateData()}
                     hasMore={state.hasMore}
                     loadMore={fetchData}

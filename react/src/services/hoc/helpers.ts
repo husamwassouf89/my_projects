@@ -114,3 +114,9 @@ export const numberWithCommas = (n: number) => {
 let currentYear = (new Date()).getFullYear()
 let oldestYear = currentYear - 50
 export const years = Array.from({ length: (oldestYear - currentYear) / -1 + 1}, (_, i) => ({ value: currentYear + (i * -1), label: currentYear + (i * -1) }))
+
+
+export const getFileName = (link: string): string => {
+    let file_name = link.split('/').pop() || '';
+    return file_name.replace('-' + file_name.split('-').pop(), '');
+}
