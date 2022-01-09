@@ -27,6 +27,8 @@ export default () => {
     const [financialStatus, setFinancialStatus] = useState<any>(null)
     const [ irsID, setIRSID ] = useState<number>(0)
     const [ isSaving, setIsSaving ] = useState<number>(0)
+    const [weightPercentage, setWeightPercentage] = useState(0);
+    const [shouldSave, setShouldSave] = useState(false);
 
     // Redux
     const dispatch = useDispatch()
@@ -40,6 +42,13 @@ export default () => {
 
     const save = async () => {
 
+        ENDPOINTS.irs().updatePercentage({
+            class_type_id: classType.value,
+            category_id: category.value,
+            financial_status: financialStatus.value,
+            percentage: weightPercentage
+        });
+
         let questions = state.questions.filter(question => question.status !== "saved" && question.question).map(question => ({
             id: question.id,
             text: question.question,
@@ -51,11 +60,13 @@ export default () => {
             }))
         }))
 
-        if(questions.length === 0) {
+        if(questions.length === 0 && !shouldSave) {
             toast("Your data is already saved!", {
                 progressStyle: { background: "#925b97" }
             })
         }
+
+        setShouldSave(false);
         
         for(var i = 0; i < questions.length; i++) {
             let question = questions[i];
@@ -117,7 +128,7 @@ export default () => {
     }
 
     const isSaved = (): boolean => {
-        return state.questions?.filter(question => question.status !== "saved").length === 0
+        return state.questions?.filter(question => question.status !== "saved").length === 0 && !shouldSave
     }
 
     useEffect(() => {
@@ -130,6 +141,7 @@ export default () => {
                 let irs = response.data.data
                 setIRSID(irs.id)
                 dispatch( IRSSlice.actions.setPercentage(irs.questions.map((question: any) => Number(question.max_options_value)).reduce((a: number, b: number) => a + b, 0)) )
+                setWeightPercentage(irs.percentage);
                 setIsLoaded(true)
                 dispatch(IRSSlice.actions.setQuestions(
                     irs.questions?.map((question: any): question => ({
@@ -166,7 +178,7 @@ export default () => {
                     </Col>
                     { classType && category && financialStatus && isLoaded &&
                     <>
-                    <Col md={8}>
+                    <Col md={6}>
                         <h3 style={{ lineHeight: "50px" }}><span style={{ fontWeight: "normal" }}>Questions related to </span>{classType.label} &#x3E; {category.label} Factors</h3>
                     </Col>
                     
@@ -181,6 +193,13 @@ export default () => {
                         </div>
                         }
 
+                    </Col>
+
+                    <Col md={2}>
+                        <NumberField min={0} max={100} placeholder={t("weight_percentage")} value={weightPercentage} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            setWeightPercentage(Number(e.target.value));
+                            setShouldSave(true);
+                        }} />
                     </Col>
 
                     <Col md={2}>

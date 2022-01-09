@@ -98,7 +98,7 @@ export default () => {
                                 setLoadingDetails(true)
                                 ENDPOINTS.pd().show({ id: pd.id })
                                 .then((response: any) => {
-                                    setPDDetails(response.data.data)
+                                    setPDDetails({ ...response.data.data, class_type: pd.class_type })
                                     setLoadingDetails(false)
                                 })
                             }} />
@@ -143,16 +143,17 @@ export default () => {
                     <div className="filters">
                         <div className="filter" key="PDFilter">
                             <ClassesMenu
+                                isClearable
                                 value={classType}
                                 onChange={(selected: any) => setClassType(selected)}
                                 placeholder="Filter by class type"
                                 />
                         </div>
                         <div className="filter">
-                            <SelectField defaultValue={year ? { label: year, value: year } : undefined} onChange={(selected: { value: number; }) => setYear(selected?.value)} placeholder={t("year")} options={years} />
+                            <SelectField isClearable defaultValue={year ? { label: year, value: year } : undefined} onChange={(selected: { value: number; }) => setYear(selected?.value)} placeholder={t("year")} options={years} />
                         </div>
                         <div className="filter">
-                            <SelectField defaultValue={quarter ? { label: quarter?.toUpperCase(), value: quarter } : undefined} onChange={(selected: { value: 'q1' | 'q2' | 'q3' | 'q4'; }) => setQuarter(selected?.value)} placeholder={t("quarter")} options={[
+                            <SelectField isClearable defaultValue={quarter ? { label: quarter?.toUpperCase(), value: quarter } : undefined} onChange={(selected: { value: 'q1' | 'q2' | 'q3' | 'q4'; }) => setQuarter(selected?.value)} placeholder={t("quarter")} options={[
                                 { label: "Q1", value: "q1" },
                                 { label: "Q2", value: "q2" },
                                 { label: "Q3", value: "q3" },

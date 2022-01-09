@@ -35,6 +35,7 @@ export const StaticAlert = (props: StaticAlertProps) => {
 interface ConfirmModalProps {
     message: string;
     onConfirm(): any;
+    hideCancel?: boolean;
 }
 
 const ConfirmModal = (props: ConfirmModalProps) => {
@@ -48,8 +49,11 @@ const ConfirmModal = (props: ConfirmModalProps) => {
                 props.onConfirm()
                 close()
             }}>{t("OK")}</button>
+            { !props.hideCancel &&
+            <>
             <span className="margin-10" />
             <button className="button" onClick={close}>{t("Cancel")}</button>
+            </> }
         </Modal>
     )
 

@@ -11,6 +11,7 @@ import FileUploader from '../../components/FileUploader/FileUploader'
 import { toast } from 'react-toastify'
 import API from '../../services/api/api'
 import { ClassesMenu } from '../../components/PredefinedMenus/PredefinedMenus'
+import { Confirm } from '../../components/Alerts/Alerts'
 
 export default () => {
 
@@ -72,9 +73,12 @@ export default () => {
             eco_parameter_heavy_weight: calcWeight(ecoParameterHeavyWeight)
         })
         .then((response: any) => {
-            toast(response?.data?.message, {
-                progressStyle: { background: "#925b97" }
-            })
+            if(!response.data.data)
+                Confirm({ message: response?.data?.message, onConfirm: () => {}, hideCancel: true })
+            else
+                toast(response?.data?.message, {
+                    progressStyle: { background: "#925b97" }
+                })
             // toast("Your PD file has been imported successfully!", {
             //     progressStyle: { background: "#925b97" }
             // })
@@ -99,7 +103,7 @@ export default () => {
                     { label: "Q3", value: "q3" },
                     { label: "Q4", value: "q4" },
                 ]} />
-            { classType !== 6 &&
+            { (classType !== 6 && classType !== 7) &&
                 <>
                 <div className="weight">
                     <label>Eco parameter - <strong>Base</strong></label>

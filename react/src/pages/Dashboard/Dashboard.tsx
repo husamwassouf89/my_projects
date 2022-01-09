@@ -30,7 +30,7 @@ export default (props: any) => {
         {
             icon: "icon-users",
             name: t("direct_credit_facilities"),
-            sub_name: 'Corporate – SME – Retail',
+            sub_name: 'Corporate - SME - Retail',
             show: true,
             childs: [
                 {
@@ -70,7 +70,7 @@ export default (props: any) => {
         {
             icon: "icon-users",
             name: t("OFF-Balance"),
-            sub_name: 'Corporate – SME – Retail',
+            sub_name: 'Corporate - SME - Retail',
             show: true,
             childs: [
                 {
@@ -94,26 +94,13 @@ export default (props: any) => {
             childs: [
                 {
                     icon: "icon-hammer",
-                    name: t("all_clients"),
+                    name: t("direct"),
                     link: "/limits",
                     show: true
                 },
                 {
-                    icon: "icon-tasks",
-                    name: t("import_clients"),
-                    link: "/import-limits",
-                    show: true
-                },
-            ]
-        },
-        {
-            icon: "icon-users",
-            name: t("Unused limits - Off balance"),
-            show: true,
-            childs: [
-                {
                     icon: "icon-hammer",
-                    name: t("all_clients"),
+                    name: t("indirect"),
                     link: "/limits-offbalance",
                     show: true
                 },

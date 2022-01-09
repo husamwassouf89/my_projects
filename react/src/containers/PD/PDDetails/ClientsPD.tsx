@@ -3,10 +3,15 @@ import { getFileName, getPercentage, toFixed } from '../../../services/hoc/helpe
 import './ClientsPD.scss'
 
 const BanksMap = [ "AAA", "AA", "A", "BBB", "BB", "B", "CCC", "Default" ]
+const exclude = ["Abroad Bank", "Investments"];
 
 export default ({ PDDetails }: { PDDetails: any }) => {
     
     const [activeTab, setActiveTab] = useState<'default_calculation' | 'final_pd' | 'cumulative_pd' | 'attachments'>('cumulative_pd')
+
+    const excluded = () => {
+        return exclude.includes(PDDetails.class_type);
+    }
 
     return(
         <div style={{ width: "90vw" }}>
@@ -43,20 +48,22 @@ export default ({ PDDetails }: { PDDetails: any }) => {
                 </table> : activeTab === "final_pd" ?
                     <table className="table">
                         <thead>
+                            { !excluded() &&
                             <tr>
                                 <th colSpan={4}></th>
                                 <th title={PDDetails?.eco_parameter_base_weight}>{getPercentage(PDDetails?.eco_parameter_base_weight)}</th>
                                 <th title={PDDetails?.eco_parameter_mild_weight}>{getPercentage(PDDetails?.eco_parameter_mild_weight)}</th>
                                 <th title={PDDetails?.eco_parameter_heavy_weight}>{getPercentage(PDDetails?.eco_parameter_heavy_weight)}</th>
                                 <th colSpan={2}></th>
-                            </tr>
+                            </tr> }
                             <tr>
-                                <th rowSpan={2}>{ PDDetails?.pd?.length < 10 ? 'From/to' : 'Degree' }</th>
-                                <th colSpan={3}>FX Macroeconomic Parameter</th>
-                                <th colSpan={3}>Inclusion to the FX Percentages</th>
-                                <th style={{ background: '#723b77' }} rowSpan={2}>Final Calibrated wieghted PD</th>
-                                <th style={{ background: '#723b77' }} rowSpan={2}>Final Calibrated Used PD</th>
+                                <th rowSpan={!excluded() ? 2 : 1}>{ PDDetails?.pd?.length < 10 ? 'From/to' : 'Degree' }</th>
+                                { !excluded() && <th colSpan={3}>FX Macroeconomic Parameter</th> }
+                                <th colSpan={!excluded() ? 3 : 1}>Inclusion to the FX Percentages</th>
+                                <th style={{ background: '#723b77' }} rowSpan={!excluded() ? 2 : 1}>Final Calibrated wieghted PD</th>
+                                <th style={{ background: '#723b77' }} rowSpan={!excluded() ? 2 : 1}>Final Calibrated Used PD</th>
                             </tr>
+                            { !excluded() &&
                             <tr>
                                 <th style={{ background: "#3498db", borderColor: "#3498db" }}>Base</th>
                                 <th style={{ background: "#f39c12", borderColor: "#f39c12" }}>Mild Covid19 Shock</th>
@@ -64,18 +71,24 @@ export default ({ PDDetails }: { PDDetails: any }) => {
                                 <th style={{ background: "#3498db", borderColor: "#3498db" }}>Base</th>
                                 <th style={{ background: "#f39c12", borderColor: "#f39c12" }}>Mild Covid19 Shock</th>
                                 <th style={{ background: "#e74c3c", borderColor: "#e74c3c" }}>Heavy Covid19 Shock</th>
-                            </tr>
+                            </tr> }
                         </thead>
                         <tbody>
                             {[...Array(PDDetails?.pd?.length)].map((x, i) =>
                                 <tr>
                                     <td>{PDDetails?.pd?.length < 10 ? BanksMap[i] : i + 1}</td>
+                                    { !excluded() &&
+                                    <>
                                     <td title={PDDetails?.eco_parameter_base_value}>{toFixed(PDDetails?.eco_parameter_base_value, 2)}</td>
                                     <td title={PDDetails?.eco_parameter_mild_value}>{toFixed(PDDetails?.eco_parameter_mild_value, 2)}</td>
                                     <td title={PDDetails?.eco_parameter_heavy_value}>{toFixed(PDDetails?.eco_parameter_heavy_value, 2)}</td>
+                                    </> }
                                     <td title={PDDetails?.inclusion.base[i]}>{getPercentage(PDDetails?.inclusion.base[i])}</td>
+                                    { !excluded() &&
+                                    <>
                                     <td title={PDDetails?.inclusion.mild[i]}>{getPercentage(PDDetails?.inclusion.mild[i])}</td>
                                     <td title={PDDetails?.inclusion.heavy[i]}>{getPercentage(PDDetails?.inclusion.heavy[i])}</td>
+                                    </> }
                                     <td title={PDDetails?.final_calibrated_weighted_pd[i]} style={{ fontWeight: 'bold' }}>{getPercentage(PDDetails?.final_calibrated_weighted_pd[i])}</td>
                                     <td title={PDDetails?.final_calibrated_used_PD[i]} style={{ fontWeight: 'bold' }}>{getPercentage(PDDetails?.final_calibrated_used_PD[i])}</td>
                                 </tr>

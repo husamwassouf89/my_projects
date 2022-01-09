@@ -151,6 +151,7 @@ class API {
         questions( query: { id: number; } ): any;
         store( query: any ): any;
         update( query: any ): any;
+        updatePercentage( query: { class_type_id: number; category_id: number; financial_status: string; percentage: number; } ): any;
     } {
         var endpoints:any = {}
 
@@ -159,6 +160,8 @@ class API {
         endpoints.store = ( query: any, name='irs/questions' ) => axios.post( `${this.url}/${name}`, query )
         
         endpoints.update = ( query: any, name='irs/questions' ) => axios.put( `${this.url}/${name}/${query.id}`, query )
+
+        endpoints.updatePercentage = ( query: any, name='irs' ) => axios.post( `${this.url}/${name}`, query )
 
         return endpoints
     }

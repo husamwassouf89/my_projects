@@ -37,8 +37,8 @@ export default (props: IProps) => {
     // Hooks
     const [keyword, setKeyword] = useState<string>("");
     const [classType, setClassType] = useState<any>();
-    const [year, setYear] = useState<number>((new Date()).getFullYear())
-    const [quarter, setQuarter] = useState<'q1' | 'q2' | 'q3' | 'q4'>('q1')
+    const [year, setYear] = useState<number>()
+    const [quarter, setQuarter] = useState<'q1' | 'q2' | 'q3' | 'q4'>()
     const [classes, setClasses] = useState<any[]>([]);
 
     // API
@@ -61,7 +61,7 @@ export default (props: IProps) => {
         console.log(classType);
         dispatch( clientsSlice.actions.setIsFetching( true ) )
 
-        ENDPOINTS.clients().index({ page, page_size, class_type_id: classType.id, year, quarter, type: props.offbalance && props.type !== 'limits' ? 'documents' : undefined, limits: props.type === 'limits' ? 'yes' : undefined })
+        ENDPOINTS.clients().index({ page, page_size, class_type_id: classType?.id, year, quarter, type: props.offbalance && props.type !== 'limits' ? 'documents' : undefined, limits: props.type === 'limits' ? 'yes' : undefined })
         .then((response: any) => {
             let clients: client[] = response.data.data.clients.map((client: any): client => ({
                 id: client.id,
@@ -105,7 +105,7 @@ export default (props: IProps) => {
         ENDPOINTS.other().predefined()
         .then((response: any) => {
             setClasses(response.data?.data?.class_types);
-            setClassType(response.data?.data?.class_types?.filter((item: any) => item.category === props.category)[0]);
+            // setClassType(response.data?.data?.class_types?.filter((item: any) => item.category === props.category)[0]);
         })
         return(() => {
             dispatch( clientsSlice.actions.setIsLoaded( false ) )
@@ -114,7 +114,7 @@ export default (props: IProps) => {
     }, [])
 
     useEffect(() => {
-        if(!state.isLoaded && classes?.length > 0 && classType)
+        if(!state.isLoaded && classes?.length > 0)
             fetchData(1);
     }, [classes, classType]);
 
@@ -137,6 +137,8 @@ export default (props: IProps) => {
                     <div className="filters">
                         <div className="filter" key={props.category}>
                             <SelectField
+                                isClearable
+                                placeholder={t("class_type")}
                                 value={classType}
                                 onChange={(selected: any) => setClassType(selected)}
                                 options={classes.filter((item: any) => item.category === props.category)}
@@ -145,10 +147,10 @@ export default (props: IProps) => {
                                 />
                         </div>
                         <div className="filter">
-                            <SelectField defaultValue={{ label: year, value: year }} onChange={(selected: { value: number; }) => setYear(selected?.value)} placeholder={t("year")} options={years} />
+                            <SelectField isClearable defaultValue={year ? { label: year, value: year } : null} onChange={(selected: { value: number; }) => setYear(selected?.value)} placeholder={t("year")} options={years} />
                         </div>
                         <div className="filter">
-                            <SelectField defaultValue={{ label: quarter.toUpperCase(), value: quarter }} onChange={(selected: { value: 'q1' | 'q2' | 'q3' | 'q4'; }) => setQuarter(selected?.value)} placeholder={t("quarter")} options={[
+                            <SelectField isClearable defaultValue={quarter ? { label: quarter?.toUpperCase(), value: quarter } : null} onChange={(selected: { value: 'q1' | 'q2' | 'q3' | 'q4'; }) => setQuarter(selected?.value)} placeholder={t("quarter")} options={[
                                 { label: "Q1", value: "q1" },
                                 { label: "Q2", value: "q2" },
                                 { label: "Q3", value: "q3" },
