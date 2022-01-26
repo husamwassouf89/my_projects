@@ -61,7 +61,7 @@ export default (props: IProps) => {
         console.log(classType);
         dispatch( clientsSlice.actions.setIsFetching( true ) )
 
-        ENDPOINTS.clients().index({ page, page_size, class_type_id: classType?.id, year, quarter, type: props.offbalance && props.type !== 'limits' ? 'documents' : undefined, limits: props.type === 'limits' ? 'yes' : undefined })
+        ENDPOINTS.clients().index({ page, page_size, class_type_category: classType?.id ? undefined : props.category, class_type_id: classType?.id, year, quarter, type: props.offbalance && props.type !== 'limits' ? 'documents' : undefined, limits: props.type === 'limits' ? 'yes' : undefined })
         .then((response: any) => {
             let clients: client[] = response.data.data.clients.map((client: any): client => ({
                 id: client.id,
@@ -124,8 +124,11 @@ export default (props: IProps) => {
     }, [classType, year, quarter, props.offbalance])
 
     useEffect(() => {
-        if(classes.filter((item: any) => item.category === props.category)[0] !== classType)
-            setClassType(classes.filter((item: any) => item.category === props.category)[0]);
+        // if(classes.filter((item: any) => item.category === props.category)[0] !== classType)
+        //     setClassType(classes.filter((item: any) => item.category === props.category)[0]);
+        setClassType(null);
+        tableRef.current?.reset()
+        dispatch( clientsSlice.actions.reset() )
     }, [props.category]);
 
     return(

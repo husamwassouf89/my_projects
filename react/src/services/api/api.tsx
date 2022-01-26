@@ -7,6 +7,7 @@ interface pagination {
     page_size: number,
     keyword?: string,
     class_type_id?: number;
+    class_type_category?: string;
     quarter?: string;
     year?: number;
     type?: string;
