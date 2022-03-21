@@ -31,6 +31,7 @@ interface pd {
 class API {
 
     url: string;
+    source = axios.CancelToken.source()
 
     constructor() {
         // this.url = "http://127.0.0.1:8000"
@@ -44,6 +45,7 @@ class API {
             config.headers["Accept"] = "application/json"
             config.headers["Content-Type"] = "application/json"
             config.headers["X-Requested-With"] = "XMLHttpRequest"
+            config.cancelToken = this.source.token;
             if (cookies.userinfo) {
                 config.headers["Authorization"] = cookies.userinfo.accessToken;
             }
@@ -93,7 +95,7 @@ class API {
      clients(): {
         index( query: pagination ): any;
         show( query: { id: number } ): any;
-        search_cif( query: { cif: number; limit?: 'on' | 'off'; } ): any;
+        search_cif( query: { cif: string; limit?: 'on' | 'off'; balance?: string; } ): any;
         store( query: { path: string; year: string; quarter: "q1" | "q2" | "q3" | "q4"; type: string; } ): any;
         import_limits( query: { path: string; year: string; quarter: "q1" | "q2" | "q3" | "q4"; type: string; } ): any;
         change_financial_status( query: { id: number; financial_status: string; } ): any;
@@ -219,6 +221,8 @@ class API {
 
         return endpoints
     }
+
+    abortCalls = () => this.source.cancel('Operation canceled due to route change.')
     
 
 }

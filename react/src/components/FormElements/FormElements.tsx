@@ -16,7 +16,7 @@ import { uid } from '../../services/hoc/helpers';
 
 // Stylesheet
 import './FormElements.css'
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 export const InputField = (props: any) => {
 
@@ -68,19 +68,11 @@ export const Checkbox = (props: any) => {
 }
 
 
-export const SimpleCheckbox = (props: any) => {
-    
-    let field: object = (({ onChange, onClick, disabled, checked, className }) => ({ onChange, onClick, disabled, checked, className }))(props);
-    let id = uid('input')
-
-    return(
-        <div className="simple-checkbox">
-            <input type="checkbox" id={id} {...field} />
-            <label htmlFor={id} ><i className="icon-checkmark" />{props.label ? " " + props.label : ""}</label>
-        </div>
-    )
-
-}
+export const SimpleCheckbox = (props: React.InputHTMLAttributes<HTMLInputElement>) => (
+    <div className="simple-checkbox">
+        <input type="checkbox" {...props} />
+    </div>
+);
 
 
 export const LightDarkModeSwitcher = (props: any) => {

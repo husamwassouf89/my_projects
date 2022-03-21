@@ -83,6 +83,11 @@ export default () => {
             //     progressStyle: { background: "#925b97" }
             // })
         })
+        .catch((error: any) => {
+            toast(error?.response?.data?.error, {
+                progressStyle: { background: "#925b97" }
+            })
+        })
         .finally(() => {
             setIsLoading(false)
         })

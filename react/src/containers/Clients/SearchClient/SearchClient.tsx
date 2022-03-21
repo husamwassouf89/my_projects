@@ -18,6 +18,13 @@ import { getFileName, getPercentage, numberWithCommas, toFixed } from '../../../
 import { FinancialStatusMenu } from '../../../components/PredefinedMenus/PredefinedMenus'
 import ImportAttachments from './ImportAttachments/ImportAttachments'
 
+const TYPES = [
+    {label: 'ON-Balance', value: 'onbalance'},
+    {label: 'OFF-Balance', value: 'offbalance'},
+    {label: 'Limits ON', value: 'limitson'},
+    {label: 'Limits OFF', value: 'limitsoff'}
+]
+
 export default () => {
     
     // History
@@ -26,7 +33,7 @@ export default () => {
     // Hooks
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [showDetails, setShowDetails] = useState<boolean>(false)
-    const [cif, setCIF] = useState<number | null>(null)
+    const [cif, setCIF] = useState<string | null>(null)
     const [client, setClient] = useState<any>(null)
     const [active_account, setActiveAccount] = useState<number>(0)
     const [financialStatus, setFinancialStatus] = useState<string>('');
@@ -37,6 +44,9 @@ export default () => {
     const [selectedYear, setSelectedYear] = useState<any>()
     const [selectedQuarter, setSelectedQuarter] = useState<any>()
     const [activeAccountInfo, setActiveAcountInfo] = useState<any>()
+
+    // Client type
+    const [clientType, setClientType] = useState<any>({label: 'ON-Balance', value: 'onbalance'})
 
     const [isOpenEditRate, setIsOpenEditRate] = useState<boolean>(false)
     const [isOpenEditStage, setIsOpenEditStage] = useState<boolean>(false)
@@ -50,7 +60,7 @@ export default () => {
     // API
     const ENDPOINTS = new API()
 
-    const search = ((e?: React.FormEvent<HTMLFormElement>, customCIF?: number) => {
+    const search = ((e?: React.FormEvent<HTMLFormElement>, customCIF?: string) => {
         e?.preventDefault()
 
         let search_cif = cif || customCIF
@@ -60,11 +70,11 @@ export default () => {
 
         setIsLoading(true)
         const params = new URLSearchParams(location.search);
-        params.set('cif', String(search_cif));
+        params.set('cif', String(search_cif == '0' ? '00000' : search_cif));
         window.history.replaceState({}, '', `${location.pathname}?${params}`);
         const query = new URLSearchParams(location.search);
-        const limit: any = query.get('limit')
-        ENDPOINTS.clients().search_cif({ cif: search_cif, limit })
+        const type: any = query.get('client_type')
+        ENDPOINTS.clients().search_cif({ cif: search_cif == '0' ? '00000' : search_cif, balance: type === 'offbalance' ? 'off' : 'on', limit: type === 'limitson' ? 'on' : type === 'limitsoff' ? 'off' : undefined })
         .then((response: any) => {
             setIsLoading(false)
             if(response.data.data === null) {
@@ -77,6 +87,12 @@ export default () => {
             setFinancialStatus(response.data?.data?.financial_status);
             setShowDetails(true)
         })
+        .catch(() => {
+            setIsLoading(false)
+            toast("We couldn't find a client with this CIF.", {
+                progressStyle: { background: "tomato" }
+            })
+        })
 
     })
 
@@ -84,8 +100,12 @@ export default () => {
         const query = new URLSearchParams(location.search);
         const query_cif = query.get('cif')
         if(query_cif && !isLoading && !showDetails) {
-            setCIF(Number(query_cif))
-            search(undefined, Number(query_cif))
+            setCIF(query_cif)
+            search(undefined, query_cif)
+        }
+        const type = query.get('client_type')
+        if(type) {
+            setClientType(TYPES.find(item => item.value === type) || clientType)
         }
     }, [])
 
@@ -97,7 +117,7 @@ export default () => {
         const query_quarter = query.get('quarter')
         let new_years: any = {}
         let current: number | null = null
-        client.client_accounts[active_account].account_infos?.map((item: any, index: number) => {
+        client.client_accounts[active_account]?.account_infos?.map((item: any, index: number) => {
             if(typeof new_years[item.year] === "undefined") {
                 new_years[item.year] = { label: item.year, value: item.year, quarters: [] }
             }
@@ -118,8 +138,8 @@ export default () => {
             }
         })
         if(!current) {
-            let year = client.client_accounts[active_account].account_infos[0]?.year;
-            let quarter = client.client_accounts[active_account].account_infos[0]?.quarter;
+            let year = client.client_accounts[active_account]?.account_infos[0]?.year;
+            let quarter = client.client_accounts[active_account]?.account_infos[0]?.quarter;
             setSelectedYear({ label: year, value: year });
             setSelectedQuarter({ label: quarter, value: quarter });
         }
@@ -144,6 +164,14 @@ export default () => {
         window.history.replaceState({}, '', `${location.pathname}?${params}`);
     }
 
+    const changeClientType = (selected: any) => {
+        setClientType(selected);
+        const params = new URLSearchParams(location.search);
+        params.set('client_type', String(selected.value));
+        window.history.replaceState({}, '', `${location.pathname}?${params}`);
+        window.location.reload();
+    }
+
     return (
         <div className="search-client">
 
@@ -154,10 +182,7 @@ export default () => {
                     {isLoading ? <WhiteboxLoader /> : ""}
                     <div className="search-client-actions">
                         <Row>
-                            <Col md={2.5}>
-                                <h2>{t("search_for_client")}</h2>
-                            </Col>
-                            <Col md={9.5}>
+                            <Col md={12}>
                                     <Row>
                                         <Col md={2} component="form" onSubmit={(e) => e.preventDefault()}>
                                             <InputField
@@ -167,17 +192,20 @@ export default () => {
                                                         search()
                                                 }}
                                                 style={{ background: "#FFF", border: "1px solid #DDD" }}
-                                                value={cif}
-                                                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => { setCIF(Number(e.target.value)) }}
+                                                value={cif == '0' ? '00000' : cif}
+                                                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => { setCIF(e.target.value) }}
                                                 placeholder={t("client_cif")} />
                                         </Col>
-                                        <Col md={2.5} component="form" onSubmit={(e) => e.preventDefault()}>
+                                        <Col md={2} component="form" onSubmit={(e) => e.preventDefault()}>
                                             <SelectField placeholder="Year" options={Object.values(years)} value={selectedYear} onChange={(selected: any) => changeYear(selected)} />
                                         </Col>
-                                        <Col md={2.5} component="form"onSubmit={(e) => e.preventDefault()}>
-                                            <SelectField placeholder="Quarter" options={years[selectedYear.value].quarters} value={selectedQuarter} onChange={(selected: any) => changeQuarter(selected)} />
+                                        <Col md={2} component="form"onSubmit={(e) => e.preventDefault()}>
+                                            <SelectField placeholder="Quarter" options={years[selectedYear.value]?.quarters} value={selectedQuarter} onChange={(selected: any) => changeQuarter(selected)} />
                                         </Col>
-                                        <Col md={5} style={{ position: "relative", top: 11, textAlign: "right" }} className="actions">
+                                        <Col md={2} component="form"onSubmit={(e) => e.preventDefault()}>
+                                            <SelectField placeholder="Client Type" options={TYPES} value={clientType} onChange={(selected: any) => changeClientType(selected)} />
+                                        </Col>
+                                        <Col md={4} style={{ position: "relative", top: 11, textAlign: "right" }} className="actions">
                                             <button className="button color-gold" onClick={() => setIsOpenEditStage(true)}>{t("client_stage")}</button>
                                             <span className="margin-10" />
                                             <button className="button bg-gold color-white" onClick={() => setIsOpenEditRate(true)}>{t("client_rate")}</button>
@@ -295,7 +323,7 @@ export default () => {
                                 <td>{t("st_date")}</td>
                                 <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].st_date}</td>
                                 <td>{t("80_per_estimated_value_of_real_estate_collateral")}</td>
-                                <td>{numberWithCommas(client.client_accounts[active_account].account_infos[activeAccountInfo]['80_per_estimated_value_of_real_estate_collateral'])}</td>
+                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo]['80_per_estimated_value_of_real_estate_collateral'])}</td>
                             </tr>
                             <tr>
                                 <td>{t("mat_date")}</td>
@@ -309,6 +337,14 @@ export default () => {
                                 <td>{t("mortgages")}</td>
                                 <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].mortgages)}</td>
                             </tr>
+                            { client.client_accounts[active_account]?.account_infos[activeAccountInfo].account?.document_type &&
+                            <tr>
+                                <td>{t("document_type")}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].account?.document_type?.name}</td>
+                                <td>{t("document_type_ccf")}</td>
+                                <td>{getPercentage(client.client_accounts[active_account]?.account_infos[activeAccountInfo].account?.document_type?.ccf)}</td>
+                            </tr>
+                            }
 
                             { client.client_accounts[active_account]?.account_infos[activeAccountInfo].unused_direct_limit &&
                             <>
@@ -399,7 +435,7 @@ export default () => {
                         <h1 className="text-center" style={{ margin: "0 0 40px" }}>{t("search_for_client")}</h1>
                         <InputField
                             value={cif}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCIF(Number(e.target.value))}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCIF(e.target.value)}
                             style={{ background: "#FFF", border: "1px solid #DDD" }}
                             placeholder={t("client_cif")} />
                         <div className="text-center margin-top-40"><button className="button bg-gold color-white round" style={{ padding: "0 50px" }}>{t("search_client")}</button></div>

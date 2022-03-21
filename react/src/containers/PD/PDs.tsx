@@ -60,7 +60,7 @@ export default () => {
 
         dispatch( pdsSlice.actions.setIsFetching( true ) )
 
-        ENDPOINTS.pd().index({ page, page_size, class_type_id: classType?.id, year, quarter, keyword })
+        ENDPOINTS.pd().index({ page, page_size, class_type_id: classType?.value, year, quarter, keyword })
         .then((response: any) => {
             let pds: pd[] = response.data.data.pds.map((pd: any): pd => ({
                 id: pd.id,

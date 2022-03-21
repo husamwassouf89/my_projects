@@ -50,6 +50,7 @@ export default (props: IProps) => {
     
     // Search
     const search = (value: string) => {
+        ENDPOINTS.abortCalls();
         tableRef.current?.reset()
         dispatch( clientsSlice.actions.reset() )
         setKeyword(value)
@@ -66,7 +67,7 @@ export default (props: IProps) => {
             let clients: client[] = response.data.data.clients.map((client: any): client => ({
                 id: client.id,
                 loan_key: client.loan_key,
-                cif: client.cif,
+                cif: client.cif == '0' ? '00000' : client.cif,
                 name: client.name,
                 class_type: client.class_type_name,
                 type: client.type
@@ -88,9 +89,9 @@ export default (props: IProps) => {
                 cif: client.cif,
                 name: client.name,
                 class_type: client.class_type,
-                type: client.type,
+                // type: client.type,
                 actions: <div className="show-on-hover">
-                            <Link to={ `/search-client?cif=${client.cif}&year=${year}&quarter=${quarter}` + ( props.type === 'limits' ? ( props.offbalance ? '&limit=off' : '&limit=on' ) : '' ) }><i className="icon-info" style={{ color: "#333" }} /></Link>
+                            <Link to={ `/search-client?cif=${client.cif}` + (year ? `&year=${year}` : '') + (quarter ? `&quarter=${quarter}` : '') + ( props.type === 'limits' ? ( props.offbalance ? '&client_type=limitsoff' : '&client_type=limitson' ) : '' ) + ( props.offbalance ? '&client_type=offbalance' : '' ) }><i className="icon-info" style={{ color: "#333" }} /></Link>
                         </div>
             }
         })
@@ -119,13 +120,15 @@ export default (props: IProps) => {
     }, [classes, classType]);
 
     useEffect(() => {
+        ENDPOINTS.abortCalls();
         tableRef.current?.reset()
         dispatch( clientsSlice.actions.reset() )
-    }, [classType, year, quarter, props.offbalance])
+    }, [classType, year, quarter, props.offbalance, location.href])
 
     useEffect(() => {
         // if(classes.filter((item: any) => item.category === props.category)[0] !== classType)
         //     setClassType(classes.filter((item: any) => item.category === props.category)[0]);
+        ENDPOINTS.abortCalls();
         setClassType(null);
         tableRef.current?.reset()
         dispatch( clientsSlice.actions.reset() )
@@ -170,7 +173,7 @@ export default (props: IProps) => {
                 
                 <DashboardTable
                     ref={tableRef}
-                    header={[ t("cif"), t("name"), t("class_type"), t("type"), "" ]}
+                    header={[ t("cif"), t("name"), t("class_type"), "" ]}
                     body={generateData()}
                     hasMore={state.hasMore}
                     loadMore={fetchData}
