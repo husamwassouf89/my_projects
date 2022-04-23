@@ -11,6 +11,7 @@ import FileUploader from '../../components/FileUploader/FileUploader'
 import API from '../../services/api/api'
 import { toast } from 'react-toastify'
 import { years } from '../../services/hoc/helpers'
+import { Confirm } from '../../components/Alerts/Alerts'
 
 export default (props: { type: 'clients' | 'banks' | 'documents' | 'limits' }) => {
 
@@ -32,30 +33,38 @@ export default (props: { type: 'clients' | 'banks' | 'documents' | 'limits' }) =
     // Import
     const importClients = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        
-        setIsLoading(true)
-        
-        const endpoint = type === 'limits' ? ENDPOINTS.clients().import_limits : ENDPOINTS.clients().store
 
-        endpoint({
-            path: importFile || "",
-            year: String(year) || "",
-            quarter: quarter || "q1",
-            type
-        })
-        .then((response: any) => {
-            toast("Your clients file has been imported successfully!", {
-                progressStyle: { background: "#925b97" }
-            })
-        })
-        .catch((error: any) => {
-            toast(error?.response?.data?.error, {
-                progressStyle: { background: "#925b97" }
-            })
-        })
-        .finally(() => {
-            setIsLoading(false)
-        })
+        Confirm({
+            message: "How do you want to import this data?",
+            okayText: 'Append to old data',
+            cancelText: 'Replace with old data',
+            onAction: (action) => {
+                setIsLoading(true)
+
+                const endpoint = type === 'limits' ? ENDPOINTS.clients().import_limits : ENDPOINTS.clients().store
+
+                endpoint({
+                    path: importFile || "",
+                    year: String(year) || "",
+                    quarter: quarter || "q1",
+                    type,
+                    replace: action === 'cancel' ? true : undefined
+                })
+                    .then((response: any) => {
+                        toast("Your clients file has been imported successfully!", {
+                            progressStyle: { background: "#925b97" }
+                        })
+                    })
+                    .catch((error: any) => {
+                        toast(error?.response?.data?.error, {
+                            progressStyle: { background: "#925b97" }
+                        })
+                    })
+                    .finally(() => {
+                        setIsLoading(false)
+                    })
+            }
+        });
 
     }
 

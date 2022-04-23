@@ -15,6 +15,16 @@ export interface question {
     isSaving?: boolean
 }
 
+export interface irs {
+    id: number;
+    cif: number;
+    name: string;
+    financial_status: string;
+    score: number;
+    grade: number;
+    class_type: string;
+}
+
 // clients state
 export interface IRSState {
     isLoaded: boolean, // First load
@@ -22,7 +32,8 @@ export interface IRSState {
     isFetching: boolean,
     hasMore: boolean,
     questions: question[],
-    percentage: number
+    percentage: number,
+    IRSs: irs[]
 }
 
 const initialState: IRSState = {
@@ -31,7 +42,8 @@ const initialState: IRSState = {
     isFetching: false,
     hasMore: true,
     questions: [],
-    percentage: 0
+    percentage: 0,
+    IRSs: []
 }
 
 // Calculate percentage
@@ -89,9 +101,13 @@ export const IRSSlice = createSlice({
             state.questions[payload.q_index].answers = answers
             state.percentage = calculatePercentage(state)
         },
+        addIRSs: ( state, {payload}: PayloadAction<irs[]> ) => {
+            state.IRSs = [ ...state.IRSs, ...payload ]
+        },
         reset: ( state ) => {
             state.questions = []
             state.hasMore = true
+            state.IRSs = []
         }
     }
 })

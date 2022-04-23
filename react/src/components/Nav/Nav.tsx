@@ -115,6 +115,7 @@ export const TopNav = () => {
     const [redirect, setRedirect] = useState<boolean>(false);
     const [showReportConfig, setShowReportConfig] = useState<boolean>(false);
     const [link, setLink] = useState<string>('');
+    const [showTo, setShowTo] = useState(false);
 
     // Cookies hooks
     const [cookie, __, removeCookie] = useCookies();
@@ -154,28 +155,38 @@ export const TopNav = () => {
                         <li><a onClick={ () => {
                             setShowReportConfig(true);
                             setLink("https://ifrs.opalcityadvisory.com/api/public/reports/cif");
+                            setShowTo(false);
                         }}>{t("cif")}</a></li>
                         <li><a onClick={ () => {
                             setShowReportConfig(true);
                             setLink("https://ifrs.opalcityadvisory.com/api/public/reports/cif-guarantee");
+                            setShowTo(false);
                         }}>{t("cif_guarantee")}</a></li>
                         <li><a onClick={ () => {
                             setShowReportConfig(true);
                             setLink("https://ifrs.opalcityadvisory.com/api/public/reports/disclosure");
+                            setShowTo(true);
                         }}>{t("disclosure")}</a></li>
                         <li><a onClick={ () => {
                             setShowReportConfig(true);
                             setLink("https://ifrs.opalcityadvisory.com/api/public/reports/ead-guarantee");
+                            setShowTo(false);
                         }}>{t("ead_guarantee")}</a></li>
                         <li><a onClick={ () => {
                             setShowReportConfig(true);
                             setLink("https://ifrs.opalcityadvisory.com/api/public/reports/ecl");
+                            setShowTo(false);
+                        }}>{t("ecl")}</a></li>
+                        <li><a onClick={ () => {
+                            setShowReportConfig(true);
+                            setLink("https://ifrs.opalcityadvisory.com/api/public/reports/facility-disclosure");
+                            setShowTo(true);
                         }}>{t("ecl")}</a></li>
                         {/* <li><a href="https://ifrs.opalcityadvisory.com/api/public/reports/facility-disclosure">{t("facility_disclosure")}</a></li> */}
                     </ul>
                 </div>
 
-                <ReportConfigurations open={showReportConfig} toggle={() => setShowReportConfig(false)} link={link} />
+                <ReportConfigurations open={showReportConfig} toggle={() => setShowReportConfig(false)} link={link} showTo={showTo} />
 
                 <div className="switchers">
                     <LightDarkModeSwitcher />

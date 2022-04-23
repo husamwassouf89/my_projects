@@ -172,6 +172,16 @@ export default () => {
         window.location.reload();
     }
 
+    // Force stage
+    const [showForceStage, setShowForceStage] = useState(false);
+    const [stage, setStage] = useState<number>(0);
+    const [loadingStage, setLoadingStage] = useState(false);
+
+    // Force grade
+    const [showForceGrade, setShowForceGrade] = useState(false);
+    const [grade, setGrade] = useState<number>(0);
+    const [loadingGrade, setLoadingGrade] = useState(false);
+
     return (
         <div className="search-client">
 
@@ -250,9 +260,19 @@ export default () => {
                         <tbody>
                             <tr>
                                 <td>Stage</td>
-                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].stage_no || 'N/A'}</td>
+                                <td>
+                                    <div className='force' style={{ display: 'flex', justifyContent: 'space-between', cursor: 'pointer' }} onClick={() => setShowForceStage(true)}>
+                                        {client.client_accounts[active_account]?.account_infos[activeAccountInfo].stage_no}
+                                        <i className="icon-edit" />
+                                    </div>
+                                </td>
                                 <td>Grade</td>
-                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].final_grade || 'N/A'}</td>
+                                <td>
+                                    <div className='force' style={{ display: 'flex', justifyContent: 'space-between', cursor: 'pointer' }} onClick={() => setShowForceGrade(true)}>
+                                        {client.client_accounts[active_account]?.account_infos[activeAccountInfo].final_grade}
+                                        <i className="icon-edit" />
+                                    </div>
+                                </td>
                                 <td>PD</td>
                                 <td>{getPercentage(client.client_accounts[active_account]?.account_infos[activeAccountInfo].pd)}</td>
                             </tr>
@@ -427,6 +447,51 @@ export default () => {
                                 ))}
                             </tbody>
                         </table>
+                    </Modal>
+                    <Modal open={showForceStage} toggle={() => setShowForceStage(false)}>
+                        { loadingStage && <WhiteboxLoader /> }
+                        <div style={{ minWidth: 350 }}>
+                            <h2 style={{ marginTop: 0 }}>Force Stage</h2>
+                            <InputField
+                                defaultValue={client.client_accounts[active_account]?.account_infos[activeAccountInfo].stage_no}
+                                placeholder="Client Stage"
+                                onChange={(e: any) => setStage(+e.target.value)}
+                                />
+                            <button className='button color-white bg-gold' onClick={() => {
+                                const stageToSave = stage || client.client_accounts[active_account]?.account_infos[activeAccountInfo].stage_no;
+                                if(stageToSave) {
+                                    setLoadingStage(true);
+                                    ENDPOINTS.clients().setStage({ id: client.id, stage: stageToSave })
+                                    .then(() => {
+                                        setLoadingStage(false);
+                                        setShowForceStage(false);
+                                        search(undefined, cif || '');
+                                    });
+                                }
+                            }}>Save Stage</button>
+                        </div>
+                    </Modal>
+                    <Modal open={showForceGrade} toggle={() => setShowForceGrade(false)}>
+                        { loadingGrade && <WhiteboxLoader /> }
+                        <div style={{ minWidth: 350 }}>
+                            <h2 style={{ marginTop: 0 }}>Force Grade</h2>
+                            <InputField
+                                defaultValue={client.client_accounts[active_account]?.account_infos[activeAccountInfo].final_grade}
+                                placeholder="Client Grade"
+                                onChange={(e: any) => setGrade(e.target.value)} />
+                            <button className='button color-white bg-gold' onClick={() => {
+                                const gradeToSave = grade || client.client_accounts[active_account]?.account_infos[activeAccountInfo].final_grade;
+                                if(gradeToSave) {
+                                    setLoadingGrade(true);
+                                    ENDPOINTS.clients().setGrade({ id: client.id, grade: gradeToSave })
+                                    .then(() => {
+                                        setLoadingGrade(false);
+                                        setShowForceGrade(false);
+                                        search(undefined, cif || '');
+                                    });
+                                }
+                            }}>Save Grade</button>
+                        </div>
                     </Modal>
                 </> :
                 <>

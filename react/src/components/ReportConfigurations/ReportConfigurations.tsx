@@ -6,7 +6,7 @@ import Modal from "../Modal/Modal"
 import { years } from '../../services/hoc/helpers'
 import { ClassesMenu } from "../PredefinedMenus/PredefinedMenus";
 
-export default (props: { open: boolean; toggle(): any; link: string; }) => {
+export default (props: { open: boolean; toggle(): any; link: string; showTo?: boolean; }) => {
 
   const [classType, setClassType] = useState<any>();
   const [limits, setLimits] = useState<any>(false);
@@ -20,8 +20,8 @@ export default (props: { open: boolean; toggle(): any; link: string; }) => {
       classType &&
       year &&
       quarter &&
-      eYear &&
-      eQuarter
+      (!props.showTo || eYear) &&
+      (!props.showTo || eQuarter )
     )
       return `${props.link}?quarter1=${quarter}&year1=${year}&quarter2=${eQuarter}&year2=${eYear}&limits=${limits ? 'yes' : 'no'}&class_type_category=${classType}`
     return '#';
@@ -52,18 +52,21 @@ export default (props: { open: boolean; toggle(): any; link: string; }) => {
                   { label: "Q4", value: "q4" }
               ]} />
           </div>
-          <div className="sep text-center">TO</div>
-          <div className="config">
-              <SelectField defaultValue={eYear ? { label: eYear, value: eYear } : undefined} onChange={(selected: { value: number; }) => setEYear(selected?.value)} placeholder={t("year")} options={years} />
-          </div>
-          <div className="config">
-              <SelectField defaultValue={eQuarter ? { label: eQuarter?.toUpperCase(), value: eQuarter } : undefined} onChange={(selected: { value: 'q1' | 'q2' | 'q3' | 'q4'; }) => setEQuarter(selected?.value)} placeholder={t("quarter")} options={[
+          {props.showTo &&
+            <>
+              <div className="sep text-center">TO</div>
+              <div className="config">
+                <SelectField defaultValue={eYear ? { label: eYear, value: eYear } : undefined} onChange={(selected: { value: number; }) => setEYear(selected?.value)} placeholder={t("year")} options={years} />
+              </div>
+              <div className="config">
+                <SelectField defaultValue={eQuarter ? { label: eQuarter?.toUpperCase(), value: eQuarter } : undefined} onChange={(selected: { value: 'q1' | 'q2' | 'q3' | 'q4'; }) => setEQuarter(selected?.value)} placeholder={t("quarter")} options={[
                   { label: "Q1", value: "q1" },
                   { label: "Q2", value: "q2" },
                   { label: "Q3", value: "q3" },
                   { label: "Q4", value: "q4" }
-              ]} />
-          </div>
+                ]} />
+              </div>
+            </>}
           <br />
           <div className="text-center">
             <a href={getLink()} className="button bg-gold color-white" style={{ padding: '15px 20px' }}>View Report</a>

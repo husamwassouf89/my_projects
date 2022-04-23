@@ -409,6 +409,13 @@
     "quarter": "Quarter",
     "weight": "Weight",
 
-    "direct_credit_facilities": "Direct credit facilities"
+    "direct_credit_facilities": "Direct credit facilities",
+
+    "staging": "Staging",
+    "constants": "Constants",
+    "financial_status": "Financial status",
+
+    "continue": "Continue",
+    "final_grade": "Final grade"
 
 }

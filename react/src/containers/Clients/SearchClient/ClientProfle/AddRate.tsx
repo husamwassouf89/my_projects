@@ -10,6 +10,8 @@ import { RadioButton } from "../../../../components/FormElements/FormElements"
 import './AddRate.css'
 import { t } from "react-multi-lang"
 import { Col, Row } from "react-grid-system"
+import { predefinedState } from "../../../../components/PredefinedMenus/PredefinedMenusSlice"
+import { useSelector } from "react-redux"
 
 interface IProps {
     class_type: number;
@@ -21,6 +23,8 @@ interface IProps {
 }
 
 export default (props: IProps) => {
+
+    const predefinedState: predefinedState = useSelector((state: { predefined_menus: predefinedState }) => state.predefined_menus)
 
     const questionsRef = useRef<HTMLDivElement>(null)
     const saveRef =  useRef<HTMLDivElement>(null)
@@ -64,6 +68,10 @@ export default (props: IProps) => {
     })
 
     const submit = () => {
+        if(!checkAbilityToSubmit()) {
+            nextStep();
+            return;
+        }
         setSubmitting(true)
         ENDPOINTS.clients().change_financial_status({ id: props.client_id, financial_status: financialStatusID })
             .then(() => props.changeFinancialStatus(financialStatus))
@@ -71,6 +79,29 @@ export default (props: IProps) => {
             .then(() => {
                 window.location.reload()
             })
+    }
+
+    const [doneSteps, setDoneSteps] = useState<number[]>([]);
+    const checkAbilityToSubmit = () => {
+        if(predefinedState.categories.list.length - 1 === doneSteps.length) {
+            return true;
+        }
+        for(var i = 0; i < predefinedState.categories.list.length; i++) {
+            if(!doneSteps.includes(+predefinedState.categories.list[i].value)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    const nextStep = () => {
+        const done = [...doneSteps, +category.value];
+        setDoneSteps(done);
+        for(var i = 0; i < predefinedState.categories.list.length; i++) {
+            if(!done.includes(+predefinedState.categories.list[i].value)) {
+                setCategory({ ...predefinedState.categories.list[i] });
+                break;
+            }
+        }
     }
 
     return(
@@ -89,7 +120,7 @@ export default (props: IProps) => {
                         />
                     </Col>
                     <Col md={6}>
-                        <CategoriesMenu onChange={(selected: { value: number; }) => setCategory(selected)} placeholder={t("factor")} />
+                        <CategoriesMenu onChange={(selected: { value: number; }) => setCategory(selected)} value={category} placeholder={t("factor")} />
                     </Col>
                 </Row>
             </form>
@@ -124,7 +155,7 @@ export default (props: IProps) => {
                     }
                     <br />
                     { questions.length > 0 && <>{category.label} rate: <strong>{ [].concat.apply([], questions.map((question: any) => question.options.filter((answer: any) => answers.includes(answer.id)).map((answer: any) => answer.value))).reduce((a, b) => a + b, 0) }</strong></> }
-                    { !props.readonly && <div className="save" ref={saveRef}><button disabled={answers.length < questions?.length} className="button bg-gold color-white" onClick={submit}>{t("submit_data")}</button></div> }
+                    { !props.readonly && <div className="save" ref={saveRef}><button disabled={answers.length < questions?.length} className="button bg-gold color-white" onClick={submit}>{checkAbilityToSubmit() ? t("submit_data") : t("continue")}</button></div> }
                 </div> : <EllipsisLoader /> }
                 </> :
                 <div className="text-center margin-top-30">

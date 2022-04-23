@@ -34,8 +34,11 @@ export const StaticAlert = (props: StaticAlertProps) => {
 
 interface ConfirmModalProps {
     message: string;
-    onConfirm(): any;
+    onConfirm?: () => any;
     hideCancel?: boolean;
+    onAction?: (actions: 'cancel' | 'okay') => void;
+    okayText?: string;
+    cancelText?: string;
 }
 
 const ConfirmModal = (props: ConfirmModalProps) => {
@@ -43,16 +46,20 @@ const ConfirmModal = (props: ConfirmModalProps) => {
     const t = useTranslation()
 
     return(
-        <Modal open={true} toggle={() => {}} alwaysVisible={true}>
+        <Modal open={true} toggle={() => { if(props.onAction) { close(); } }} alwaysVisible={!props.onAction}>
             <p style={{ margin: "0 0 30px" }}>{props.message}</p>
             <button className="button bg-gold color-white" style={{ minWidth: 80 }} onClick={() => {
-                props.onConfirm()
+                props.onConfirm?.()
+                props.onAction?.('okay')
                 close()
-            }}>{t("OK")}</button>
+            }}>{props.okayText || t("OK")}</button>
             { !props.hideCancel &&
             <>
             <span className="margin-10" />
-            <button className="button" onClick={close}>{t("Cancel")}</button>
+            <button className="button" onClick={() => {
+                props.onAction?.('cancel')
+                close()
+            }}>{props.cancelText || t("Cancel")}</button>
             </> }
         </Modal>
     )

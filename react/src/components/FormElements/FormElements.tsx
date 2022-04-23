@@ -20,14 +20,20 @@ import React, { useState } from 'react';
 
 export const InputField = (props: any) => {
 
-    let field: object = (({ type, onChange, defaultValue, disabled, max, min, value, style, onKeyPress }) => ({ type, onChange, defaultValue, disabled, max, min, value, style, onKeyPress }))(props);
+    let field = (({ type, onChange, defaultValue, disabled, max, min, value, style, onKeyPress }) => ({ type, onChange, defaultValue, disabled, max, min, value, style, onKeyPress }))(props);
     let inputLabel: string = props.placeholder ? props.placeholder : props.label ? props.label : '';
     let id = uid('input')
+    const [fieldValue, setFieldValue] = useState('');
 
     return (
         <div className="input-box">
-            <input {...field} style={ props.style || (props.bg ? { background: props.bg } : {})} autoComplete="" id={id} />
-            { inputLabel ? <label className={props.value ? "active" : ''} htmlFor={id}>{inputLabel}</label> : ''}
+            <input {...field} onWheel={() => false} onChange={e => {
+                setFieldValue(e.target.value);
+                if(field.onChange) {
+                    field.onChange(e);
+                }
+            }} style={ props.style || (props.bg ? { background: props.bg } : {})} autoComplete="" id={id} />
+            { inputLabel ? <label className={props.value || props.defaultValue || fieldValue ? "active" : ''} htmlFor={id}>{inputLabel}</label> : ''}
             {props.error ? <i className="icon-error" data-tip={props.error}></i> : ''}
             {props.error ? <ReactTooltip place="left" type="error" effect="solid" delayHide={500} /> : ''}
         </div>
@@ -211,7 +217,7 @@ export const NumberField = (props: any) => {
     
     return(
         <div className={"input-box" + ( props.className ? " " + props.className : "" )}>
-            <input style={ props.style || (props.bg ? { background: props.bg } : {})} {...field} value={props.value?.toString()} type="number" autoComplete="" id={id} onBlur={enforceMinMax} onChange={validate} step="0.1" />
+            <input style={ props.style || (props.bg ? { background: props.bg } : {})} {...field} value={props.value?.toString()} type="number" autoComplete="" id={id} onBlur={enforceMinMax} onChange={validate} onWheel={() => false} step="0.1" />
             { inputLabel ? <label className={props.value || Number(props.value) === 0 ? "active" : ''} htmlFor={id}>{inputLabel}</label> : ''}
             {props.error || error ? <i className="icon-error" data-tip={error ? error : props.error}></i> : ''}
             {props.error || error ? <ReactTooltip place="left" type="error" effect="solid" delayHide={500} /> : ''}
