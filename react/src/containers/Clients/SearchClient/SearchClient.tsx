@@ -20,9 +20,12 @@ import ImportAttachments from './ImportAttachments/ImportAttachments'
 
 const TYPES = [
     {label: 'ON-Balance', value: 'onbalance'},
-    {label: 'OFF-Balance', value: 'offbalance'},
-    {label: 'Limits ON', value: 'limitson'},
-    {label: 'Limits OFF', value: 'limitsoff'}
+    {label: 'OFF-Balance', value: 'offbalance'}
+]
+
+const LIMITS = [
+    {label: 'LIMITS: ON', value: 'yes'},
+    {label: 'LIMITS: OFF', value: 'no'}
 ]
 
 export default () => {
@@ -46,7 +49,8 @@ export default () => {
     const [activeAccountInfo, setActiveAcountInfo] = useState<any>()
 
     // Client type
-    const [clientType, setClientType] = useState<any>({label: 'ON-Balance', value: 'onbalance'})
+    const [clientType, setClientType] = useState<any>(TYPES[0])
+    const [limits, setLimits] = useState<any>(LIMITS[1]);
 
     const [isOpenEditRate, setIsOpenEditRate] = useState<boolean>(false)
     const [isOpenEditStage, setIsOpenEditStage] = useState<boolean>(false)
@@ -74,7 +78,8 @@ export default () => {
         window.history.replaceState({}, '', `${location.pathname}?${params}`);
         const query = new URLSearchParams(location.search);
         const type: any = query.get('client_type')
-        ENDPOINTS.clients().search_cif({ cif: search_cif == '0' ? '00000' : search_cif, balance: type === 'offbalance' ? 'off' : 'on', limit: type === 'limitson' ? 'on' : type === 'limitsoff' ? 'off' : undefined })
+        const limitsParam: any = query.get('limits')
+        ENDPOINTS.clients().search_cif({ cif: search_cif == '0' ? '00000' : search_cif, balance: type === 'offbalance' ? 'off' : 'on', limit: limitsParam })
         .then((response: any) => {
             setIsLoading(false)
             if(response.data.data === null) {
@@ -106,6 +111,10 @@ export default () => {
         const type = query.get('client_type')
         if(type) {
             setClientType(TYPES.find(item => item.value === type) || clientType)
+        }
+        const limitsParam = query.get('limits');
+        if(limitsParam) {
+            setLimits(LIMITS.find(item => item.value === limitsParam) || limits)
         }
     }, [])
 
@@ -172,6 +181,17 @@ export default () => {
         window.location.reload();
     }
 
+    const changeLimits = (selected: any) => {
+        setLimits(selected);
+        const params = new URLSearchParams(location.search);
+        if(selected?.value)
+            params.set('limits', String(selected.value));
+        else
+            params.delete('limits')
+        window.history.replaceState({}, '', `${location.pathname}?${params}`);
+        window.location.reload();
+    }
+
     // Force stage
     const [showForceStage, setShowForceStage] = useState(false);
     const [stage, setStage] = useState<number>(0);
@@ -194,7 +214,7 @@ export default () => {
                         <Row>
                             <Col md={12}>
                                     <Row>
-                                        <Col md={2} component="form" onSubmit={(e) => e.preventDefault()}>
+                                        <Col md={1.5} component="form" onSubmit={(e) => e.preventDefault()}>
                                             <InputField
                                                 onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
                                                     e.stopPropagation();
@@ -206,16 +226,19 @@ export default () => {
                                                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => { setCIF(e.target.value) }}
                                                 placeholder={t("client_cif")} />
                                         </Col>
-                                        <Col md={2} component="form" onSubmit={(e) => e.preventDefault()}>
+                                        <Col md={1.5} component="form" onSubmit={(e) => e.preventDefault()}>
                                             <SelectField placeholder="Year" options={Object.values(years)} value={selectedYear} onChange={(selected: any) => changeYear(selected)} />
                                         </Col>
-                                        <Col md={2} component="form"onSubmit={(e) => e.preventDefault()}>
+                                        <Col md={1.5} component="form"onSubmit={(e) => e.preventDefault()}>
                                             <SelectField placeholder="Quarter" options={years[selectedYear.value]?.quarters} value={selectedQuarter} onChange={(selected: any) => changeQuarter(selected)} />
                                         </Col>
                                         <Col md={2} component="form"onSubmit={(e) => e.preventDefault()}>
                                             <SelectField placeholder="Client Type" options={TYPES} value={clientType} onChange={(selected: any) => changeClientType(selected)} />
                                         </Col>
-                                        <Col md={4} style={{ position: "relative", top: 11, textAlign: "right" }} className="actions">
+                                        <Col md={2} component="form"onSubmit={(e) => e.preventDefault()}>
+                                            <SelectField placeholder="Limits" options={LIMITS} value={limits} onChange={(selected: any) => changeLimits(selected)} />
+                                        </Col>
+                                        <Col md={3.5} style={{ position: "relative", top: 11, textAlign: "right" }} className="actions">
                                             <button className="button color-gold" onClick={() => setIsOpenEditStage(true)}>{t("client_stage")}</button>
                                             <span className="margin-10" />
                                             <button className="button bg-gold color-white" onClick={() => setIsOpenEditRate(true)}>{t("client_rate")}</button>
@@ -262,27 +285,27 @@ export default () => {
                                 <td>Stage</td>
                                 <td>
                                     <div className='force' style={{ display: 'flex', justifyContent: 'space-between', cursor: 'pointer' }} onClick={() => setShowForceStage(true)}>
-                                        {client.client_accounts[active_account]?.account_infos[activeAccountInfo].stage_no}
+                                        {client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.stage_no}
                                         <i className="icon-edit" />
                                     </div>
                                 </td>
                                 <td>Grade</td>
                                 <td>
                                     <div className='force' style={{ display: 'flex', justifyContent: 'space-between', cursor: 'pointer' }} onClick={() => setShowForceGrade(true)}>
-                                        {client.client_accounts[active_account]?.account_infos[activeAccountInfo].final_grade}
+                                        {client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.final_grade}
                                         <i className="icon-edit" />
                                     </div>
                                 </td>
                                 <td>PD</td>
-                                <td>{getPercentage(client.client_accounts[active_account]?.account_infos[activeAccountInfo].pd)}</td>
+                                <td>{getPercentage(client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.pd)}</td>
                             </tr>
                             <tr>
                                 <td>LGD</td>
-                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].final_lgd ? getPercentage(client.client_accounts[active_account]?.account_infos[activeAccountInfo].final_lgd) : 'N/A'}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.final_lgd ? getPercentage(client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.final_lgd) : 'N/A'}</td>
                                 <td>EAD</td>
-                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].ead ? numberWithCommas(toFixed(Number(client.client_accounts[active_account]?.account_infos[activeAccountInfo].ead), 2)) : 'N/A'}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.ead ? numberWithCommas(toFixed(Number(client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.ead), 2)) : 'N/A'}</td>
                                 <td style={{ background: "#3595f6", color: "#FFF" }}>Account ECL</td>
-                                <td style={{ background: "#2478ce", color: "#FFF" }}>{numberWithCommas(toFixed(Number(client.client_accounts[active_account]?.account_infos[activeAccountInfo].ecl), 2))}</td>
+                                <td style={{ background: "#2478ce", color: "#FFF" }}>{numberWithCommas(toFixed(Number(client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.ecl), 2))}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -295,90 +318,90 @@ export default () => {
                                 <td>{t("type")}</td>
                                 <td>{client.client_accounts[active_account]?.type_name}</td>
                                 <td>{t("number_of_reschedule")}</td>
-                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].number_of_reschedule}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.number_of_reschedule}</td>
                             </tr>
                             <tr>
                                 <td>{t("currency_name")}</td>
                                 <td>{client.client_accounts[active_account]?.currency_name}</td>
                                 <td>{t("pay_method")}</td>
-                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].pay_method}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.pay_method}</td>
                             </tr>
                             <tr>
                                 <td>{t("guarantee_ccy")}</td>
                                 <td>{client.client_accounts[active_account]?.gu_currency_name}</td>
                                 <td>{t("cm_guarantee")}</td>
-                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].cm_guarantee)}</td>
+                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.cm_guarantee)}</td>
                             </tr>
                             <tr>
                                 <td>{t("outstanding_lcy")}</td>
-                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].outstanding_lcy)}</td>
+                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.outstanding_lcy)}</td>
                                 <td>{t("past_due_days")}</td>
-                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].past_due_days}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.past_due_days}</td>
                             </tr>
                             <tr>
                                 <td>{t("outstanding_fcy")}</td>
-                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].outstanding_fcy) === numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].outstanding_lcy) ? '-' : numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].outstanding_fcy)}</td>
+                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.outstanding_fcy) === numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.outstanding_lcy) ? '-' : numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.outstanding_fcy)}</td>
                                 <td>{t("pv_re_guarantees")}</td>
-                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].pv_re_guarantees)}</td>
+                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.pv_re_guarantees)}</td>
                             </tr>
                             <tr>
                                 <td>{t("accrued_interest_lcy")}</td>
-                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].accrued_interest_lcy)}</td>
+                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.accrued_interest_lcy)}</td>
                                 <td>{t("pv_securities_guarantees")}</td>
-                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].pv_securities_guarantees)}</td>
+                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.pv_securities_guarantees)}</td>
                             </tr>
                             <tr>
                                 <td>{t("suspended_lcy")}</td>
-                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].suspended_lcy)}</td>
+                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.suspended_lcy)}</td>
                                 <td>{t("estimated_value_of_stock_collateral")}</td>
-                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].estimated_value_of_stock_collateral)}</td>
+                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.estimated_value_of_stock_collateral)}</td>
                             </tr>
                             <tr>
                                 <td>{t("interest_received_in_advance_lcy")}</td>
-                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].interest_received_in_advance_lcy}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.interest_received_in_advance_lcy}</td>
                                 <td>{t("estimated_value_of_real_estate_collateral")}</td>
-                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].estimated_value_of_real_estate_collateral)}</td>
+                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.estimated_value_of_real_estate_collateral)}</td>
                             </tr>
                             <tr>
                                 <td>{t("st_date")}</td>
-                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].st_date}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.st_date}</td>
                                 <td>{t("80_per_estimated_value_of_real_estate_collateral")}</td>
-                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo]['80_per_estimated_value_of_real_estate_collateral'])}</td>
+                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.['80_per_estimated_value_of_real_estate_collateral'])}</td>
                             </tr>
                             <tr>
                                 <td>{t("mat_date")}</td>
-                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].mat_date}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.mat_date}</td>
                                 <td>{t("interest_rate")}</td>
-                                <td>{getPercentage(client.client_accounts[active_account]?.account_infos[activeAccountInfo].interest_rate)}</td>
+                                <td>{getPercentage(client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.interest_rate)}</td>
                             </tr>
                             <tr>
                                 <td>{t("sp_date")}</td>
-                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].sp_date}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.sp_date}</td>
                                 <td>{t("mortgages")}</td>
-                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].mortgages)}</td>
+                                <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.mortgages)}</td>
                             </tr>
-                            { client.client_accounts[active_account]?.account_infos[activeAccountInfo].account?.document_type &&
+                            { client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.account?.document_type &&
                             <tr>
                                 <td>{t("document_type")}</td>
-                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo].account?.document_type?.name}</td>
+                                <td>{client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.account?.document_type?.name}</td>
                                 <td>{t("document_type_ccf")}</td>
-                                <td>{getPercentage(client.client_accounts[active_account]?.account_infos[activeAccountInfo].account?.document_type?.ccf)}</td>
+                                <td>{getPercentage(client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.account?.document_type?.ccf)}</td>
                             </tr>
                             }
 
-                            { client.client_accounts[active_account]?.account_infos[activeAccountInfo].unused_direct_limit &&
+                            { client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.unused_direct_limit &&
                             <>
                                 <tr>
                                     <td>{t('unused_direct_limit')}</td>
-                                    <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].unused_direct_limit)}</td>
+                                    <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.unused_direct_limit)}</td>
                                     <td>{t('used_direct_limit')}</td>
-                                    <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].used_direct_limit)}</td>
+                                    <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.used_direct_limit)}</td>
                                 </tr>
                                 <tr>
                                     <td>{t('unused_undirect_limit')}</td>
-                                    <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].unused_undirect_limit)}</td>
+                                    <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.unused_undirect_limit)}</td>
                                     <td>{t('used_un_direct_limit')}</td>
-                                    <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo].used_un_direct_limit)}</td>
+                                    <td>{numberWithCommas(client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.used_un_direct_limit)}</td>
                                 </tr>
                             </> }
 
@@ -427,7 +450,7 @@ export default () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {client.client_accounts[active_account]?.account_infos[activeAccountInfo].ecl_data?.map((item: any) => (
+                                {client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.ecl_data?.map((item: any) => (
                                     <tr>
                                         <td>{item.repayment_date}</td>
                                         { moreECLDetails && <td>{item.days_between}</td> }
@@ -453,12 +476,12 @@ export default () => {
                         <div style={{ minWidth: 350 }}>
                             <h2 style={{ marginTop: 0 }}>Force Stage</h2>
                             <InputField
-                                defaultValue={client.client_accounts[active_account]?.account_infos[activeAccountInfo].stage_no}
+                                defaultValue={client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.stage_no}
                                 placeholder="Client Stage"
                                 onChange={(e: any) => setStage(+e.target.value)}
                                 />
                             <button className='button color-white bg-gold' onClick={() => {
-                                const stageToSave = stage || client.client_accounts[active_account]?.account_infos[activeAccountInfo].stage_no;
+                                const stageToSave = stage || client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.stage_no;
                                 if(stageToSave) {
                                     setLoadingStage(true);
                                     ENDPOINTS.clients().setStage({ id: client.id, stage: stageToSave })
@@ -476,11 +499,11 @@ export default () => {
                         <div style={{ minWidth: 350 }}>
                             <h2 style={{ marginTop: 0 }}>Force Grade</h2>
                             <InputField
-                                defaultValue={client.client_accounts[active_account]?.account_infos[activeAccountInfo].final_grade}
+                                defaultValue={client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.final_grade}
                                 placeholder="Client Grade"
                                 onChange={(e: any) => setGrade(e.target.value)} />
                             <button className='button color-white bg-gold' onClick={() => {
-                                const gradeToSave = grade || client.client_accounts[active_account]?.account_infos[activeAccountInfo].final_grade;
+                                const gradeToSave = grade || client.client_accounts[active_account]?.account_infos[activeAccountInfo]?.final_grade;
                                 if(gradeToSave) {
                                     setLoadingGrade(true);
                                     ENDPOINTS.clients().setGrade({ id: client.id, grade: gradeToSave })

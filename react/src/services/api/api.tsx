@@ -11,7 +11,8 @@ interface pagination {
     quarter?: string;
     year?: number;
     type?: string;
-    limits?: 'yes';
+    limit?: 'yes' | 'no';
+    filter_type?: string;
 }
 
 interface pd {
@@ -231,6 +232,8 @@ class API {
         saveDocuments(query: { id: number; ccf: string | number; }): Promise<any>;
         predefined(query: { page: number; page_size: number; }): any;
         savePredefined(query: { id: number; pd: string | number; lgd: string | number; }): Promise<any>;
+        lgd(query: { page: number; page_size: number; }): any;
+        saveLgd(query: { id: number; value: string | number; }): Promise<any>;
     } {
         var endpoints: any = {}
 
@@ -245,6 +248,10 @@ class API {
         endpoints.predefined = (query: any, name = 'settings/show-predefined') => axios.get(`${this.url}/${name}`, { params: query })
 
         endpoints.savePredefined = (query: any, name = 'settings/update-predefined') => axios.post(`${this.url}/${name}/${query.id}`, { pd: query.pd, lgd: query.lgd })
+
+        endpoints.lgd = (query: any, name = 'settings/show-guarantee-lgd') => axios.get(`${this.url}/${name}`, { params: query })
+
+        endpoints.saveLgd = (query: any, name = 'settings/update-guarantee-lgd') => axios.post(`${this.url}/${name}/${query.id}`, { value: query.value })
 
         return endpoints
     }

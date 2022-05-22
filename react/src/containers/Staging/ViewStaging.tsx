@@ -33,6 +33,7 @@ export default () => {
     const [classType, setClassType] = useState<any>();
     const [year, setYear] = useState<number>()
     const [quarter, setQuarter] = useState<'q1' | 'q2' | 'q3' | 'q4'>()
+    const [filter, setFilter] = useState<any>({ label: 'No stage', value: 'without' });
 
     // API
     const ENDPOINTS = new API()
@@ -53,7 +54,7 @@ export default () => {
 
         dispatch( StagingSlice.actions.setIsFetching( true ) )
 
-        ENDPOINTS.staging_profile().staging_list({ page, page_size, class_type_id: classType?.value, year, quarter, keyword })
+        ENDPOINTS.staging_profile().staging_list({ page, page_size, class_type_id: classType?.value, year, quarter, keyword, filter_type: filter?.value })
         .then((response: any) => {
             let staging_list: staging[] = response.data.data.clients.map((staging: any): staging => ({
                 id: staging.id,
@@ -75,7 +76,7 @@ export default () => {
     useEffect(() => {
         tableRef.current?.reset()
         dispatch( StagingSlice.actions.reset() )
-    }, [classType, year, quarter])
+    }, [classType, year, quarter, filter])
 
     interface tableDataType { [key: string]: { [key: string]: any } }
     const generateData: () => tableDataType = () => {
@@ -109,6 +110,18 @@ export default () => {
                 { state.isLoading ? <WhiteboxLoader /> : ""}
                 <form>
                     <div className="filters">
+                        <div className='filter'>
+                            <SelectField
+                                placeholder="Filter"
+                                options={[
+                                    { label: 'All', value: 'all' },
+                                    { label: 'Has stage', value: 'with' },
+                                    { label: 'No stage', value: 'without' }
+                                ]}
+                                onChange={(selected: any) => setFilter(selected)}
+                                value={filter}
+                            />
+                        </div>
                         <div className="filter" key="StagingFilter">
                             <ClassesMenu
                                 isClearable

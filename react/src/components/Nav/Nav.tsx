@@ -165,7 +165,7 @@ export const TopNav = () => {
                         <li><a onClick={ () => {
                             setShowReportConfig(true);
                             setLink("https://ifrs.opalcityadvisory.com/api/public/reports/disclosure");
-                            setShowTo(true);
+                            setShowTo(false);
                         }}>{t("disclosure")}</a></li>
                         <li><a onClick={ () => {
                             setShowReportConfig(true);

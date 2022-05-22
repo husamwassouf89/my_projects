@@ -40,7 +40,7 @@ export default (props: { open: boolean; toggle(): any; link: string; showTo?: bo
               ]} />
           </div>
           <Checkbox label="Unused Limits" style={{ margin: '20px 0' }} checked={limits} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLimits(e.target.checked)} />
-          <div className="sep text-center">FROM</div>
+          { props.showTo && <div className="sep text-center">FROM</div> }
           <div className="config">
               <SelectField defaultValue={year ? { label: year, value: year } : undefined} onChange={(selected: { value: number; }) => setYear(selected?.value)} placeholder={t("year")} options={years} />
           </div>

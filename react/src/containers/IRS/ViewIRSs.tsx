@@ -33,6 +33,7 @@ export default () => {
     const [classType, setClassType] = useState<any>();
     const [year, setYear] = useState<number>()
     const [quarter, setQuarter] = useState<'q1' | 'q2' | 'q3' | 'q4'>()
+    const [filter, setFilter] = useState<any>({ label: 'No IRS', value: 'without' });
 
     // API
     const ENDPOINTS = new API()
@@ -53,7 +54,7 @@ export default () => {
 
         dispatch( IRSSlice.actions.setIsFetching( true ) )
 
-        ENDPOINTS.irs().index({ page, page_size, class_type_id: classType?.value, year, quarter, keyword })
+        ENDPOINTS.irs().index({ page, page_size, class_type_id: classType?.value, year, quarter, keyword, filter_type: filter?.value })
         .then((response: any) => {
             let IRSs: irs[] = response.data.data.clients.map((irs: any): irs => ({
                 id: irs.id,
@@ -76,7 +77,7 @@ export default () => {
     useEffect(() => {
         tableRef.current?.reset()
         dispatch( IRSSlice.actions.reset() )
-    }, [classType, year, quarter])
+    }, [classType, year, quarter, filter])
 
     interface tableDataType { [key: string]: { [key: string]: any } }
     const generateData: () => tableDataType = () => {
@@ -112,6 +113,18 @@ export default () => {
                 { state.isLoading ? <WhiteboxLoader /> : ""}
                 <form>
                     <div className="filters">
+                        <div className='filter'>
+                            <SelectField
+                                placeholder="Filter"
+                                options={[
+                                    { label: 'All', value: 'all' },
+                                    { label: 'Has IRS', value: 'with' },
+                                    { label: 'No IRS', value: 'without' }
+                                ]}
+                                onChange={(selected: any) => setFilter(selected)}
+                                value={filter}
+                            />
+                        </div>
                         <div className="filter" key="IRSFilter">
                             <ClassesMenu
                                 isClearable
