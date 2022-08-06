@@ -96,7 +96,7 @@ class API {
     clients(): {
         index(query: pagination): any;
         show(query: { id: number }): any;
-        search_cif(query: { cif: string; limit?: 'on' | 'off'; balance?: string; }): any;
+        search_cif(query: { cif: string; limit?: 'on' | 'off'; balance?: string; year?: number; quarter?: string; }): any;
         store(query: { path: string; year: string; quarter: "q1" | "q2" | "q3" | "q4"; type: string; replace?: boolean; }): any;
         import_limits(query: { path: string; year: string; quarter: "q1" | "q2" | "q3" | "q4"; type: string; replace?: boolean; }): any;
         change_financial_status(query: { id: number; financial_status: string; }): any;

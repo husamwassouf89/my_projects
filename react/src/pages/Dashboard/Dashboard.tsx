@@ -180,19 +180,19 @@ export default (props: any) => {
                     <Clients category="facility" />
                 )
             case "import-clients":
-                return(<ImportClients type="clients" />)
+                return(<ImportClients type="clients" link="/templates/direct-credit-facilities.xlsx" />)
             case "institutions":
                 return(
                     <Clients category="financial" />
                 )
             case "import-institutions":
-                return(<ImportClients type="banks" />)
+                return(<ImportClients type="banks" link="/templates/direct-credit-facilities.xlsx" />)
             case "offbalance":
                 return(
                     <Clients category="facility" offbalance />
                 )
             case "import-offbalance":
-                return(<ImportClients type="documents" />)
+                return(<ImportClients type="documents" link="/templates/direct-credit-facilities.xlsx" />)
             case "limits":
                 return(
                     <Clients category="facility" type="limits" />
@@ -202,7 +202,7 @@ export default (props: any) => {
                     <Clients category="facility" type="limits" offbalance />
                 )
             case "import-limits":
-                return(<ImportClients type="limits" />)
+                return(<ImportClients type="limits" link="/templates/direct-credit-facilities.xlsx" />)
             case 'all-pds':
                 return(<PDs />)
             case 'import-pd':

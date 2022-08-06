@@ -79,7 +79,7 @@ export default () => {
                     <div style={{ maxWidth: 400, marginTop: 40 }}>
                         {generalFields?.map((field, index) =>
                         <>
-                        { field.id == 1 ?
+                        { field.id == 1 || field.id == 3 ?
                         <Checkbox checked={field.value === 1} label={field.description.replace(' (0: false, 1:true)', '')} onChange={(e: any) => {
                             setGeneralFields(prev => {
                                 const temp = [...prev];
@@ -87,6 +87,8 @@ export default () => {
                                 return temp;
                             })
                         }} /> :
+                        generalFields.find(item => item.id === 3)?.value === 0 && [4, 5, 6].includes(field.id) ?
+                        '' :
                         <NumberField label={field.description} value={field.value} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                             setGeneralFields(prev => {
                                 const temp = [...prev];

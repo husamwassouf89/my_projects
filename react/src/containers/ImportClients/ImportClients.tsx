@@ -13,7 +13,7 @@ import { toast } from 'react-toastify'
 import { years } from '../../services/hoc/helpers'
 import { Confirm } from '../../components/Alerts/Alerts'
 
-export default (props: { type: 'clients' | 'banks' | 'documents' | 'limits' }) => {
+export default (props: { type: 'clients' | 'banks' | 'documents' | 'limits'; link: string; }) => {
 
     const { type } = props;
 
@@ -91,8 +91,9 @@ export default (props: { type: 'clients' | 'banks' | 'documents' | 'limits' }) =
                         setImportFile(file.data[0])
                     }} />
                 <div className="text-center margin-top-40"><button className="button bg-gold color-white round" style={{ padding: "0 50px" }}>{t("import")}</button></div>
+                <p className='text-center'><a href={props.link} style={{ color: '#925b97', textDecoration: 'none' }}>Download import template</a></p>
             </form>
-            <img src={Import} alt="Import" className="search-image" />
+            {/* <img src={Import} alt="Import" className="search-image" /> */}
 
         </div>
     )

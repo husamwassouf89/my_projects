@@ -181,7 +181,7 @@ export const TopNav = () => {
                             setShowReportConfig(true);
                             setLink("https://ifrs.opalcityadvisory.com/api/public/reports/facility-disclosure");
                             setShowTo(true);
-                        }}>{t("ecl")}</a></li>
+                        }}>{t("facility_disclosure")}</a></li>
                         {/* <li><a href="https://ifrs.opalcityadvisory.com/api/public/reports/facility-disclosure">{t("facility_disclosure")}</a></li> */}
                     </ul>
                 </div>

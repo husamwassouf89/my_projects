@@ -169,6 +169,7 @@ export default () => {
                         setAttachments(prevAttachments => [ ...prevAttachments, file.data[0] ])
                     }} />
                 <div className="text-center margin-top-40"><button className="button bg-gold color-white round" style={{ padding: "0 50px" }}>{t("import")}</button></div>
+                <p className='text-center'><a href="#" style={{ color: '#925b97', textDecoration: 'none' }}>Download import template</a></p>
             </form>
             <br /> <br />
             <img src={Import} alt="Import" className="search-image" />
