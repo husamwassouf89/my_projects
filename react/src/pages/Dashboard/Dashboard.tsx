@@ -99,14 +99,8 @@ export default (props: any) => {
             childs: [
                 {
                     icon: "icon-hammer",
-                    name: t("direct"),
+                    name: t("view_all"),
                     link: "/limits",
-                    show: true
-                },
-                {
-                    icon: "icon-hammer",
-                    name: t("indirect"),
-                    link: "/limits-offbalance",
                     show: true
                 },
                 {
