@@ -8,6 +8,7 @@ import { predefinedMenusSlice } from '../../components/PredefinedMenus/Predefine
 import { clientsSlice } from "../../containers/Clients/ClientsSlice";
 import { pdsSlice } from "../../containers/PD/PDsSlice";
 import { IRSSlice } from "../../containers/IRS/IRSSlice";
+import { StagingSlice } from "../../containers/Staging/StagingSlice";
 
 
 const reducer = {
@@ -16,7 +17,8 @@ const reducer = {
     predefined_menus: predefinedMenusSlice.reducer,
     clients: clientsSlice.reducer,
     pds: pdsSlice.reducer,
-    irs: IRSSlice.reducer
+    irs: IRSSlice.reducer,
+    staging: StagingSlice.reducer
 }
 
 export default configureStore({

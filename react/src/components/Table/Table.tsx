@@ -88,7 +88,7 @@ export const DashboardTable = forwardRef<TableHandle, DashboardTableProps>((prop
                     }}>
                 { Object.keys(props.body).map( ( id, tr_index ) => (
                     <tr key={id} style={{ zIndex: Object.keys(props.body).length - tr_index }} onClick={(e: React.MouseEvent<HTMLTableRowElement>) => selectRow(e, id) }>
-                        { props.selectable && <td width="50"><SimpleCheckbox className="select-row" onClick={(e: React.MouseEvent<HTMLTableDataCellElement>) => e.stopPropagation()} /></td> }
+                        { props.selectable && <td width="50"><SimpleCheckbox className="select-row" onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()} /></td> }
                         { Object.keys(props.body[id]).map( ( key, td_index ) => (
                             <td key={tr_index + "_" + td_index}>{props.body[id][key]}</td>
                         ) ) }

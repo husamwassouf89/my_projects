@@ -54,7 +54,7 @@ export default (props: IProps) => {
 
     useEffect(() => {
         saveRef?.current?.removeAttribute("style")
-        saveRef?.current?.setAttribute("style", `bottom: calc( calc( 100vh - ${questionsRef?.current?.parentElement?.parentElement?.offsetHeight}px ) / 2 )`)
+        // saveRef?.current?.setAttribute("style", `bottom: calc( calc( 100vh - ${questionsRef?.current?.parentElement?.parentElement?.offsetHeight}px ) / 2 )`)
     })
 
     const submit = () => {
@@ -112,7 +112,7 @@ export default (props: IProps) => {
                         </div>
                     ))
                 }
-                { !props.readonly && <div className="save" ref={saveRef}><button className="button bg-gold color-white" onClick={submit}>{t("submit_data")}</button></div> }
+                { !props.readonly && <div className="save" ref={saveRef}><button disabled={answers.length < questions?.length} className="button bg-gold color-white" onClick={submit}>{t("submit_data")}</button></div> }
             </div> : <EllipsisLoader /> }
             </>
         </div>

@@ -39,3 +39,11 @@
     color: #925b97;
     padding: 0 20px;
 }
+
+.force i {
+    color: #AAA;
+    transition: all .3s ease;
+}
+.force:hover i {
+    color: #925b97;
+}

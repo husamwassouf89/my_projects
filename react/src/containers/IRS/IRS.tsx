@@ -27,7 +27,7 @@ export default () => {
     const [financialStatus, setFinancialStatus] = useState<any>(null)
     const [ irsID, setIRSID ] = useState<number>(0)
     const [ isSaving, setIsSaving ] = useState<number>(0)
-    const [weightPercentage, setWeightPercentage] = useState(0);
+    const [weightPercentage, setWeightPercentage] = useState<any>(0);
     const [shouldSave, setShouldSave] = useState(false);
 
     // Redux
@@ -196,8 +196,8 @@ export default () => {
                     </Col>
 
                     <Col md={2}>
-                        <NumberField min={0} max={100} placeholder={t("weight_percentage")} value={weightPercentage} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                            setWeightPercentage(Number(e.target.value));
+                        <InputField placeholder={t("weight_percentage")} value={weightPercentage} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            setWeightPercentage(e.target.value);
                             setShouldSave(true);
                         }} />
                     </Col>

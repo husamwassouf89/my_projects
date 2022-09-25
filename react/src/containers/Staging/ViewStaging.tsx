@@ -3,7 +3,7 @@ import { useTranslation } from 'react-multi-lang'
 
 // Redux
 import { useDispatch, useSelector } from 'react-redux'
-import { pd, pdsSlice, pdsState } from './PDsSlice'
+import { StagingSlice, StagingState, staging } from './StagingSlice'
 
 // API
 import API from '../../services/api/api'
@@ -12,15 +12,11 @@ import API from '../../services/api/api'
 import TableActionBar from '../../components/TableActionBar/TableActionBar'
 import { DashboardTable } from '../../components/Table/Table'
 import { EllipsisLoader, WhiteboxLoader } from '../../components/Loader/Loader'
-import Modal from '../../components/Modal/Modal'
-import { Col, Row } from 'react-grid-system'
-import { getPercentage, toFixed } from '../../services/hoc/helpers'
-import ClientsPD from './PDDetails/ClientsPD'
-import { Confirm } from '../../components/Alerts/Alerts'
 import { ClassesMenu } from '../../components/PredefinedMenus/PredefinedMenus'
 import { SelectField } from '../../components/FormElements/FormElements'
 
 import { years } from '../../services/hoc/helpers'
+import { Link } from 'react-router-dom'
 
 export default () => {
 
@@ -29,17 +25,15 @@ export default () => {
 
     // Redux
     const dispatch = useDispatch()
-    const state = useSelector( ( state: { pds: pdsState } ) => state.pds )
+    const state = useSelector( ( state: { staging: StagingState } ) => state.staging )
 
     // Hooks
     const [keyword, setKeyword] = useState<string>("")
-    const [showDetails, setShowDetails] = useState<boolean>(false)
-    const [loadingDetails, setLoadingDetails] = useState<boolean>(true)
-    const [PDDetails, setPDDetails] = useState<any>(null)
 
     const [classType, setClassType] = useState<any>();
     const [year, setYear] = useState<number>()
     const [quarter, setQuarter] = useState<'q1' | 'q2' | 'q3' | 'q4'>()
+    const [filter, setFilter] = useState<any>({ label: 'No stage', value: 'without' });
 
     // API
     const ENDPOINTS = new API()
@@ -51,81 +45,56 @@ export default () => {
     // Search
     const search = (value: string) => {
         tableRef.current?.reset()
-        dispatch( pdsSlice.actions.reset() )
+        dispatch( StagingSlice.actions.reset() )
         setKeyword(value)
     }
 
     // Fetch Data
     const fetchData = (page: number, page_size: number = 10) => {
 
-        dispatch( pdsSlice.actions.setIsFetching( true ) )
+        dispatch( StagingSlice.actions.setIsFetching( true ) )
 
-        ENDPOINTS.pd().index({ page, page_size, class_type_id: classType?.value, year, quarter, keyword })
+        ENDPOINTS.staging_profile().staging_list({ page, page_size, class_type_id: classType?.value, year, quarter, keyword, filter_type: filter?.value })
         .then((response: any) => {
-            let pds: pd[] = response.data.data.pds.map((pd: any): pd => ({
-                id: pd.id,
-                class_type: pd.class_type_name,
-                quarter: pd.quarter,
-                year: pd.year
+            let staging_list: staging[] = response.data.data.clients.map((staging: any): staging => ({
+                id: staging.id,
+                class_type: staging.class_type_name,
+                cif: staging.cif,
+                name: staging.name,
+                financial_status: staging.financial_status,
+                stage: staging.stage_no
             }))
             
-            dispatch( pdsSlice.actions.addPDs( pds ) )
-            dispatch( pdsSlice.actions.setHasMore( page < Number(response.data.data.last_page) ) )
+            dispatch( StagingSlice.actions.addStaging( staging_list ) )
+            dispatch( StagingSlice.actions.setHasMore( page < Number(response.data.data.last_page) ) )
             console.log(page !== Number(response.data.data.last_page))
             if( !state.isLoaded )
-                dispatch( pdsSlice.actions.setIsLoaded( true ) )
+                dispatch( StagingSlice.actions.setIsLoaded( true ) )
         })
     }
 
     useEffect(() => {
         tableRef.current?.reset()
-        dispatch( pdsSlice.actions.reset() )
-    }, [classType, year, quarter])
+        dispatch( StagingSlice.actions.reset() )
+    }, [classType, year, quarter, filter])
 
     interface tableDataType { [key: string]: { [key: string]: any } }
     const generateData: () => tableDataType = () => {
         
         let data: tableDataType = {}
-        state.pds.map((pd, index) => {
-            data[pd.id] = {
-                class_type: pd.class_type,
-                year: pd.year,
-                quarter: pd.quarter,
+        state.staging_list.map((staging, index) => {
+            data[staging.id] = {
+                cif: staging.cif,
+                name: staging.name,
+                class_type: staging.class_type,
+                stage: staging.stage,
                 actions: <div className="show-on-hover">
-                            <i className="icon-info" onClick={(e: React.MouseEvent<HTMLLIElement>) => {
-                                e.stopPropagation()
-                                setShowDetails(true)
-                                setLoadingDetails(true)
-                                ENDPOINTS.pd().show({ id: pd.id })
-                                .then((response: any) => {
-                                    setPDDetails({ ...response.data.data, class_type: pd.class_type })
-                                    setLoadingDetails(false)
-                                })
-                            }} />
-                            <i className="icon-delete" onClick={(e: React.MouseEvent<HTMLLIElement>) => {
-                                e.stopPropagation()
-                                Confirm({
-                                    message: t("delete_confirmation"),
-                                    onConfirm: () => remove(pd.id)
-                                })
-                            }} />
+                            <Link to={ `/search-client?cif=${staging.cif}` + (year ? `&year=${year}` : '') + (quarter ? `&quarter=${quarter}` : '') }><i className="icon-info" style={{ color: "#333" }} /></Link>
                         </div>
             }
         })
 
         return data
-    }
-
-    // Delete
-    const remove = (id: number) => {
-        
-        dispatch( pdsSlice.actions.setIsLoading(true) )
-        ENDPOINTS.pd().delete({ id })
-        .then(() => {
-            dispatch( pdsSlice.actions.setIsLoading(false) )
-            dispatch( pdsSlice.actions.deletePDs([id]) )
-        })
-
     }
 
     // First fetch
@@ -141,7 +110,19 @@ export default () => {
                 { state.isLoading ? <WhiteboxLoader /> : ""}
                 <form>
                     <div className="filters">
-                        <div className="filter" key="PDFilter">
+                        <div className='filter'>
+                            <SelectField
+                                placeholder="Filter"
+                                options={[
+                                    { label: 'All', value: 'all' },
+                                    { label: 'Has stage', value: 'with' },
+                                    { label: 'No stage', value: 'without' }
+                                ]}
+                                onChange={(selected: any) => setFilter(selected)}
+                                value={filter}
+                            />
+                        </div>
+                        <div className="filter" key="StagingFilter">
                             <ClassesMenu
                                 isClearable
                                 value={classType}
@@ -163,28 +144,18 @@ export default () => {
                     </div>
                 </form>
                 <TableActionBar
-                    title={t("pds")}
+                    title={t("staging")}
                     search={search}
                     showFilter={false}
                     />
                 
                 <DashboardTable
                     ref={tableRef}
-                    header={[ t("class_type"), t("year"), t("quarter"), "" ]}
+                    header={[ t("cif"), t("name"), t("class_type"), t("stage"), "" ]}
                     body={generateData()}
                     hasMore={state.hasMore}
                     loadMore={fetchData}
                     />
-
-                <Modal open={showDetails} toggle={() => setShowDetails(false)}>
-                    {
-                        loadingDetails ? <EllipsisLoader /> :
-                        <>
-                        <ClientsPD PDDetails={PDDetails} />
-                        </>
-                    }
-                </Modal>
-
                 
             </> : <div className="center"><EllipsisLoader /></div> }
         </>

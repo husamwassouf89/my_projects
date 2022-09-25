@@ -25,7 +25,7 @@ export default (props: ActionBarProps) => {
         <div className="action-bar">
             { props.title ? <h2>{props.title}</h2> : "" }
             { props.search ?
-            <div className="search">
+            <div className="search" style={{ display: 'none' }}>
                 <input type="text" value={searchValue} placeholder={t('search')}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchValue(e.target.value)}
                 onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { CategoriesMenu } from "../../../../components/PredefinedMenus/PredefinedMenus"
+import { CategoriesMenu, FinancialStatusMenu } from "../../../../components/PredefinedMenus/PredefinedMenus"
 import API from "../../../../services/api/api"
 
 import select_vector from '../../../../assets/images/vectors/select.svg'
@@ -9,6 +9,9 @@ import { RadioButton } from "../../../../components/FormElements/FormElements"
 
 import './AddRate.css'
 import { t } from "react-multi-lang"
+import { Col, Row } from "react-grid-system"
+import { predefinedState } from "../../../../components/PredefinedMenus/PredefinedMenusSlice"
+import { useSelector } from "react-redux"
 
 interface IProps {
     class_type: number;
@@ -16,9 +19,12 @@ interface IProps {
     defaultAnswers: number[];
     readonly: boolean;
     financial_status: string;
+    changeFinancialStatus(value: string): any;
 }
 
 export default (props: IProps) => {
+
+    const predefinedState: predefinedState = useSelector((state: { predefined_menus: predefinedState }) => state.predefined_menus)
 
     const questionsRef = useRef<HTMLDivElement>(null)
     const saveRef =  useRef<HTMLDivElement>(null)
@@ -28,21 +34,23 @@ export default (props: IProps) => {
     const [questions, setQuestions] = useState<any>([])
     const [answers, setAnswers] = useState<number[]>(props.defaultAnswers)
     const [submitting, setSubmitting] = useState<boolean>(false)
+    const [financialStatus, setFinancialStatus] = useState<any>(props.financial_status);
+    const [financialStatusID, setFinancialStatusID] = useState<any>(props.financial_status);
 
     const ENDPOINTS = new API()
 
     useEffect(() => {
 
-        if(category) {
+        if(category && financialStatus) {
             setIsLoaded(false)
-            ENDPOINTS.irs().irs({ class_type_id: props.class_type, category_id: category?.value, financial_status: props.financial_status })
+            ENDPOINTS.irs().irs({ class_type_id: props.class_type, category_id: category?.value, financial_status: financialStatus })
             .then((response: any) => {
                 setQuestions(response.data.data.questions)
                 setIsLoaded(true)
             })
         }
 
-    }, [category])
+    }, [category, financialStatus])
 
     const addAnswer = (answer: number, toRemove: number[]) => {
         let tmp = [...answers]
@@ -56,23 +64,65 @@ export default (props: IProps) => {
 
     useEffect(() => {
         saveRef?.current?.removeAttribute("style")
-        saveRef?.current?.setAttribute("style", `bottom: calc( calc( 100vh - ${questionsRef?.current?.parentElement?.offsetHeight}px ) / 2 )`)
+        // saveRef?.current?.setAttribute("style", `bottom: calc( calc( 100vh - ${questionsRef?.current?.parentElement?.offsetHeight}px ) / 2 )`)
     })
 
     const submit = () => {
+        if(!checkAbilityToSubmit()) {
+            nextStep();
+            return;
+        }
         setSubmitting(true)
+        ENDPOINTS.clients().change_financial_status({ id: props.client_id, financial_status: financialStatusID })
+            .then(() => props.changeFinancialStatus(financialStatus))
         ENDPOINTS.irs_profile().store({ client_id: props.client_id, answers })
-        .then(() => {
-            window.location.reload()
-        })
+            .then(() => {
+                window.location.reload()
+            })
+    }
+
+    const [doneSteps, setDoneSteps] = useState<number[]>([]);
+    const checkAbilityToSubmit = () => {
+        if(predefinedState.categories.list.length - 1 === doneSteps.length) {
+            return true;
+        }
+        for(var i = 0; i < predefinedState.categories.list.length; i++) {
+            if(!doneSteps.includes(+predefinedState.categories.list[i].value)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    const nextStep = () => {
+        const done = [...doneSteps, +category.value];
+        setDoneSteps(done);
+        for(var i = 0; i < predefinedState.categories.list.length; i++) {
+            if(!done.includes(+predefinedState.categories.list[i].value)) {
+                setCategory({ ...predefinedState.categories.list[i] });
+                break;
+            }
+        }
     }
 
     return(
-        <div style={{ minWidth: 500 }} ref={questionsRef} className="add-profile">
+        <div style={{ minWidth: 700 }} ref={questionsRef} className="add-profile">
             { submitting && <WhiteboxLoader /> }
             <h2 style={{ margin: "0 0 20px" }}>{ props.readonly ? t("show_rate") : t("add_new_rate") }</h2>
             <form onSubmit={e => e.preventDefault()}>
-                <CategoriesMenu onChange={(selected: { value: number; }) => setCategory(selected)} placeholder={t("factor")} />
+                <Row>
+                    <Col md={6}>
+                        <FinancialStatusMenu
+                            defaultValue={{ value: props.financial_status, label: props.financial_status }}
+                            onChange={(selected: any) => {
+                                setFinancialStatus(selected.label);
+                                setFinancialStatusID(selected.value);
+                            }}
+                        />
+                    </Col>
+                    <Col md={6}>
+                        <CategoriesMenu onChange={(selected: { value: number; }) => setCategory(selected)} value={category} placeholder={t("factor")} />
+                    </Col>
+                </Row>
             </form>
             {
                 category ?
@@ -105,7 +155,7 @@ export default (props: IProps) => {
                     }
                     <br />
                     { questions.length > 0 && <>{category.label} rate: <strong>{ [].concat.apply([], questions.map((question: any) => question.options.filter((answer: any) => answers.includes(answer.id)).map((answer: any) => answer.value))).reduce((a, b) => a + b, 0) }</strong></> }
-                    { !props.readonly && <div className="save" ref={saveRef}><button className="button bg-gold color-white" onClick={submit}>{t("submit_data")}</button></div> }
+                    { !props.readonly && <div className="save" ref={saveRef}><button disabled={answers.length < questions?.length} className="button bg-gold color-white" onClick={submit}>{checkAbilityToSubmit() ? t("submit_data") : t("continue")}</button></div> }
                 </div> : <EllipsisLoader /> }
                 </> :
                 <div className="text-center margin-top-30">

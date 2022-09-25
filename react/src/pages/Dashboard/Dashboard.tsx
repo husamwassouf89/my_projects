@@ -15,10 +15,15 @@ import ImportClients from '../../containers/ImportClients/ImportClients'
 import PDs from '../../containers/PD/PDs'
 import ImportPDs from '../../containers/PD/ImportPDs'
 import IRS from '../../containers/IRS/IRS'
+import Settings from '../../containers/Settings/Settings'
+import ViewIRSs from '../../containers/IRS/ViewIRSs'
+import ViewStaging from '../../containers/Staging/ViewStaging'
 
 export default (props: any) => {
 
     const t = useTranslation()
+
+    const [cookies] = useCookies(['userinfo']);
 
     const navList = [
         {
@@ -94,14 +99,8 @@ export default (props: any) => {
             childs: [
                 {
                     icon: "icon-hammer",
-                    name: t("direct"),
+                    name: t("view_all"),
                     link: "/limits",
-                    show: true
-                },
-                {
-                    icon: "icon-hammer",
-                    name: t("indirect"),
-                    link: "/limits-offbalance",
                     show: true
                 },
                 {
@@ -135,14 +134,33 @@ export default (props: any) => {
             icon: "icon-star",
             name: t("irs"),
             show: true,
-            link: "/irs"
+            link: "/all-irs",
         },
-        // {
-        //     icon: "icon-gears",
-        //     name: t("settings"),
-        //     show: true,
-        //     link: "/settings"
-        // }
+        {
+            icon: "icon-star",
+            name: t("staging"),
+            show: true,
+            link: "/all-staging",
+        },
+        {
+            icon: "icon-gears",
+            name: t("settings"),
+            show: cookies?.userinfo?.role?.name === 'Admin',
+            childs: [
+                {
+                    icon: "icon-product",
+                    name: t("constants"),
+                    link: "/settings",
+                    show: true
+                },
+                {
+                    icon: "icon-product",
+                    name: t("irs"),
+                    link: "/irs",
+                    show: true
+                }
+            ]
+        }
     ]
 
     let section = props.match.params.section ? props.match.params.section.toLowerCase() : "search-client"
@@ -156,19 +174,19 @@ export default (props: any) => {
                     <Clients category="facility" />
                 )
             case "import-clients":
-                return(<ImportClients type="clients" />)
+                return(<ImportClients type="clients" link="/templates/direct-credit-facilities.xlsx" />)
             case "institutions":
                 return(
                     <Clients category="financial" />
                 )
             case "import-institutions":
-                return(<ImportClients type="banks" />)
+                return(<ImportClients type="banks" link="/templates/direct-credit-facilities.xlsx" />)
             case "offbalance":
                 return(
                     <Clients category="facility" offbalance />
                 )
             case "import-offbalance":
-                return(<ImportClients type="documents" />)
+                return(<ImportClients type="documents" link="/templates/direct-credit-facilities.xlsx" />)
             case "limits":
                 return(
                     <Clients category="facility" type="limits" />
@@ -178,13 +196,19 @@ export default (props: any) => {
                     <Clients category="facility" type="limits" offbalance />
                 )
             case "import-limits":
-                return(<ImportClients type="limits" />)
+                return(<ImportClients type="limits" link="/templates/direct-credit-facilities.xlsx" />)
             case 'all-pds':
                 return(<PDs />)
             case 'import-pd':
                 return(<ImportPDs />)
             case 'irs':
                 return(<IRS />)
+            case 'all-irs':
+                return(<ViewIRSs />);
+            case 'all-staging':
+                return(<ViewStaging />);
+            case 'settings':
+                return(<Settings />);
             default:
                 break;
 

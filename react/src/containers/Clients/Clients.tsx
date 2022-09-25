@@ -50,6 +50,7 @@ export default (props: IProps) => {
     
     // Search
     const search = (value: string) => {
+        ENDPOINTS.abortCalls();
         tableRef.current?.reset()
         dispatch( clientsSlice.actions.reset() )
         setKeyword(value)
@@ -61,12 +62,12 @@ export default (props: IProps) => {
         console.log(classType);
         dispatch( clientsSlice.actions.setIsFetching( true ) )
 
-        ENDPOINTS.clients().index({ page, page_size, class_type_id: classType?.id, year, quarter, type: props.offbalance && props.type !== 'limits' ? 'documents' : undefined, limits: props.type === 'limits' ? 'yes' : undefined })
+        ENDPOINTS.clients().index({ page, page_size, class_type_category: classType?.id ? undefined : props.category, class_type_id: classType?.id, year, quarter, type: props.offbalance ? 'documents' : undefined, limit: props.type === 'limits' ? 'yes' : undefined })
         .then((response: any) => {
             let clients: client[] = response.data.data.clients.map((client: any): client => ({
                 id: client.id,
                 loan_key: client.loan_key,
-                cif: client.cif,
+                cif: client.cif == '0' ? '00000' : client.cif,
                 name: client.name,
                 class_type: client.class_type_name,
                 type: client.type
@@ -88,9 +89,9 @@ export default (props: IProps) => {
                 cif: client.cif,
                 name: client.name,
                 class_type: client.class_type,
-                type: client.type,
+                // type: client.type,
                 actions: <div className="show-on-hover">
-                            <Link to={ `/search-client?cif=${client.cif}&year=${year}&quarter=${quarter}` + ( props.type === 'limits' ? ( props.offbalance ? '&limit=off' : '&limit=on' ) : '' ) }><i className="icon-info" style={{ color: "#333" }} /></Link>
+                            <Link target='_blank' to={ `/search-client?cif=${client.cif}` + (year ? `&year=${year}` : '') + (quarter ? `&quarter=${quarter}` : '') + ( props.type === 'limits' ? '&limits=yes' : '' ) + ( props.offbalance ? '&client_type=offbalance' : '' ) }><i className="icon-information" style={{ color: "#333" }} /></Link>
                         </div>
             }
         })
@@ -119,13 +120,18 @@ export default (props: IProps) => {
     }, [classes, classType]);
 
     useEffect(() => {
+        ENDPOINTS.abortCalls();
         tableRef.current?.reset()
         dispatch( clientsSlice.actions.reset() )
-    }, [classType, year, quarter, props.offbalance])
+    }, [classType, year, quarter, props.offbalance, location.href])
 
     useEffect(() => {
-        if(classes.filter((item: any) => item.category === props.category)[0] !== classType)
-            setClassType(classes.filter((item: any) => item.category === props.category)[0]);
+        // if(classes.filter((item: any) => item.category === props.category)[0] !== classType)
+        //     setClassType(classes.filter((item: any) => item.category === props.category)[0]);
+        ENDPOINTS.abortCalls();
+        setClassType(null);
+        tableRef.current?.reset()
+        dispatch( clientsSlice.actions.reset() )
     }, [props.category]);
 
     return(
@@ -167,7 +173,7 @@ export default (props: IProps) => {
                 
                 <DashboardTable
                     ref={tableRef}
-                    header={[ t("cif"), t("name"), t("class_type"), t("type"), "" ]}
+                    header={[ t("cif"), t("name"), t("class_type"), "" ]}
                     body={generateData()}
                     hasMore={state.hasMore}
                     loadMore={fetchData}

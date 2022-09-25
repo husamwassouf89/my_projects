@@ -3,7 +3,7 @@ import { useTranslation } from 'react-multi-lang'
 
 // Redux
 import { useDispatch, useSelector } from 'react-redux'
-import { pd, pdsSlice, pdsState } from './PDsSlice'
+import { IRSSlice, IRSState, irs } from './IRSSlice'
 
 // API
 import API from '../../services/api/api'
@@ -12,15 +12,11 @@ import API from '../../services/api/api'
 import TableActionBar from '../../components/TableActionBar/TableActionBar'
 import { DashboardTable } from '../../components/Table/Table'
 import { EllipsisLoader, WhiteboxLoader } from '../../components/Loader/Loader'
-import Modal from '../../components/Modal/Modal'
-import { Col, Row } from 'react-grid-system'
-import { getPercentage, toFixed } from '../../services/hoc/helpers'
-import ClientsPD from './PDDetails/ClientsPD'
-import { Confirm } from '../../components/Alerts/Alerts'
 import { ClassesMenu } from '../../components/PredefinedMenus/PredefinedMenus'
 import { SelectField } from '../../components/FormElements/FormElements'
 
 import { years } from '../../services/hoc/helpers'
+import { Link } from 'react-router-dom'
 
 export default () => {
 
@@ -29,17 +25,15 @@ export default () => {
 
     // Redux
     const dispatch = useDispatch()
-    const state = useSelector( ( state: { pds: pdsState } ) => state.pds )
+    const state = useSelector( ( state: { irs: IRSState } ) => state.irs )
 
     // Hooks
     const [keyword, setKeyword] = useState<string>("")
-    const [showDetails, setShowDetails] = useState<boolean>(false)
-    const [loadingDetails, setLoadingDetails] = useState<boolean>(true)
-    const [PDDetails, setPDDetails] = useState<any>(null)
 
     const [classType, setClassType] = useState<any>();
     const [year, setYear] = useState<number>()
     const [quarter, setQuarter] = useState<'q1' | 'q2' | 'q3' | 'q4'>()
+    const [filter, setFilter] = useState<any>({ label: 'No IRS', value: 'without' });
 
     // API
     const ENDPOINTS = new API()
@@ -51,81 +45,59 @@ export default () => {
     // Search
     const search = (value: string) => {
         tableRef.current?.reset()
-        dispatch( pdsSlice.actions.reset() )
+        dispatch( IRSSlice.actions.reset() )
         setKeyword(value)
     }
 
     // Fetch Data
     const fetchData = (page: number, page_size: number = 10) => {
 
-        dispatch( pdsSlice.actions.setIsFetching( true ) )
+        dispatch( IRSSlice.actions.setIsFetching( true ) )
 
-        ENDPOINTS.pd().index({ page, page_size, class_type_id: classType?.value, year, quarter, keyword })
+        ENDPOINTS.irs().index({ page, page_size, class_type_id: classType?.value, year, quarter, keyword, filter_type: filter?.value })
         .then((response: any) => {
-            let pds: pd[] = response.data.data.pds.map((pd: any): pd => ({
-                id: pd.id,
-                class_type: pd.class_type_name,
-                quarter: pd.quarter,
-                year: pd.year
+            let IRSs: irs[] = response.data.data.clients.map((irs: any): irs => ({
+                id: irs.id,
+                class_type: irs.class_type_name,
+                cif: irs.cif,
+                name: irs.name,
+                financial_status: irs.financial_status,
+                score: irs.final_score,
+                grade: irs.final_grade
             }))
             
-            dispatch( pdsSlice.actions.addPDs( pds ) )
-            dispatch( pdsSlice.actions.setHasMore( page < Number(response.data.data.last_page) ) )
+            dispatch( IRSSlice.actions.addIRSs( IRSs ) )
+            dispatch( IRSSlice.actions.setHasMore( page < Number(response.data.data.last_page) ) )
             console.log(page !== Number(response.data.data.last_page))
             if( !state.isLoaded )
-                dispatch( pdsSlice.actions.setIsLoaded( true ) )
+                dispatch( IRSSlice.actions.setIsLoaded( true ) )
         })
     }
 
     useEffect(() => {
         tableRef.current?.reset()
-        dispatch( pdsSlice.actions.reset() )
-    }, [classType, year, quarter])
+        dispatch( IRSSlice.actions.reset() )
+    }, [classType, year, quarter, filter])
 
     interface tableDataType { [key: string]: { [key: string]: any } }
     const generateData: () => tableDataType = () => {
         
         let data: tableDataType = {}
-        state.pds.map((pd, index) => {
-            data[pd.id] = {
-                class_type: pd.class_type,
-                year: pd.year,
-                quarter: pd.quarter,
+        state.IRSs.map((irs, index) => {
+            data[irs.id] = {
+                class_type: irs.cif,
+                year: irs.name,
+                quarter: irs.class_type,
+                financial_status: irs.financial_status,
+                score: irs.score,
+                grade: irs.grade,
                 actions: <div className="show-on-hover">
-                            <i className="icon-info" onClick={(e: React.MouseEvent<HTMLLIElement>) => {
-                                e.stopPropagation()
-                                setShowDetails(true)
-                                setLoadingDetails(true)
-                                ENDPOINTS.pd().show({ id: pd.id })
-                                .then((response: any) => {
-                                    setPDDetails({ ...response.data.data, class_type: pd.class_type })
-                                    setLoadingDetails(false)
-                                })
-                            }} />
-                            <i className="icon-delete" onClick={(e: React.MouseEvent<HTMLLIElement>) => {
-                                e.stopPropagation()
-                                Confirm({
-                                    message: t("delete_confirmation"),
-                                    onConfirm: () => remove(pd.id)
-                                })
-                            }} />
+                            <Link to={ `/search-client?cif=${irs.cif}` + (year ? `&year=${year}` : '') + (quarter ? `&quarter=${quarter}` : '') }><i className="icon-info" style={{ color: "#333" }} /></Link>
                         </div>
             }
         })
 
         return data
-    }
-
-    // Delete
-    const remove = (id: number) => {
-        
-        dispatch( pdsSlice.actions.setIsLoading(true) )
-        ENDPOINTS.pd().delete({ id })
-        .then(() => {
-            dispatch( pdsSlice.actions.setIsLoading(false) )
-            dispatch( pdsSlice.actions.deletePDs([id]) )
-        })
-
     }
 
     // First fetch
@@ -141,7 +113,19 @@ export default () => {
                 { state.isLoading ? <WhiteboxLoader /> : ""}
                 <form>
                     <div className="filters">
-                        <div className="filter" key="PDFilter">
+                        <div className='filter'>
+                            <SelectField
+                                placeholder="Filter"
+                                options={[
+                                    { label: 'All', value: 'all' },
+                                    { label: 'Has IRS', value: 'with' },
+                                    { label: 'No IRS', value: 'without' }
+                                ]}
+                                onChange={(selected: any) => setFilter(selected)}
+                                value={filter}
+                            />
+                        </div>
+                        <div className="filter" key="IRSFilter">
                             <ClassesMenu
                                 isClearable
                                 value={classType}
@@ -163,28 +147,18 @@ export default () => {
                     </div>
                 </form>
                 <TableActionBar
-                    title={t("pds")}
+                    title={t("irs")}
                     search={search}
                     showFilter={false}
                     />
                 
                 <DashboardTable
                     ref={tableRef}
-                    header={[ t("class_type"), t("year"), t("quarter"), "" ]}
+                    header={[ t("cif"), t("name"), t("class_type"), t("financial_status"), t("score"), t("grade"), "" ]}
                     body={generateData()}
                     hasMore={state.hasMore}
                     loadMore={fetchData}
                     />
-
-                <Modal open={showDetails} toggle={() => setShowDetails(false)}>
-                    {
-                        loadingDetails ? <EllipsisLoader /> :
-                        <>
-                        <ClientsPD PDDetails={PDDetails} />
-                        </>
-                    }
-                </Modal>
-
                 
             </> : <div className="center"><EllipsisLoader /></div> }
         </>
