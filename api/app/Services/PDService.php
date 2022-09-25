@@ -8,6 +8,7 @@ use App\Imports\PDImport;
 use App\Models\Attachment;
 use App\Models\Client\ClassType;
 use App\Models\PD\PD;
+use App\Models\Value;
 use App\Traits\FilesKit;
 use App\Traits\MathKit;
 use Maatwebsite\Excel\Facades\Excel;
@@ -18,12 +19,23 @@ class PDService extends Service
 {
     use FilesKit, MathKit;
 
+    private $noReg, $noEco;
+
+    public function __construct()
+    {
+        $this->noReg = ['4', '6', '7'];
+        $this->noEco = ['6', '7'];
+        $this->exp   = new \PhpOffice\PhpSpreadsheet\Calculation\MathTrig\Exp;
+        $this->sqrt  = new \PhpOffice\PhpSpreadsheet\Calculation\MathTrig\Sqrt;
+    }
+
     public function index(array $input)
     {
         $data = PD::query();
         $data->selectIndex();
         if (isset($input['year']) and $input['year']) $data->where('year', $input['year']);
         if (isset($input['quarter']) and $input['quarter']) $data->where('quarter', $input['quarter']);
+        if (isset($input['class_type_id']) and $input['class_type_id']) $data->where('p_d_s.class_type_id', $input['class_type_id']);
         $data = $data->paginate($input['page_size']);
 
         return $this->handlePaginate($data, 'pds');
@@ -31,6 +43,13 @@ class PDService extends Service
 
     public function store($input)
     {
+        $checkPd = PD::where('class_type_id', $input['class_type_id'])
+                     ->where('year', $input['year'])->where('quarter', $input['quarter'])->first();
+        if ($checkPd and isset($input['replace']) and $input['replace'] == 'yes') {
+            $checkPd->delete();
+        } else if ($checkPd) {
+            return -1;
+        }
         $pd                            = new PD();
         $pd->class_type_id             = $input['class_type_id'];
         $pd->year                      = $input['year'];
@@ -56,7 +75,12 @@ class PDService extends Service
             }
         }
 
-        Excel::import(new PDImport($pd), $input['path']);
+        try {
+            Excel::import(new PDImport($pd), $input['path']);
+        } catch (\Exception $e) {
+            $pd->delete();
+            return -2;
+        }
 
         return $this->show($pd->id);
     }
@@ -68,6 +92,7 @@ class PDService extends Service
 
     private function handleShow(PD $pd)
     {
+        //  Get Values
         $values               = $pd->values()->with('row', 'column')->get();
         $pdArray              = [];
         $defaultRate          = [];
@@ -75,7 +100,14 @@ class PDService extends Service
         $classType            = $pd->classType;
         $grades               = $classType->grades()->orderBy('serial_no')->select('serial_no')->get()->pluck('serial_no')->toArray();
 
-        $factor = 7;
+        // Fix the factor: pd for any row after factor is 1
+        if ($pd->class_type_id == 4) {
+            $factor = 2;
+        } else {
+            $factor = 7;
+        }
+
+        // Convert to 2D array
         foreach ($grades as $key => $item) {
             if ($key >= $factor) {
                 unset($grades[$key]);
@@ -84,7 +116,9 @@ class PDService extends Service
             $grades[$key] = (int)$item + 1;
         }
 
-        if (count($values) <= 0) return [];
+        if (count($values) <= 0) {
+            return -1;
+        }
 
         foreach ($values as $value) {
             $row    = $value->row;
@@ -99,8 +133,7 @@ class PDService extends Service
 
         }
 
-        $mm    = new \PhpOffice\PhpSpreadsheet\Calculation\MathTrig\MatrixFunctions();
-        $pdTTC = $mm->multiply($pdArray, $defaultRate);
+        // PD-TTC this function is written by me, we can use the PHP-office one too
         $pdTTC = $this->matrixMultiplication($pdArray, $defaultRate);
         for ($i = 0; $i < count($defaultRate); $i++) {
             $defaultRate[$i] = $defaultRate[$i][0];
@@ -111,21 +144,26 @@ class PDService extends Service
             if ($i >= $factor) {
                 $pdTTC[$i] = 1;
             } else {
+
                 $pdTTC[$i]    = $pdTTC[$i][0];
                 $newPdTTC[$i] = $pdTTC[$i];
             }
         }
 
-        $trend = new Statistical\Trends();
 
-        $slope = $trend->LINEST($newPdTTC, $grades, TRUE, TRUE)[0][0];
-
-        for ($i = 0; $i < count($pdTTC); $i++) {
-            if ($i >= $factor) {
-                $pdTTCAfterRegression[$i] = 1;
-            } else {
-                $pdTTCAfterRegression[$i] = 0.0005 + $grades[$i] * $slope;
+        // For Regression (not for all classes: [Retail, Abroad, Investment])
+        if (!in_array($pd->class_type_id, $this->noReg)) {
+            $trend = new Statistical\Trends();
+            $slope = $trend->LINEST($newPdTTC, $grades, TRUE, TRUE)[0][0];
+            for ($i = 0; $i < count($pdTTC); $i++) {
+                if ($i >= $factor) {
+                    $pdTTCAfterRegression[$i] = 1;
+                } else {
+                    $pdTTCAfterRegression[$i] = 0.0005 + $grades[$i] * $slope;
+                }
             }
+        } else {
+            $pdTTCAfterRegression = $pdTTC;
         }
         $assetCorrelation = [];
 
@@ -134,26 +172,46 @@ class PDService extends Service
             if ($i >= $factor) {
                 $assetCorrelation[$i] = 1;
             } else {
-                $firstPart            = (0.12 * (1 - exp(-50 * $pdTTCAfterRegression[$i]))) / (1 - exp(-50));
-                $secondPart           = (0.24 * (1 - (1 - exp(-50 * $pdTTCAfterRegression[$i])))) / (1 - exp(-50));
+
+                // Retail coefficients are different
+                if ($pd->class_type_id == 4) {
+                    $c1 = 0.03;
+                    $c2 = 0.16;
+                    $c3 = -35.0;
+                } else {
+                    $c1 = 0.12;
+                    $c2 = 0.24;
+                    $c3 = -50;
+                }
+                $preReq = null;
+
+                $firstPart            = (double)($c1 * (1 - $this->exp->evaluate($c3 * $pdTTCAfterRegression[$i]))) / (1 - $this->exp->evaluate($c3));
+                $secondPart           = (double)($c2 * (1 - (1 - $this->exp->evaluate($c3 * $pdTTCAfterRegression[$i])))) / (1 - $this->exp->evaluate($c3));
                 $assetCorrelation[$i] = $firstPart + $secondPart;
             }
         }
 
+
         $ttc_to_pit = [];
-        $norm       = new    \PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions\StandardNormal();
-        $error      = new \PhpOffice\PhpSpreadsheet\Calculation\Logical\Conditional();
+        $norm
+                    = new    \PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions\StandardNormal();
+        $error
+                    = new \PhpOffice\PhpSpreadsheet\Calculation\Logical\Conditional();
 
-
+        // Even the name is regression but the regression is not always applied!
         for ($i = 0; $i < count($pdTTCAfterRegression); $i++) {
 
             if ($i >= $factor) {
                 $ttc_to_pit[$i] = 1;
             } else {
-                $ttc_to_pit[$i] = $error->IFERROR($norm->cumulative($norm->inverse($pdTTCAfterRegression[$i]) / sqrt(1 - $assetCorrelation[$i])), 0);
+                $value = $pdTTCAfterRegression[$i];
+                if (in_array($pd->class_type_id, $this->noReg,) and in_array($pd->class_type_id, $this->noEco)) {
+                    $value = $defaultRate[$i];
+                }
+
+                $ttc_to_pit[$i] = $error->IFERROR($norm->cumulative($norm->inverse($value) / $this->sqrt->sqrt(1 - $assetCorrelation[$i])), 0);
             }
         }
-
 
         $inclusion = [
             'base'  => [],
@@ -166,29 +224,41 @@ class PDService extends Service
                 $inclusion['mild'][$i]  = 1;
                 $inclusion['heavy'][$i] = 1;
             } else {
-                $inclusion['base'][$i]  = $error->IFERROR($norm->cumulative(($norm->inverse($pdTTCAfterRegression[$i]) - SQRT($assetCorrelation[$i]) * $pd->eco_parameter_base_value) / SQRT(1 - $assetCorrelation[$i])), 0);
-                $inclusion['mild'][$i]  = $error->IFERROR($norm->cumulative(($norm->inverse($pdTTCAfterRegression[$i]) - SQRT($assetCorrelation[$i]) * $pd->eco_parameter_mild_value) / SQRT(1 - $assetCorrelation[$i])), 0);
-                $inclusion['heavy'][$i] = $error->IFERROR($norm->cumulative(($norm->inverse($pdTTCAfterRegression[$i]) - SQRT($assetCorrelation[$i]) * $pd->eco_parameter_heavy_value) / SQRT(1 - $assetCorrelation[$i])), 0);
+
+//                $n                      = -2.487429559;
+//                $sq1                    = 0.454963807;
+//                $sq2                    = 0.890509929;
+//                $d = $sq1 * (double)$pd->eco_parameter_heavy_value;
+//                $inclusion['heavy'][$i] = $error->IFERROR((double)$norm->cumulative(($n - $d ) / $sq2), 0);
+
+                $inclusion['base'][$i]  = $error->IFERROR((double)$norm->cumulative(($norm->inverse($pdTTCAfterRegression[$i]) - SQRT($assetCorrelation[$i]) * (double)$pd->eco_parameter_base_value) / SQRT(1 - $assetCorrelation[$i])), 0);
+                $inclusion['mild'][$i]  = $error->IFERROR((double)$norm->cumulative(($norm->inverse($pdTTCAfterRegression[$i]) - SQRT($assetCorrelation[$i]) * (double)$pd->eco_parameter_mild_value) / SQRT(1 - $assetCorrelation[$i])), 0);
+                $inclusion['heavy'][$i] = $error->IFERROR((double)$norm->cumulative(($norm->inverse($pdTTCAfterRegression[$i]) - SQRT($assetCorrelation[$i]) * (double)$pd->eco_parameter_heavy_value) / SQRT(1 - $assetCorrelation[$i])), 0);
             }
         }
+//        =IFERROR(NORMSDIST((NORMSINV(BU4)-SQRT(BW4)*BZ4)/SQRT(1-BW4))
         $finalCalibratedWeightedPD = [];
-        for ($i = 0; $i < count($pdTTCAfterRegression); $i++) {
-            if ($i >= $factor) {
-                $finalCalibratedWeightedPD[$i] = 1;
-                $finalCalibratedWeightedPD[$i] = 1;
-                $finalCalibratedWeightedPD[$i] = 1;
-            } else {
-                $finalCalibratedWeightedPD[$i] = ($inclusion['base'][$i] * $pd->eco_parameter_base_weight)
-                                                 + ($inclusion['mild'][$i] * $pd->eco_parameter_mild_weight)
-                                                 + ($inclusion['heavy'][$i] * $pd->eco_parameter_heavy_weight);
+        if (in_array($pd->class_type_id, $this->noEco)) {
+            for ($i = 0; $i < count($pdTTCAfterRegression); $i++) {
+                $finalCalibratedWeightedPD[$i] = $ttc_to_pit[$i];
+            }
+        } else {
+            for ($i = 0; $i < count($pdTTCAfterRegression); $i++) {
+                if ($i >= $factor) {
+                    $finalCalibratedWeightedPD[$i] = 1;
+                } else {
+                    $finalCalibratedWeightedPD[$i] = ((double)$inclusion['base'][$i] * (double)$pd->eco_parameter_base_weight)
+                                                     + ((double)$inclusion['mild'][$i] * (double)$pd->eco_parameter_mild_weight)
+                                                     + ((double)$inclusion['heavy'][$i] * (double)$pd->eco_parameter_heavy_weight);
+                }
             }
         }
+
         $finalCalibratedUsedPD = [];
-
-
+        // Get the Min value for the pd
+        $value = Value::find(2);
         for ($i = 0; $i < count($pdTTCAfterRegression); $i++) {
-            if ($finalCalibratedWeightedPD[$i] >= 0.0005) $finalCalibratedUsedPD[$i] = $finalCalibratedWeightedPD[$i];
-            else $finalCalibratedUsedPD[$i] = 0.0005;
+            $finalCalibratedUsedPD[$i] = max($finalCalibratedWeightedPD[$i], $value->value);
         }
 
 
@@ -220,7 +290,7 @@ class PDService extends Service
     public function classTypeYears($id)
     {
         $allYears = [];
-        for ($i = 1990; $i <= Date('Y'); $i++) {
+        for ($i = 2018; $i <= Date('Y'); $i++) {
             array_push($allYears, $i);
         }
 
@@ -264,9 +334,10 @@ class PDService extends Service
         return false;
     }
 
-    public function getPdByYearQuarter($year, $quarter)
+    public function getPdByYearQuarter($year, $quarter, $classTypeId)
     {
-        $pd = PD::where('year', $year)->where('quarter', $quarter)->orderBy('id', 'desc')->first();
+        $pd = PD::where('year', $year)->where('quarter', $quarter)->orderBy('id', 'desc')
+                ->where('class_type_id', $classTypeId)->first();
         if ($pd) {
             return $this->handleShow($pd);
         } else {

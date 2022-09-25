@@ -14,16 +14,21 @@ class ClientAccount extends Model
 
     protected $guarded = ['id'];
 
+
     public function scopeJoins(Builder $query)
     {
-        return $query->join('types', 'types.id', '=', 'client_accounts.type_id')
+        return $query
+                  // ->join('account_infos', 'client_accounts.id', '=', 'account_infos.client_account_id')
+                     ->join('types', 'types.id', '=', 'client_accounts.type_id')
                      ->join('currencies', 'currencies.id', '=', 'client_accounts.main_currency_id')
-                     ->leftJoin('currencies as gu_currencies', 'gu_currencies.id', '=', 'client_accounts.guarantee_currency_id');
+                     ->leftJoin('currencies as gu_currencies', 'gu_currencies.id', '=', 'client_accounts.guarantee_currency_id')
+                     ->leftJoin('document_types', 'document_types.id', '=', 'client_accounts.document_type_id');
     }
 
     public function scopeSelectShow(Builder $query)
     {
-        return $query->select('client_accounts.*', 'types.name as type_name', 'currencies.name as currency_name');
+        return $query->select('client_accounts.*', 'types.name as type_name', 'currencies.name as currency_name', 'gu_currencies.name as gu_currency_name', 'document_types.name as document_type',
+                              'document_types.ccf as document_type_ccf');
     }
 
     public function accountInfos()

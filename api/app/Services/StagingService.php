@@ -13,7 +13,7 @@ class StagingService extends Service
 
     public function index($input)
     {
-        $type   = ClassType::findOrFail($input['id']);
+        $type   = ClassType::findOrFail($input['class_type_id']);
         return StagingQuestion::where('class_type_id', $type->id)
                               ->with('options')->get();
     }

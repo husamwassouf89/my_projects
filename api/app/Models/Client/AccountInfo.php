@@ -15,7 +15,7 @@ class AccountInfo extends Model
 
     public function account()
     {
-        return $this->belongsTo(ClientAccount::class);
+        return $this->belongsTo(ClientAccount::class, 'client_account_id');
     }
 
 

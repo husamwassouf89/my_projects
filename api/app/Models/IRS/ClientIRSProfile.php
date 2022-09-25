@@ -2,6 +2,7 @@
 
 namespace App\Models\IRS;
 
+use App\Models\Attachment;
 use App\Models\Client\Client;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -21,5 +22,10 @@ class ClientIRSProfile extends Model
     public function client()
     {
         return $this->belongsTo(Client::class);
+    }
+
+    public function attachments()
+    {
+        return $this->morphMany(Attachment::class, 'attachmentable');
     }
 }

@@ -17,9 +17,19 @@ class Controller extends BaseController
     public function response($message, $data = null, $code = 200)
     {
         return Response::json([
-                                  'message' => __('messages.' . $message),
+                                  'message' => $message,
                                   'data'    => $data,
                               ], $code)->setEncodingOptions(JSON_NUMERIC_CHECK);
+    }
+
+    public function handlePaginate($data, $name = 'data')
+    {
+        if ($data) {
+            return [
+                $name       => $data->items(),
+                'last_page' => $data->lastPage(),
+            ];
+        } else return null;
     }
 
 }

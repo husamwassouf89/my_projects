@@ -16,4 +16,9 @@ class Question extends Model
     {
         return $this->hasMany(Option::class);
     }
+
+    public function irs()
+    {
+        return $this->belongsTo(IRS::class,'irs_id');
+    }
 }

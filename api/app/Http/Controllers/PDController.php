@@ -26,6 +26,12 @@ class PDController extends Controller
     public function store(ImportRequest $request)
     {
         if ($data = $this->service->store($request->validated())) {
+
+            if ($data == -1) {
+                return $this->response('failed, you have already added a pd for the wanted specification', null);
+            } else if($data == -2){
+                return $this->response('failed, not suitable template has been used!', null,422);
+            }
             return $this->response('success', $data);
         }
         return $this->response('failed');

@@ -16,7 +16,7 @@ class CreateClassTypesTable extends Migration
         Schema::create('class_types', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('fixed')->default(3);
+            $table->enum('category',['facility', 'financial'])->default('facility');
         });
     }
 

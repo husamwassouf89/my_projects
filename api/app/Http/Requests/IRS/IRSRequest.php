@@ -3,6 +3,7 @@
 namespace App\Http\Requests\IRS;
 
 use App\Http\Requests\FormRequest;
+use App\Models\Client\Client;
 
 class IRSRequest extends FormRequest
 {
@@ -17,6 +18,7 @@ class IRSRequest extends FormRequest
         return [
             'class_type_id' => 'required|numeric|exists:class_types,id',
             'category_id'   => 'required|numeric|exists:categories,id',
+            'financial_status'  => 'required|string|in:' . implode(',', Client::$FINANCIAL_STATUS),
             'percentage'    => 'required|numeric|min:0.0|max:100',
         ];
     }

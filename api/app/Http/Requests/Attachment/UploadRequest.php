@@ -16,7 +16,7 @@ class UploadRequest extends FormRequest
     public function rules()
     {
         return [
-            'type' => 'required|string|in:pd,attachments,clients,banks,documents'
+            'type' => 'required|string|in:pd,attachments,clients,banks,documents,limits'
         ];
     }
 }

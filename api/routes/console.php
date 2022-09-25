@@ -51,4 +51,14 @@ Artisan::command('go-all', function () {
     Artisan::call('db:seed QuestionSeeder');
 
     echo "Database is ready, go go 🌠🌠!";
-})->describe('Migrate with passport!');
+})->describe('Migrate with passport and seeds!');
+
+Artisan::command('seed-all', function () {
+    // exec('cd dash-tenancy && composer dump-autoload');
+    Artisan::call('db:seed');
+    Artisan::call('db:seed StageSeeder');
+    Artisan::call('db:seed GuaranteeSeeder');
+    Artisan::call('db:seed QuestionSeeder');
+
+    echo "All Seeders has been seede :3 🌠🌠!";
+})->describe('Seed Seed!!');

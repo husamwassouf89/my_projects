@@ -15,9 +15,11 @@ class StagingController extends Controller
         $this->service = $service;
     }
 
-    public function index(StagingQuestionsRequest $request): JsonResponse
+    public function index($id, StagingQuestionsRequest $request): JsonResponse
     {
-        return $this->response('success', $this->service->index($request->all()));
+        $input = $request->validated();
+        $input['id'] = $id;
+        return $this->response('success', $this->service->index($input));
     }
 
     public function store(StagingQuestionRequest $request): JsonResponse

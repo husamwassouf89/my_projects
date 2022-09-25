@@ -20,6 +20,14 @@ class GuaranteeSeeder extends Seeder
         GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 1, 'stage_id' => 2, 'ratio' => 0]);
         GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 1, 'stage_id' => 3, 'ratio' => 0]);
 
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 2, 'stage_id' => 1, 'ratio' => 0]);
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 2, 'stage_id' => 2, 'ratio' => 0]);
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 2, 'stage_id' => 3, 'ratio' => 0]);
+
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 3, 'stage_id' => 1, 'ratio' => 0]);
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 3, 'stage_id' => 2, 'ratio' => 0]);
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 3, 'stage_id' => 3, 'ratio' => 0]);
+
         GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 4, 'stage_id' => 1, 'ratio' => 0]);
         GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 4, 'stage_id' => 2, 'ratio' => 0]);
         GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 4, 'stage_id' => 3, 'ratio' => 0]);
@@ -29,6 +37,14 @@ class GuaranteeSeeder extends Seeder
         GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 1, 'stage_id' => 1, 'ratio' => 0]);
         GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 1, 'stage_id' => 2, 'ratio' => 0]);
         GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 1, 'stage_id' => 3, 'ratio' => 0]);
+
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 2, 'stage_id' => 1, 'ratio' => 0]);
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 2, 'stage_id' => 2, 'ratio' => 0]);
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 2, 'stage_id' => 3, 'ratio' => 0]);
+
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 3, 'stage_id' => 1, 'ratio' => 0]);
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 3, 'stage_id' => 2, 'ratio' => 0]);
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 3, 'stage_id' => 3, 'ratio' => 0]);
 
         GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 4, 'stage_id' => 1, 'ratio' => 0]);
         GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 4, 'stage_id' => 2, 'ratio' => 0]);
@@ -41,6 +57,14 @@ class GuaranteeSeeder extends Seeder
         GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 1, 'stage_id' => 2, 'ratio' => 0.1]);
         GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 1, 'stage_id' => 3, 'ratio' => 0.1]);
 
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 2, 'stage_id' => 1, 'ratio' => 0.05]);
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 2, 'stage_id' => 2, 'ratio' => 0.1]);
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 2, 'stage_id' => 3, 'ratio' => 0.1]);
+
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 3, 'stage_id' => 1, 'ratio' => 0.05]);
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 3, 'stage_id' => 2, 'ratio' => 0.1]);
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 3, 'stage_id' => 3, 'ratio' => 0.1]);
+
         GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 4, 'stage_id' => 1, 'ratio' => 0.05]);
         GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 4, 'stage_id' => 2, 'ratio' => 0.1]);
         GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 4, 'stage_id' => 3, 'ratio' => 0.1]);
@@ -52,6 +76,14 @@ class GuaranteeSeeder extends Seeder
         GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 1, 'stage_id' => 2, 'ratio' => 0.4]);
         GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 1, 'stage_id' => 3, 'ratio' => 1]);
 
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 2, 'stage_id' => 1, 'ratio' => 0.2]);
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 2, 'stage_id' => 2, 'ratio' => 0.4]);
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 2, 'stage_id' => 3, 'ratio' => 1]);
+
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 3, 'stage_id' => 1, 'ratio' => 0.2]);
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 3, 'stage_id' => 2, 'ratio' => 0.4]);
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 3, 'stage_id' => 3, 'ratio' => 1]);
+
         GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 4, 'stage_id' => 1, 'ratio' => 0.25]);
         GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 4, 'stage_id' => 2, 'ratio' => 0.50]);
         GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 4, 'stage_id' => 3, 'ratio' => 1]);
@@ -61,5 +93,13 @@ class GuaranteeSeeder extends Seeder
         GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 1, 'stage_id' => 1, 'ratio' => 0.75]);
         GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 1, 'stage_id' => 2, 'ratio' => 0.75]);
         GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 1, 'stage_id' => 3, 'ratio' => 0.75]);
+
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 2, 'stage_id' => 1, 'ratio' => 0.75]);
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 2, 'stage_id' => 2, 'ratio' => 0.75]);
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 2, 'stage_id' => 3, 'ratio' => 0.75]);
+
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 3, 'stage_id' => 1, 'ratio' => 0.75]);
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 3, 'stage_id' => 2, 'ratio' => 0.75]);
+        GuaranteeLGD::create(['guarantee_id' => $guarantee->id, 'class_type_id' => 3, 'stage_id' => 3, 'ratio' => 0.75]);
     }
 }

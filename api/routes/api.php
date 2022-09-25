@@ -7,8 +7,11 @@ use App\Http\Controllers\ClientIRSProfileController;
 use App\Http\Controllers\ClientStagingProfileController;
 use App\Http\Controllers\HelpController;
 use App\Http\Controllers\IRSController;
+use App\Http\Controllers\LimitController;
 use App\Http\Controllers\PDController;
 use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StagingController;
 use Illuminate\Support\Facades\Route;
 
@@ -16,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('test', [HelpController::class, 'test']);
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout']);
+Route::get('cc', [HelpController::class, 'clearCache']);
 
 
 Route::group(['middleware' => 'auth:api',], function () {
@@ -31,6 +35,12 @@ Route::group(['middleware' => 'auth:api',], function () {
     Route::group(['prefix' => 'clients'], function () {
         Route::get('cif/{cif}', [ClientController::class, 'showByCif']);
         Route::post('change-financial-status', [ClientController::class, 'changeFinancialStatus']);
+        Route::post('set-grade/{id}/{gradeId}', [ClientController::class, 'setGrade']);
+        Route::post('set-stage/{id}/{gradeId}', [ClientController::class, 'setStage']);
+        Route::get('get-class-type-grades/{id}', [ClientController::class, 'getClassTypeGrades']);
+        Route::post('add-attachments/{id}', [ClientController::class, 'addAttachments']);
+        Route::get('irs', [ClientController::class, 'indexIRS']);
+        Route::get('stage', [ClientController::class, 'indexStage']);
     });
     Route::resource('clients', ClientController::class);
 
@@ -63,7 +73,7 @@ Route::group(['middleware' => 'auth:api',], function () {
             Route::get('{id}', [ClientStagingProfileController::class, 'show']);
             Route::delete('{id}', [ClientStagingProfileController::class, 'destroy']);
         });
-        Route::get('', [StagingController::class, 'index']);
+        Route::get('{id}', [StagingController::class, 'index']);
     });
 
     // ************************************* PD Routes ******************************
@@ -74,7 +84,38 @@ Route::group(['middleware' => 'auth:api',], function () {
     });
     Route::resource('pd', PDController::class);
 
+    // ************************************* Limits Routes ******************************
+
+    Route::group(['prefix' => 'limits'], function () {
+        Route::post('import', [LimitController::class, 'import']);;
+        Route::get('show', [LimitController::class, 'show']);;
+    });
+
+
+    // ************************************* Limits Routes ******************************
+
+    Route::group(['prefix' => 'settings'], function () {
+        Route::get('show-predefined', [SettingController::class, 'showPredefined']);
+        Route::get('show-guarantee-lgd', [SettingController::class, 'showGuaranteeLGD']);
+        Route::post('update-predefined/{id}', [SettingController::class, 'updatePredefined']);
+        Route::post('update-guarantee-lgd/{id}', [SettingController::class, 'updateGuaranteeLGD']);
+        Route::get('show-document-types', [SettingController::class, 'showDocumentTypes']);
+        Route::post('update-document-type/{id}', [SettingController::class, 'updateDocumentType']);
+        Route::post('toggle-period-lock/{quarter}/{year}', [SettingController::class, 'togglePeriodLock']);
+        Route::get('get-locked', [SettingController::class, 'getLocked']);
+        Route::post('update-value/{id}/{value}', [SettingController::class, 'updateValue']);
+        Route::get('get-values', [SettingController::class, 'getValues']);
+    });
+
+
 });
 
-
-
+// ************************************* Report Routes ******************************
+Route::group(['prefix' => 'reports'], function () {
+    Route::get('cif', [ReportController::class, 'cif']);
+    Route::get('cif-guarantee', [ReportController::class, 'cifGuarantee']);
+    Route::get('disclosure', [ReportController::class, 'disclosure']);
+    Route::get('ead-guarantee', [ReportController::class, 'eadGuarantee']);
+    Route::get('ecl', [ReportController::class, 'ecl']);
+    Route::get('facility-disclosure', [ReportController::class, 'facilityDisclosure']);
+});

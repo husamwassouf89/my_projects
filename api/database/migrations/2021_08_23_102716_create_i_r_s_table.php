@@ -19,7 +19,7 @@ class CreateIRSTable extends Migration
             $table->id();
             $table->string('name')->default('IRS for certain class type');
             $table->enum('financial_status', \App\Models\Client\Client::$FINANCIAL_STATUS)->default(\App\Models\Client\Client::$FINANCIAL_STATUS[0]);
-            $table->float('percentage')->default(0);
+            $table->double('percentage',20,20)->default(0);
             $table->foreignIdFor(Category::class);
             $table->foreignIdFor(ClassType::class);
         });

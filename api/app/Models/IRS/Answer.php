@@ -12,6 +12,11 @@ class Answer extends Model
     public $timestamps = false;
     public $guarded = ['id'];
 
+    public function question()
+    {
+        return $this->belongsTo(Question::class);
+    }
+
     public function scopeJoins($query)
     {
         $query->join('options', 'options.id', '=', 'answers.option_id')

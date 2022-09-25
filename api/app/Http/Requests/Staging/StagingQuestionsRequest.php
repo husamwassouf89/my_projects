@@ -15,7 +15,6 @@ class StagingQuestionsRequest extends FormRequest
     {
         return [
             'class_type_id' => 'required|numeric|exists:class_types,id',
-            'client_id'     => 'required|numeric|exists:clients,id',
         ];
     }
 }

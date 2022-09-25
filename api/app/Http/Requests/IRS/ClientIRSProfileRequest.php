@@ -18,6 +18,9 @@ class ClientIRSProfileRequest extends FormRequest
             'client_id' => 'required|numeric|exists:clients,id',
             'answers'   => 'required|array',
             'answers.*' => 'required|numeric|exists:options,id',
+
+            'attachment_ids'   => 'array',
+            'attachment_ids.*' => 'numeric|exists:attachments,id',
         ];
     }
 }

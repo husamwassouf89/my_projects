@@ -19,6 +19,7 @@ class CreateCurrenciesTable extends Migration
             $table->string('code')->nullable();
             $table->string('name');
             $table->enum('type', Currency::$TYPES)->default(Currency::$TYPES[0]);
+            $table->float('exchange_price')->default(1);
         });
     }
 

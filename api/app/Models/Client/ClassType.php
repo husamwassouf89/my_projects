@@ -17,7 +17,7 @@ class ClassType extends Model
     public static function getYears()
     {
         $allYears = [];
-        for ($i = 1990; $i <= Date('Y'); $i++) {
+        for ($i = 2018; $i <= Date('Y'); $i++) {
             array_push($allYears, $i);
         }
         return $allYears;
